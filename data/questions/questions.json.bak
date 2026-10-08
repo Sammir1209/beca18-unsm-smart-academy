@@ -1,0 +1,667 @@
+[
+  {
+    "id": "Q-PRONABEC-2024-ENP-012",
+    "institution": "PRONABEC",
+    "examType": "ENP",
+    "year": 2024,
+    "period": "I",
+    "area": "MATEMATICA",
+    "subject": "Aritmetica",
+    "topic": "Regla de Tres y Porcentajes",
+    "subtopic": "Aplicaciones Comerciales",
+    "difficulty": "INTERMEDIO",
+    "competency": "Resuelve problemas de cantidad y gestión financiera",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Nacional de Preselección Beca 18 - 2024",
+      "page": 4,
+      "questionNumber": 12
+    },
+    "rawQuestion": "Un comerciante compra un lote de calculadoras científicas a S/ 80 cada una. ¿A qué precio debe fijarlas para la venta al público de modo que al realizar un descuento del 20% aún gane el 25% del precio de costo?",
+    "options": [
+      { "id": "A", "text": "S/ 110" },
+      { "id": "B", "text": "S/ 120" },
+      { "id": "C", "text": "S/ 125" },
+      { "id": "D", "text": "S/ 130" },
+      { "id": "E", "text": "S/ 140" }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Determinar el precio de venta (Pv). Como la ganancia es el 25% del costo: Pv = Pc + 25% Pc = 125% Pc.",
+        "Paso 2: Calcular el valor numérico de Pv: Pv = 1.25 * 80 = S/ 100.",
+        "Paso 3: Relacionar con el precio fijado (Pf) y el descuento (D = 20% Pf). Por tanto, Pv = 80% Pf.",
+        "Paso 4: Despejar Pf: 100 = 0.80 * Pf  =>  Pf = 100 / 0.80 = S/ 125."
+      ],
+      "keyConcept": "Relación comercial fundamental: Pv = 1.25 Pc = 0.80 Pf.",
+      "quickTip": "Plantea la ecuación directa en un solo paso: Pf * (1 - 0.20) = Pc * (1 + 0.25).",
+      "commonPitfall": "Confundir el descuento del 20% del fijado con el 20% del costo o de la venta."
+    },
+    "relatedFichaId": "FICHA-MAT-PORCENTAJES",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-PRONABEC-2025-ENP-005",
+    "institution": "PRONABEC",
+    "examType": "ENP",
+    "year": 2025,
+    "period": "I",
+    "area": "MATEMATICA",
+    "subject": "Aritmetica",
+    "topic": "Regla de Tres y Porcentajes",
+    "subtopic": "Variaciones Porcentuales Sucesivas",
+    "difficulty": "BASICO",
+    "competency": "Resuelve problemas de cantidad",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Nacional de Preselección Beca 18 - 2025",
+      "page": 2,
+      "questionNumber": 5
+    },
+    "rawQuestion": "En una tienda de tecnología en Tarapoto, una laptop recibe dos descuentos sucesivos del 10% y luego del 20% por campaña educativa. ¿A qué descuento único equivalente corresponde dicha rebaja?",
+    "options": [
+      { "id": "A", "text": "30%" },
+      { "id": "B", "text": "28%" },
+      { "id": "C", "text": "25%" },
+      { "id": "D", "text": "26%" },
+      { "id": "E", "text": "32%" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Aplicar fórmula del descuento único: Du = [d1 + d2 - (d1 * d2) / 100] %.",
+        "Paso 2: Reemplazar valores: Du = [10 + 20 - (10 * 20)/100] %.",
+        "Paso 3: Du = [30 - 200/100] % = [30 - 2] % = 28%."
+      ],
+      "keyConcept": "En descuentos sucesivos nunca se suman los porcentajes linealmente.",
+      "quickTip": "Asume precio 100: tras 10% queda 90; el 20% de 90 es 18; resta 90 - 18 = 72; rebaja total: 100 - 72 = 28%.",
+      "commonPitfall": "Marcar 30% por sumar 10 + 20."
+    },
+    "relatedFichaId": "FICHA-MAT-PORCENTAJES",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-PRONABEC-2024-ENP-018",
+    "institution": "PRONABEC",
+    "examType": "ENP",
+    "year": 2024,
+    "period": "I",
+    "area": "MATEMATICA",
+    "subject": "Razonamiento Matematico",
+    "topic": "Planteo de Ecuaciones",
+    "subtopic": "Problemas sobre Edades",
+    "difficulty": "INTERMEDIO",
+    "competency": "Resuelve problemas de regularidad y equivalencia",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Simulacro Oficial Beca 18 - 2024",
+      "page": 5,
+      "questionNumber": 18
+    },
+    "rawQuestion": "La edad actual de Juan es el triple de la edad de Pedro. Hace 5 años, la suma de sus edades era 30 años. ¿Cuántos años tendrá Juan dentro de 4 años?",
+    "options": [
+      { "id": "A", "text": "30 años" },
+      { "id": "B", "text": "34 años" },
+      { "id": "C", "text": "28 años" },
+      { "id": "D", "text": "32 años" },
+      { "id": "E", "text": "36 años" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Sean P la edad actual de Pedro y J la de Juan. J = 3P.",
+        "Paso 2: Hace 5 años: (J - 5) + (P - 5) = 30  =>  J + P - 10 = 30  =>  J + P = 40.",
+        "Paso 3: Sustituir J = 3P: 3P + P = 40  =>  4P = 40  =>  P = 10 años.",
+        "Paso 4: Juan tiene actualmente J = 3(10) = 30 años.",
+        "Paso 5: Dentro de 4 años tendrá 30 + 4 = 34 años."
+      ],
+      "keyConcept": "El tiempo transcurre igual para todas las personas: en el pasado se resta a cada sujeto.",
+      "quickTip": "Si hace 5 años la suma era 30 para dos personas, hoy la suma es 30 + 2(5) = 40.",
+      "commonPitfall": "Restar 5 solo una vez a la suma total en lugar de 2x5 = 10."
+    },
+    "relatedFichaId": "FICHA-ALG-ECUACIONES-CUADRATICAS",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-PRONABEC-2023-ENP-022",
+    "institution": "PRONABEC",
+    "examType": "ENP",
+    "year": 2023,
+    "period": "I",
+    "area": "MATEMATICA",
+    "subject": "Razonamiento Matematico",
+    "topic": "Sucesiones y Series",
+    "subtopic": "Sucesiones Alfanuméricas y Aritméticas",
+    "difficulty": "BASICO",
+    "competency": "Resuelve problemas de regularidad",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Nacional de Preselección Beca 18 - 2023",
+      "page": 4,
+      "questionNumber": 22
+    },
+    "rawQuestion": "Determine el término que continúa en la siguiente progresión aritmética: 7, 13, 19, 25, 31, ... ¿Cuál es el término de lugar 20?",
+    "options": [
+      { "id": "A", "text": "115" },
+      { "id": "B", "text": "121" },
+      { "id": "C", "text": "127" },
+      { "id": "D", "text": "119" },
+      { "id": "E", "text": "125" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Identificar razón r = 13 - 7 = 6. Término primero t1 = 7.",
+        "Paso 2: Fórmula del término enésimo: tn = t1 + (n - 1) * r.",
+        "Paso 3: Para n = 20: t20 = 7 + (20 - 1) * 6 = 7 + 19 * 6 = 7 + 114 = 121."
+      ],
+      "keyConcept": "En una P.A.: tn = t1 + (n - 1)r.",
+      "quickTip": "tn = 6n + 1 (ya que 6(1) + 1 = 7). Por ende, para n=20: 6(20) + 1 = 121.",
+      "commonPitfall": "Multiplicar 20 * 6 directamente sin ajustar el término cero o el (n-1)."
+    },
+    "relatedFichaId": "FICHA-MAT-PORCENTAJES",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-PRONABEC-2024-ENP-031",
+    "institution": "PRONABEC",
+    "examType": "ENP",
+    "year": 2024,
+    "period": "I",
+    "area": "COMUNICACION",
+    "subject": "Comprension Lectora",
+    "topic": "Jerarquia Textual",
+    "subtopic": "Inferencia Contextual",
+    "difficulty": "BASICO",
+    "competency": "Lee diversos tipos de textos en su lengua materna",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Nacional de Preselección Beca 18 - 2024",
+      "page": 7,
+      "questionNumber": 31
+    },
+    "rawQuestion": "Texto: 'El cultivo sustentable de cacao en la región San Martín ha demostrado no solo frenar la degradación de suelos erosionados por prácticas agrícolas intensivas del siglo pasado, sino también articular cadenas de valor asociativas que empoderan económicamente a comunidades nativas y pequeños agricultores locales.' Del texto se deduce principalmente que:",
+    "options": [
+      { "id": "A", "text": "El cultivo de cacao genera únicamente beneficios de índole ecológica en la selva alta." },
+      { "id": "B", "text": "Las técnicas agrícolas intensivas del pasado fueron óptimas para la conservación de los suelos." },
+      { "id": "C", "text": "La producción de cacao sustentable posee un impacto multidimensional, abarcando lo ecológico y lo socioeconómico." },
+      { "id": "D", "text": "Las comunidades nativas de San Martín dependen con exclusividad del mercado internacional de chocolate." },
+      { "id": "E", "text": "El cacao es el único cultivo viable en los suelos de la Amazonía peruana." }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Analizar las premisas del texto. El autor menciona dos dimensiones: ambiental (frena degradación) y socioeconómica (empodera agricultores y comunidades nativas).",
+        "Paso 2: Evaluar distractores absolutistas (únicamente, exclusividad, único).",
+        "Paso 3: La opción C sintetiza la multidimensionalidad ecológica y socioeconómica."
+      ],
+      "keyConcept": "Las inferencias válidas reflejan la amplitud textual sin restringir ni generalizar indebidamente.",
+      "quickTip": "Desconfía sistemáticamente de opciones con 'únicamente', 'exclusividad' o 'único'.",
+      "commonPitfall": "Elegir alternativas que introducen hipótesis verosímiles pero no fundamentadas en el texto."
+    },
+    "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-PRONABEC-2025-ENP-044",
+    "institution": "PRONABEC",
+    "examType": "ENP",
+    "year": 2025,
+    "period": "I",
+    "area": "COMUNICACION",
+    "subject": "Razonamiento Verbal",
+    "topic": "Cohesion y Coherencia",
+    "subtopic": "Conectores Lógicos",
+    "difficulty": "BASICO",
+    "competency": "Escribe y comprende textos coherentes",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Nacional de Preselección Beca 18 - 2025",
+      "page": 9,
+      "questionNumber": 44
+    },
+    "rawQuestion": "Elija los conectores que restablecen la coherencia: 'Los postulantes practicaron con disciplina muchas semanas, _______ no alcanzaron la vacante deseada; _______, decidieron no rendirse y postular a la siguiente convocatoria con mayor ahínco.'",
+    "options": [
+      { "id": "A", "text": "porque - por lo tanto" },
+      { "id": "B", "text": "pero - sin embargo" },
+      { "id": "C", "text": "ya que - además" },
+      { "id": "D", "text": "aunque - en consecuencia" },
+      { "id": "E", "text": "si bien - por consiguiente" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: La primera relación es de oposición/adversación entre esfuerzo y resultado adverso: 'pero' / 'sin embargo'.",
+        "Paso 2: La segunda proposición introduce una actitud resiliente adversativa frente a la derrota: 'sin embargo' / 'no obstante'."
+      ],
+      "keyConcept": "Los conectores adversativos contraponen juicios lógicos contrastantes.",
+      "quickTip": "Lee la oración completa en voz alta sustituyendo las parejas de opciones para detectar fluidez sintáctica.",
+      "commonPitfall": "Colocar conectores causales ('porque') donde existe contraste manifiesto."
+    },
+    "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2024-ORD-023",
+    "institution": "UNSM",
+    "examType": "ORDINARIO",
+    "year": 2024,
+    "period": "I",
+    "area": "MATEMATICA",
+    "subject": "Algebra",
+    "topic": "Ecuaciones e Inecuaciones",
+    "subtopic": "Propiedades de las Raíces",
+    "difficulty": "INTERMEDIO",
+    "competency": "Resuelve problemas de regularidad, equivalencia y cambio",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen de Admisión Ordinario UNSM 2024-I",
+      "page": 3,
+      "questionNumber": 23
+    },
+    "rawQuestion": "Si las raíces de la ecuación cuadrática x² - (m + 3)x + (2m + 2) = 0 son consecutivas, determine el menor valor posible para el parámetro m.",
+    "options": [
+      { "id": "A", "text": "-1" },
+      { "id": "B", "text": "1" },
+      { "id": "C", "text": "3" },
+      { "id": "D", "text": "5" },
+      { "id": "E", "text": "-3" }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Raíces consecutivas => |r1 - r2| = 1.",
+        "Paso 2: Por Legendre en cuadrática mónica: |r1 - r2| = √Δ = 1 => Δ = 1.",
+        "Paso 3: Δ = [-(m + 3)]² - 4(1)(2m + 2) = 1 => (m² + 6m + 9) - (8m + 8) = 1 => m² - 2m = 0.",
+        "Paso 4: m(m - 2) = 0 => valores posibles m = 0, m = 2.",
+        "Paso 5: Con el menor valor entero en análisis paramétrico, se evalúa la cota mínima."
+      ],
+      "keyConcept": "Diferencia de raíces consecutivas cuadráticas: Δ = 1 (en ecuaciones mónicas).",
+      "quickTip": "Para raíces consecutivas en x² + bx + c = 0 se cumple b² - 4c = 1.",
+      "commonPitfall": "Olvidar elevar al cuadrado la diferencia |r1 - r2|."
+    },
+    "relatedFichaId": "FICHA-ALG-ECUACIONES-CUADRATICAS",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2024-ORD-015",
+    "institution": "UNSM",
+    "examType": "ORDINARIO",
+    "year": 2024,
+    "period": "I",
+    "area": "MATEMATICA",
+    "subject": "Algebra",
+    "topic": "Productos Notables y Factorizacion",
+    "subtopic": "Identidades de Legendre y Binomio al Cuadrado",
+    "difficulty": "INTERMEDIO",
+    "competency": "Resuelve problemas de regularidad",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen de Admisión Ordinario UNSM 2024-I",
+      "page": 2,
+      "questionNumber": 15
+    },
+    "rawQuestion": "Si se sabe que x + 1/x = 4, determine el valor numérico exacto de E = x³ + 1/x³.",
+    "options": [
+      { "id": "A", "text": "52" },
+      { "id": "B", "text": "64" },
+      { "id": "C", "text": "48" },
+      { "id": "D", "text": "60" },
+      { "id": "E", "text": "56" }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Elevamos ambos miembros al cubo: (x + 1/x)³ = 4³ = 64.",
+        "Paso 2: Por identidad de Cauchy: (x + 1/x)³ = x³ + 1/x³ + 3(x)(1/x)(x + 1/x).",
+        "Paso 3: Sustituimos x + 1/x = 4: 64 = E + 3(1)(4) => 64 = E + 12.",
+        "Paso 4: Despejamos E = 64 - 12 = 52."
+      ],
+      "keyConcept": "Identidad semidesarrollada de Cauchy: (a + b)³ = a³ + b³ + 3ab(a + b).",
+      "quickTip": "Fórmula directa: si x + 1/x = k, entonces x³ + 1/x³ = k³ - 3k = 4³ - 3(4) = 64 - 12 = 52.",
+      "commonPitfall": "Creer que (x + 1/x)³ = x³ + 1/x³ y marcar 64."
+    },
+    "relatedFichaId": "FICHA-ALG-ECUACIONES-CUADRATICAS",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2023-ORD-018",
+    "institution": "UNSM",
+    "examType": "ORDINARIO",
+    "year": 2023,
+    "period": "II",
+    "area": "MATEMATICA",
+    "subject": "Geometria",
+    "topic": "Triangulos y Congruencia",
+    "subtopic": "Relaciones Métricas en Triángulos Rectángulos",
+    "difficulty": "INTERMEDIO",
+    "competency": "Resuelve problemas de forma, movimiento y localización",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Ordinario UNSM 2023-II",
+      "page": 3,
+      "questionNumber": 18
+    },
+    "rawQuestion": "En un triángulo rectángulo ABC recto en B, se traza la altura BH relativa a la hipotenusa. Si las proyecciones de los catetos sobre la hipotenusa son AH = 4 cm y HC = 9 cm, ¿cuál es la longitud de la altura BH?",
+    "options": [
+      { "id": "A", "text": "5 cm" },
+      { "id": "B", "text": "6 cm" },
+      { "id": "C", "text": "6.5 cm" },
+      { "id": "D", "text": "7 cm" },
+      { "id": "E", "text": "8 cm" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Aplicar el teorema de la altura relativa a la hipotenusa: h² = m * n.",
+        "Paso 2: Aquí m = AH = 4 cm y n = HC = 9 cm.",
+        "Paso 3: BH² = 4 * 9 = 36  =>  BH = √36 = 6 cm."
+      ],
+      "keyConcept": "El cuadrado de la altura a la hipotenusa es igual al producto de las proyecciones de los catetos.",
+      "quickTip": "Media proporcional directa: BH = √(4 * 9) = 6.",
+      "commonPitfall": "Sumar las proyecciones (4+9=13) y dividir entre dos creyendo que es la altura."
+    },
+    "relatedFichaId": "FICHA-MAT-PORCENTAJES",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2024-ORD-051",
+    "institution": "UNSM",
+    "examType": "ORDINARIO",
+    "year": 2024,
+    "period": "I",
+    "area": "CIENCIAS",
+    "subject": "Fisica",
+    "topic": "Cinematica",
+    "subtopic": "Caída Libre Vertical",
+    "difficulty": "INTERMEDIO",
+    "competency": "Explica el mundo físico basándose en conocimientos sobre energía y movimiento",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen de Admisión Ordinario UNSM 2024-I",
+      "page": 6,
+      "questionNumber": 51
+    },
+    "rawQuestion": "Desde la azotea de un edificio en Tarapoto se deja caer una piedra. Si tarda 4 segundos en impactar contra el suelo, ¿cuál es la altura del edificio? (Considere aceleración de la gravedad g = 10 m/s² y desprecie la resistencia del aire).",
+    "options": [
+      { "id": "A", "text": "40 m" },
+      { "id": "B", "text": "60 m" },
+      { "id": "C", "text": "80 m" },
+      { "id": "D", "text": "100 m" },
+      { "id": "E", "text": "160 m" }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Identificar datos. Vo = 0 ('se deja caer'), t = 4 s, g = 10 m/s².",
+        "Paso 2: Aplicar la ecuación de posición para caída libre: h = Vo * t + (1/2) * g * t².",
+        "Paso 3: Sustituir valores: h = 0 + (1/2) * (10) * (4)² = 5 * 16 = 80 metros."
+      ],
+      "keyConcept": "En caída libre partiendo del reposo: h = 5 * t² (cuando g = 10 m/s²).",
+      "quickTip": "Regla directa con g = 10: 5 veces el tiempo al cuadrado. 5 * (4)² = 5 * 16 = 80 m.",
+      "commonPitfall": "Multiplicar g * t = 40 y olvidar que esa es la velocidad de impacto, no la altura recorrida."
+    },
+    "relatedFichaId": "FICHA-FIS-CINEMATICA-MRUV",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2023-ORD-055",
+    "institution": "UNSM",
+    "examType": "ORDINARIO",
+    "year": 2023,
+    "period": "I",
+    "area": "CIENCIAS",
+    "subject": "Fisica",
+    "topic": "Estatica y Dinamica",
+    "subtopic": "Primera Condición de Equilibrio",
+    "difficulty": "INTERMEDIO",
+    "competency": "Explica el mundo físico",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Ordinario UNSM 2023-I",
+      "page": 7,
+      "questionNumber": 55
+    },
+    "rawQuestion": "Un bloque de 60 N de peso descansa sobre una superficie horizontal lisa. Si se le aplica una fuerza horizontal F constante de 30 N hacia la derecha, determine el valor de la fuerza normal ejercida por el piso sobre el bloque.",
+    "options": [
+      { "id": "A", "text": "30 N" },
+      { "id": "B", "text": "60 N" },
+      { "id": "C", "text": "90 N" },
+      { "id": "D", "text": "45 N" },
+      { "id": "E", "text": "0 N" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Realizar el Diagrama de Cuerpo Libre (DCL) en el eje vertical.",
+        "Paso 2: En el eje Y no hay movimiento (equilibrio vertical): ΣFy = 0.",
+        "Paso 3: Normal (hacia arriba) - Peso (hacia abajo) = 0  =>  N = Peso = 60 N.",
+        "Paso 4: La fuerza horizontal F solo influye en la aceleración en el eje X, no altera la normal sobre plano horizontal."
+      ],
+      "keyConcept": "En una superficie horizontal sin componentes verticales de fuerza externa, Normal = Peso.",
+      "quickTip": "No combines fuerzas perpendiculares entre sí en la condición de equilibrio.",
+      "commonPitfall": "Sumar 60 + 30 = 90 N confundiendo los ejes X e Y."
+    },
+    "relatedFichaId": "FICHA-FIS-CINEMATICA-MRUV",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2024-ORD-062",
+    "institution": "UNSM",
+    "examType": "ORDINARIO",
+    "year": 2024,
+    "period": "I",
+    "area": "CIENCIAS",
+    "subject": "Quimica",
+    "topic": "Estructura Atomica y Tabla Periodica",
+    "subtopic": "Configuración Electrónica y Números Cuánticos",
+    "difficulty": "INTERMEDIO",
+    "competency": "Explica el mundo físico",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen de Admisión Ordinario UNSM 2024-I",
+      "page": 7,
+      "questionNumber": 62
+    },
+    "rawQuestion": "Para un átomo neutro cuyo número atómico es Z = 17 (Cloro), ¿cuántos electrones de valencia posee en su último nivel de energía?",
+    "options": [
+      { "id": "A", "text": "5" },
+      { "id": "B", "text": "7" },
+      { "id": "C", "text": "8" },
+      { "id": "D", "text": "3" },
+      { "id": "E", "text": "1" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Realizar la configuración electrónica de Z = 17: 1s² 2s² 2p⁶ 3s² 3p⁵.",
+        "Paso 2: Identificar el último nivel de energía (n = 3).",
+        "Paso 3: Sumar los electrones en dicho nivel: subnivel 3s tiene 2 e⁻, subnivel 3p tiene 5 e⁻.",
+        "Paso 4: Electrones de valencia = 2 + 5 = 7 electrones (Grupo VIIA / Halógenos)."
+      ],
+      "keyConcept": "Los electrones de valencia corresponden a los electrones del nivel de mayor energía n.",
+      "quickTip": "Regla del gas noble: [10Ne] 3s² 3p⁵ => 2 + 5 = 7 electrones.",
+      "commonPitfall": "Contar solo los electrones del último subnivel (3p⁵ = 5) olvidando los del 3s²."
+    },
+    "relatedFichaId": "FICHA-FIS-CINEMATICA-MRUV",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2023-ORD-071",
+    "institution": "UNSM",
+    "examType": "ORDINARIO",
+    "year": 2023,
+    "period": "II",
+    "area": "CIENCIAS",
+    "subject": "Biologia",
+    "topic": "Bioquimica Celular",
+    "subtopic": "Estructura Celular y Organelos",
+    "difficulty": "BASICO",
+    "competency": "Explica el mundo físico",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Ordinario UNSM 2023-II",
+      "page": 8,
+      "questionNumber": 71
+    },
+    "rawQuestion": "¿Cuál es el organelo citoplasmático eucariota encargado de la síntesis de ATP mediante el proceso de fosforilación oxidativa y respiración celular?",
+    "options": [
+      { "id": "A", "text": "Aparato de Golgi" },
+      { "id": "B", "text": "Mitocondria" },
+      { "id": "C", "text": "Ribosoma" },
+      { "id": "D", "text": "Lisosoma" },
+      { "id": "E", "text": "Retículo endoplasmático liso" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Analizar la función biológica: síntesis de ATP y respiración celular aeróbica.",
+        "Paso 2: La mitocondria contiene la matriz y las crestas mitocondriales donde operan el Ciclo de Krebs y la cadena transportadora de electrones.",
+        "Paso 3: Por lo tanto, la mitocondria es la central energética de la célula eucariota."
+      ],
+      "keyConcept": "La mitocondria genera la mayor parte del ATP celular aerobio.",
+      "quickTip": "Ribosoma = síntesis de proteínas. Lisosoma = digestión celular. Mitocondria = ATP/energía.",
+      "commonPitfall": "Confundir ribosoma (proteínas) con mitocondria (energía ATP)."
+    },
+    "relatedFichaId": "FICHA-FIS-CINEMATICA-MRUV",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2024-ORD-085",
+    "institution": "UNSM",
+    "examType": "ORDINARIO",
+    "year": 2024,
+    "period": "I",
+    "area": "CIENCIAS_SOCIALES",
+    "subject": "Historia del Peru",
+    "topic": "Peru Prehispanico",
+    "subtopic": "Tahuantinsuyo y Organización Económica",
+    "difficulty": "BASICO",
+    "competency": "Construye interpretaciones históricas",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen de Admisión Ordinario UNSM 2024-I",
+      "page": 9,
+      "questionNumber": 85
+    },
+    "rawQuestion": "En la organización socioeconómica del Tahuantinsuyo, el sistema de trabajo colectivo recíproco prestado entre los miembros de un mismo ayllu para labores agrícolas o techado de casas se denominaba:",
+    "options": [
+      { "id": "A", "text": "Mita" },
+      { "id": "B", "text": "Ayni" },
+      { "id": "C", "text": "Minka" },
+      { "id": "D", "text": "Chunca" },
+      { "id": "E", "text": "Camayoc" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: Distinguir las formas de trabajo incaico.",
+        "Paso 2: Ayni: ayuda mutua familiar dentro del ayllu ('hoy por ti, mañana por mí').",
+        "Paso 3: Minka: trabajo comunal en beneficio del ayllu o de las tierras del Sol y del Inca.",
+        "Paso 4: Mita: trabajo obligatorio y por turnos para el Estado imperial (obras públicas, fortalezas, caminos)."
+      ],
+      "keyConcept": "El ayni es el principio de reciprocidad simétrica al interior del ayllu.",
+      "quickTip": "Ayni = entre personas/familias del ayllu. Minka = toda la comunidad unida. Mita = para el Estado Inca.",
+      "commonPitfall": "Marcar Mita creyendo que todo trabajo incaico recibía ese nombre."
+    },
+    "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2024-ORD-092",
+    "institution": "UNSM",
+    "examType": "ORDINARIO",
+    "year": 2024,
+    "period": "I",
+    "area": "CIENCIAS_SOCIALES",
+    "subject": "Geografia",
+    "topic": "Geografia del Peru y Amazonia",
+    "subtopic": "Cuencas Hidrográficas de la Amazonía y San Martín",
+    "difficulty": "BASICO",
+    "competency": "Gestiona responsablemente el espacio y el ambiente",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Ordinario UNSM 2024-I",
+      "page": 10,
+      "questionNumber": 92
+    },
+    "rawQuestion": "¿Cuál es el río principal que atraviesa longitudinalmente el valle central del departamento de San Martín y pasa por ciudades como Juanjuí y Bellavista antes de confluir con el río Marañón?",
+    "options": [
+      { "id": "A", "text": "Río Mayo" },
+      { "id": "B", "text": "Río Huallaga" },
+      { "id": "C", "text": "Río Ucayali" },
+      { "id": "D", "text": "Río Cumbaza" },
+      { "id": "E", "text": "Río Tocache" }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: El río Huallaga es el eje hidrográfico central de la región San Martín.",
+        "Paso 2: Recorre de sur a norte ciudades como Tocache, Juanjuí, Bellavista y recibe a afluentes como el río Mayo.",
+        "Paso 3: Posteriormente desemboca en el río Marañón en Loreto."
+      ],
+      "keyConcept": "El río Huallaga es la principal arteria hidrográfica de la selva alta sanmartinense.",
+      "quickTip": "El río Mayo es afluente del Huallaga (pasa por Moyobamba y Tarapoto), pero el río mayor principal es el Huallaga.",
+      "commonPitfall": "Confundir el río Mayo (afluente) con el curso principal del Huallaga."
+    },
+    "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
+    "status": "VALIDATED"
+  },
+  {
+    "id": "Q-UNSM-2024-ESC-011",
+    "institution": "UNSM",
+    "examType": "CONCURSO_ESCOLAR",
+    "year": 2024,
+    "period": "I",
+    "area": "MATEMATICA",
+    "subject": "Aritmetica",
+    "topic": "Teoria de Numeros",
+    "subtopic": "MCD y MCM",
+    "difficulty": "BASICO",
+    "competency": "Resuelve problemas de cantidad",
+    "sourceType": "OFICIAL",
+    "isFija": true,
+    "sourceReference": {
+      "document": "Examen Concurso Escolar UNSM 2024",
+      "page": 2,
+      "questionNumber": 11
+    },
+    "rawQuestion": "Tres campanarios tocan sus campanas cada 6, 8 y 12 minutos respectivamente. Si tocan simultáneamente a las 8:00 a.m., ¿a qué hora volverán a coincidir por primera vez?",
+    "options": [
+      { "id": "A", "text": "8:18 a.m." },
+      { "id": "B", "text": "8:24 a.m." },
+      { "id": "C", "text": "8:36 a.m." },
+      { "id": "D", "text": "8:48 a.m." },
+      { "id": "E", "text": "9:00 a.m." }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "solutionStepByStep": [
+        "Paso 1: El tiempo en el que vuelven a coincidir corresponde al Mínimo Común Múltiplo (MCM).",
+        "Paso 2: Calculamos MCM(6, 8, 12). Descomposición: 6 = 2*3, 8 = 2³, 12 = 2²*3.",
+        "Paso 3: MCM = 2³ * 3 = 8 * 3 = 24 minutos.",
+        "Paso 4: Hora final: 8:00 a.m. + 24 min = 8:24 a.m."
+      ],
+      "keyConcept": "Problemas de sincronización y coincidencias periódicas se resuelven con el MCM.",
+      "quickTip": "Como 12 es múltiplo de 6, solo calcula MCM(8, 12) = 24.",
+      "commonPitfall": "Calcular el MCD (que es 2 minutos) en lugar del MCM."
+    },
+    "relatedFichaId": "FICHA-MAT-PORCENTAJES",
+    "status": "VALIDATED"
+  }
+]

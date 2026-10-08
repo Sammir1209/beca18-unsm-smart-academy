@@ -1,0 +1,173 @@
+{
+  "version": "1.0.0",
+  "areas": [
+    {
+      "id": "MATEMATICA",
+      "name": "Matemática",
+      "subjects": [
+        {
+          "id": "Aritmetica",
+          "name": "Aritmética",
+          "topics": [
+            { "id": "Razones y Proporciones", "subtopics": ["Razón aritmética y geométrica", "Serie de razones geométricas equivalentes", "Proporciones"] },
+            { "id": "Regla de Tres y Porcentajes", "subtopics": ["Regla de tres simple y compuesta", "Tanto por ciento", "Variaciones porcentuales", "Aplicaciones comerciales"] },
+            { "id": "Teoria de Numeros", "subtopics": ["Divisibilidad", "Criterios de divisibilidad", "Números primos y compuestos", "MCD y MCM"] },
+            { "id": "Conjuntos y Numeracion", "subtopics": ["Operaciones con conjuntos", "Sistemas de numeración", "Cambio de base"] }
+          ]
+        },
+        {
+          "id": "Algebra",
+          "name": "Álgebra",
+          "topics": [
+            { "id": "Leyes de Exponentes y Polinomios", "subtopics": ["Potenciación y radicación", "Grado de polinomios", "Polinomios especiales"] },
+            { "id": "Productos Notables y Factorizacion", "subtopics": ["Identidades algebraicas clásicas", "Métodos de aspa simple y doble", "Divisores binómicos"] },
+            { "id": "Ecuaciones e Inecuaciones", "subtopics": ["Ecuaciones lineales", "Ecuaciones cuadráticas y propiedades de raíces", "Sistemas lineales", "Inecuaciones polinomiales y fraccionarias"] },
+            { "id": "Funciones y Logaritmos", "subtopics": ["Dominio y rango", "Función lineal y cuadrática", "Propiedades de logaritmos"] }
+          ]
+        },
+        {
+          "id": "Geometria",
+          "name": "Geometría",
+          "topics": [
+            { "id": "Triangulos y Congruencia", "subtopics": ["Propiedades fundamentales", "Líneas notables", "Casos de congruencia"] },
+            { "id": "Semejanza y Relaciones Metricas", "subtopics": ["Teorema de Thales", "Criterios de semejanza", "Relaciones métricas en el triángulo rectángulo"] },
+            { "id": "Areas y Poligonos", "subtopics": ["Áreas de regiones triangulares y cuadrangulares", "Círculo y circunferencia"] },
+            { "id": "Geometria del Espacio", "subtopics": ["Prisma y cilindro", "Pirámide y cono", "Esfera"] }
+          ]
+        },
+        {
+          "id": "Trigonometria",
+          "name": "Trigonometría",
+          "topics": [
+            { "id": "Razones Trigonometricas", "subtopics": ["Triángulos notables", "Razones en ángulos agudos", "Ángulos en posición normal"] },
+            { "id": "Identidades Trigonometricas", "subtopics": ["Identidades fundamentales", "Ángulos compuestos", "Ángulo doble y mitad"] }
+          ]
+        },
+        {
+          "id": "Razonamiento Matematico",
+          "name": "Razonamiento Matemático (RM)",
+          "topics": [
+            { "id": "Sucesiones y Series", "subtopics": ["Sucesiones aritméticas y geométricas", "Sumatorias notables"] },
+            { "id": "Planteo de Ecuaciones", "subtopics": ["Problemas sobre edades", "Móviles", "Cronometría", "Fracciones"] },
+            { "id": "Analisis Combinatorio y Probabilidades", "subtopics": ["Principio de adición y multiplicación", "Permutaciones y combinaciones", "Probabilidad clásica"] },
+            { "id": "Distribuciones y Operadores", "subtopics": ["Operadores matemáticos arbitrarios", "Distribuciones numéricas y gráficas"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "COMUNICACION",
+      "name": "Comunicación y Aptitud Verbal",
+      "subjects": [
+        {
+          "id": "Comprension Lectora",
+          "name": "Comprensión Lectora",
+          "topics": [
+            { "id": "Jerarquia Textual", "subtopics": ["Tema central e idea principal", "Título más adecuado", "Estructura del texto"] },
+            { "id": "Niveles de Comprension", "subtopics": ["Preguntas por sentido contextual", "Preguntas por inferencia", "Preguntas por extrapolación"] }
+          ]
+        },
+        {
+          "id": "Razonamiento Verbal",
+          "name": "Razonamiento Verbal (RV)",
+          "topics": [
+            { "id": "Relaciones Semanticas", "subtopics": ["Sinonimia contextual", "Antonimia contextual", "Analogías"] },
+            { "id": "Cohesion y Coherencia", "subtopics": ["Conectores lógicos", "Oraciones incompletas", "Oraciones eliminadas", "Plan de redacción"] }
+          ]
+        },
+        {
+          "id": "Lenguaje",
+          "name": "Lenguaje y Gramática",
+          "topics": [
+            { "id": "Ortografia y Acentuacion", "subtopics": ["Acentuación general y diacrítica", "Signos de puntuación", "Uso de grafías"] },
+            { "id": "Morfologia y Sintaxis", "subtopics": ["Categorías gramaticales", "Estructura de la oración simple y compuesta"] }
+          ]
+        },
+        {
+          "id": "Literatura",
+          "name": "Literatura",
+          "topics": [
+            { "id": "Literatura Peruana", "subtopics": ["Inca Garcilaso de la Vega", "Tradiciones Peruanas (Ricardo Palma)", "Indigenismo (Ciro Alegría, J.M. Arguedas)", "Mario Vargas Llosa"] },
+            { "id": "Literatura Universal y Espanola", "subtopics": ["Siglo de Oro español", "Generación del 98 y 27", "Literatura grecolatina"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CIENCIAS",
+      "name": "Ciencias Naturales",
+      "subjects": [
+        {
+          "id": "Fisica",
+          "name": "Física",
+          "topics": [
+            { "id": "Cinematica", "subtopics": ["MRU y MRUV", "Caída libre vertical", "Movimiento parabólico"] },
+            { "id": "Estatica y Dinamica", "subtopics": ["Leyes de Newton", "Equilibrio mecánico", "Segunda ley de Newton y rozamiento"] },
+            { "id": "Trabajo, Potencia y Energia", "subtopics": ["Trabajo mecánico", "Energía cinética y potencial", "Conservación de la energía mecánica"] },
+            { "id": "Hidrostatica y Calorimetria", "subtopics": ["Principio de Pascal y Arquímedes", "Calor sensible y cambios de fase"] }
+          ]
+        },
+        {
+          "id": "Quimica",
+          "name": "Química",
+          "topics": [
+            { "id": "Estructura Atomica y Tabla Periodica", "subtopics": ["Modelos atómicos", "Configuración electrónica", "Propiedades periódicas"] },
+            { "id": "Enlace Quimico y Nomenclatura", "subtopics": ["Enlace iónico y covalente", "Óxidos, hidróxidos y ácidos inorgánicos"] },
+            { "id": "Reacciones y Estequiometria", "subtopics": ["Balanceo de ecuaciones", "Leyes ponderales", "Reactivo limitante y rendimiento"] }
+          ]
+        },
+        {
+          "id": "Biologia",
+          "name": "Biología",
+          "topics": [
+            { "id": "Bioquimica Celular", "subtopics": ["Bioelementos y biomoléculas", "Estructura celular (procariota y eucariota)"] },
+            { "id": "Metabolismo Celular", "subtopics": ["Fotosíntesis", "Respiración celular aeróbica y anaeróbica"] },
+            { "id": "Genetica y Ecologia", "subtopics": ["Leyes de Mendel", "Ecosistemas del Perú y conservación de la Amazonía"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CIENCIAS_SOCIALES",
+      "name": "Ciencias Sociales y Humanidades",
+      "subjects": [
+        {
+          "id": "Historia del Peru",
+          "name": "Historia del Perú",
+          "topics": [
+            { "id": "Peru Prehispanico", "subtopics": ["Horizonte Temprano, Medio y Tardío", "Tahuantinsuyo y organización incaica"] },
+            { "id": "Virreinato y Republica", "subtopics": ["Reformas borbónicas", "Guerra del Pacífico", "Oncenio de Leguía y Perú contemporáneo"] }
+          ]
+        },
+        {
+          "id": "Geografia",
+          "name": "Geografía",
+          "topics": [
+            { "id": "Geografia del Peru y Amazonia", "subtopics": ["Las 8 regiones naturales de Pulgar Vidal", "11 ecorregiones de Brack Egg", "Hidrografía de la cuenca amazónica (Río Huallaga, Mayo)"] }
+          ]
+        },
+        {
+          "id": "Educacion Civica",
+          "name": "Educación Cívica y Constitución",
+          "topics": [
+            { "id": "Derechos y Estado", "subtopics": ["Derechos fundamentales", "Poderes del Estado Peruano", "Garantías constitucionales"] }
+          ]
+        },
+        {
+          "id": "Economia",
+          "name": "Economía",
+          "topics": [
+            { "id": "Mercado y Produccion", "subtopics": ["Oferta y demanda", "Inflación y dinero", "Factores de la producción"] }
+          ]
+        },
+        {
+          "id": "Filosofia",
+          "name": "Filosofía",
+          "topics": [
+            { "id": "Disciplinas Filosoficas", "subtopics": ["Gnoseología y epistemología", "Ética y moral", "Historia de la filosofía clásica y moderna"] }
+          ]
+        }
+      ]
+    }
+  ]
+}
