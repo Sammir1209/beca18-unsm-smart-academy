@@ -19,14 +19,15 @@ class DataRepository {
     if (this.initialized) return;
 
     try {
-      // 1. Load from pre-packaged data JSON files
+      // 1. Load from pre-packaged data JSON files (soporta subrutas de GitHub Pages)
+      const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       const [qRes, fRes, mRes, fcRes, taxRes, srcRes] = await Promise.all([
-        fetch('/data/questions/questions.json').then(r => r.json()).catch(() => []),
-        fetch('/data/fichas/fichas.json').then(r => r.json()).catch(() => []),
-        fetch('/data/materials/materials.json').then(r => r.json()).catch(() => []),
-        fetch('/data/flashcards/flashcards.json').then(r => r.json()).catch(() => []),
-        fetch('/data/taxonomy/taxonomy.json').then(r => r.json()).catch(() => null),
-        fetch('/research/sources/source-inventory.json').then(r => r.json()).catch(() => ({ sources: [] }))
+        fetch(`${base}/data/questions/questions.json`).then(r => r.json()).catch(() => []),
+        fetch(`${base}/data/fichas/fichas.json`).then(r => r.json()).catch(() => []),
+        fetch(`${base}/data/materials/materials.json`).then(r => r.json()).catch(() => []),
+        fetch(`${base}/data/flashcards/flashcards.json`).then(r => r.json()).catch(() => []),
+        fetch(`${base}/data/taxonomy/taxonomy.json`).then(r => r.json()).catch(() => null),
+        fetch(`${base}/research/sources/source-inventory.json`).then(r => r.json()).catch(() => ({ sources: [] }))
       ]);
 
       this.questions = qRes || [];
