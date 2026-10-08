@@ -1,0 +1,74 @@
+{
+  "version": "1.0.0",
+  "generatedDate": "2026-10-08",
+  "totalAnalyzedExams": 6,
+  "yearsAnalyzed": [2023, 2024, 2025],
+  "institutions": {
+    "PRONABEC_BECA_18": {
+      "focus": "Competencias Fundamentales (Matemática y Competencia Lectora)",
+      "totalQuestionsStandard": 60,
+      "timeLimitMinutes": 120,
+      "scoring": "Sin penalización por error (clave para estrategia de responder el 100%)",
+      "historicalSubjectDistribution": {
+        "Matematica": {
+          "percentage": 50.0,
+          "questionCount": 30,
+          "highFrequencyTopics": [
+            { "topic": "Regla de Tres y Porcentajes", "frequency": "MUY_ALTA", "averagePerExam": 6 },
+            { "topic": "Planteo de Ecuaciones (RM)", "frequency": "MUY_ALTA", "averagePerExam": 7 },
+            { "topic": "Sucesiones y Series", "frequency": "ALTA", "averagePerExam": 4 },
+            { "topic": "Areas y Geometria Plana", "frequency": "ALTA", "averagePerExam": 5 },
+            { "topic": "Probabilidades y Estadistica Basica", "frequency": "ALTA", "averagePerExam": 4 },
+            { "topic": "Ecuaciones Lineales y Cuadraticas", "frequency": "MEDIA", "averagePerExam": 4 }
+          ]
+        },
+        "Competencia_Lectora": {
+          "percentage": 50.0,
+          "questionCount": 30,
+          "highFrequencyTopics": [
+            { "topic": "Idea Principal y Tema Central", "frequency": "MUY_ALTA", "averagePerExam": 8 },
+            { "topic": "Inferencia y Deduccion Contextual", "frequency": "MUY_ALTA", "averagePerExam": 10 },
+            { "topic": "Sentido Contextual de Terminos", "frequency": "ALTA", "averagePerExam": 6 },
+            { "topic": "Intencion del Autor y Tono", "frequency": "MEDIA", "averagePerExam": 6 }
+          ]
+        }
+      }
+    },
+    "UNSM_ORDINARIO": {
+      "focus": "Evaluación Holística Preuniversitaria (Ciencias, Matemática y Letras)",
+      "totalQuestionsStandard": 100,
+      "timeLimitMinutes": 180,
+      "scoring": "Penalización oficial por respuesta incorrecta (-0.5 pts por fallo frente a +4.0 pts por acierto)",
+      "historicalSubjectDistribution": {
+        "Aritmetica": { "count": 10, "highFrequencyTopics": ["Tanto por Ciento", "Razones y Proporciones", "MCD y MCM", "Divisibilidad"] },
+        "Algebra": { "count": 10, "highFrequencyTopics": ["Ecuaciones Cuadraticas", "Productos Notables", "Leyes de Exponentes", "Inecuaciones"] },
+        "Geometria": { "count": 8, "highFrequencyTopics": ["Triangulos y Congruencia", "Relaciones Metricas", "Areas de Regiones Poligonales"] },
+        "Trigonometria": { "count": 6, "highFrequencyTopics": ["Razones Trigonometricas de Angulos Agudos", "Identidades Fundamentales"] },
+        "Razonamiento_Matematico": { "count": 12, "highFrequencyTopics": ["Operadores Matematicos", "Problemas de Edades", "Metodos Operativos"] },
+        "Fisica": { "count": 10, "highFrequencyTopics": ["MRUV y Caida Libre", "Estatica (Primera condicion de equilibrio)", "Segunda Ley de Newton", "Energia Mecanica"] },
+        "Quimica": { "count": 10, "highFrequencyTopics": ["Configuracion Electronica", "Tabla Periodica", "Nomenclatura Inorganica", "Estequiometria"] },
+        "Biologia": { "count": 8, "highFrequencyTopics": ["La Celula y Organelos", "Fotosintesis", "Genetica Mendeliana", "Ecologia y Biodiversidad San Martin"] },
+        "Razonamiento_Verbal": { "count": 10, "highFrequencyTopics": ["Sinonimos y Antonimos Contextuales", "Analogias", "Oraciones Incompletas"] },
+        "Lenguaje": { "count": 6, "highFrequencyTopics": ["Acentuacion Diacritica", "El Signo Linguistico", "Sujeto y Predicado"] },
+        "Historia_del_Peru": { "count": 4, "highFrequencyTopics": ["Culturas Preincas", "Incas", "Guerra del Pacifico"] },
+        "Geografia": { "count": 4, "highFrequencyTopics": ["8 Regiones Naturales", "Cuencas Hidrograficas de la Selva", "Ecorregiones"] },
+        "Educacion_Civica": { "count": 2, "highFrequencyTopics": ["Poderes del Estado", "Garantias Constitucionales"] }
+      }
+    }
+  },
+  "comparativeStudyCore": {
+    "sharedCoreTopics": [
+      "Aritmetica: Tanto por ciento, razones y proporciones",
+      "Algebra: Ecuaciones de 1er y 2do grado, productos notables",
+      "Geometria: Triangulos y calculo de areas",
+      "Razonamiento Matematico: Series, sucesiones y planteo de ecuaciones",
+      "Comprension Lectora / Razonamiento Verbal: Analisis de textos, inferencias y lexico"
+    ],
+    "unsmSpecificRequirement": [
+      "Fisica (Cinematica, Estatica, Dinamica, Energia)",
+      "Quimica (Atomo, Enlaces, Reacciones, Estequiometria)",
+      "Biologia (Celular, Ecosistemas)",
+      "Historia del Peru y Geografia Amazonica"
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "FC-MAT-001",
+    "subject": "Aritmetica",
+    "topic": "Porcentajes",
+    "front": "¿Cuál es la fórmula para calcular el Descuento Único equivalente a dos descuentos sucesivos d1 y d2?",
+    "back": "Du = [d1 + d2 - (d1 * d2) / 100]%",
+    "category": "FORMULA",
+    "box": 1,
+    "lastReviewed": null
+  },
+  {
+    "id": "FC-ALG-002",
+    "subject": "Algebra",
+    "topic": "Ecuaciones Cuadraticas",
+    "front": "¿Qué condición deben cumplir los coeficientes de ax² + bx + c = 0 para que sus raíces sean RECÍPROCAS?",
+    "back": "El primer y último coeficiente deben ser iguales: a = c (ya que el producto de raíces r1 * r2 = c/a = 1).",
+    "category": "CONCEPTO",
+    "box": 1,
+    "lastReviewed": null
+  },
+  {
+    "id": "FC-FIS-003",
+    "subject": "Fisica",
+    "topic": "Cinematica",
+    "front": "¿Cuál es el valor del factor de conversión para transformar km/h a m/s?",
+    "back": "Multiplicar por 5/18 (ejemplo: 72 km/h * 5/18 = 20 m/s).",
+    "category": "TRUCO",
+    "box": 1,
+    "lastReviewed": null
+  },
+  {
+    "id": "FC-LIT-004",
+    "subject": "Literatura",
+    "topic": "Obras y Autores",
+    "front": "¿Quién es el autor de 'Los ríos profundos' y cuál es su corriente literaria?",
+    "back": "José María Arguedas. Corriente: Indigenismo peruano (Neoindigenismo).",
+    "category": "OBRAS_Y_AUTORES",
+    "box": 1,
+    "lastReviewed": null
+  }
+]

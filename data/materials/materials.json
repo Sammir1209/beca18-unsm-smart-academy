@@ -1,0 +1,20 @@
+[
+  {
+    "id": "MAT-GUIA-PORCENTAJES-01",
+    "title": "Compendio Estratégico de Porcentajes y Variaciones Comerciales",
+    "category": "GUIA_PRACTICA",
+    "subject": "Aritmetica",
+    "topic": "Regla de Tres y Porcentajes",
+    "contentMarkdown": "# Compendio Estratégico de Porcentajes y Comercio\n\n### 1. El Axioma del 100\nEn exámenes de selección donde no figuren cantidades monetarias reales en soles, asuma que la cantidad base es 100.\n\n### 2. Aumentos y Descuentos Sucesivos\n- **Dos aumentos (a1, a2)**: `Au = [a1 + a2 + (a1 * a2) / 100]%`\n- **Dos descuentos (d1, d2)**: `Du = [d1 + d2 - (d1 * d2) / 100]%`\n\n### 3. Fórmulas Comerciales Universales\n- `Pv = Pc + Ganancia`\n- `Pv = Pc - Pérdida`\n- `Precio Fijado (Pf) = Pv + Descuento`\n\n> **Nota de Examen**: En la UNSM y en Beca 18, si el enunciado dice únicamente 'se ganó el 20%', dicha ganancia es referida obligatoriamente al precio de costo.",
+    "relatedFichas": ["FICHA-MAT-PORCENTAJES"]
+  },
+  {
+    "id": "MAT-GUIA-ALGEBRA-CARDANO-01",
+    "title": "Teorema de Cardano-Vieta y Álgebra de Raíces Cuadráticas",
+    "category": "RESUMEN_FORMULAS",
+    "subject": "Algebra",
+    "topic": "Ecuaciones e Inecuaciones",
+    "contentMarkdown": "# Relaciones de Cardano-Vieta\n\nDada la ecuación `ax² + bx + c = 0` con raíces `r1` y `r2`:\n\n1. **Suma de raíces**: `S = r1 + r2 = -b / a`\n2. **Producto de raíces**: `P = r1 * r2 = c / a`\n3. **Diferencia de raíces**: `|r1 - r2| = √Δ / |a|` donde `Δ = b² - 4ac`\n4. **Reconstrucción de la cuadrática**: `x² - Sx + P = 0`\n\n### Casos Notables en Examen:\n- **Raíces Simétricas u Opuestas**: `r1 + r2 = 0` ➔ `b = 0`\n- **Raíces Recíprocas o Inversas**: `r1 * r2 = 1` ➔ `a = c`",
+    "relatedFichas": ["FICHA-ALG-ECUACIONES-CUADRATICAS"]
+  }
+]

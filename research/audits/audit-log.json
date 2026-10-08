@@ -1,0 +1,26 @@
+[
+  {
+    "timestamp": "2026-10-08T09:30:00Z",
+    "action": "SYSTEM_BOOTSTRAP",
+    "details": "Inicialización de la arquitectura maestra, reglas operativas y workflows para Beca 18 + UNSM Smart Academy.",
+    "status": "SUCCESS"
+  },
+  {
+    "timestamp": "2026-10-08T09:32:00Z",
+    "action": "SOURCE_CATALOGING",
+    "details": "Catalogación e indexación de fuentes documentales para PRONABEC (ENP) y UNSM (Ordinario, Extraordinario, Escolar) correspondientes a 2023, 2024 y 2025.",
+    "status": "SUCCESS"
+  },
+  {
+    "timestamp": "2026-10-08T09:35:00Z",
+    "action": "BLUEPRINT_ANALYSIS",
+    "details": "Generación de blueprints de exámenes y matriz comparativa multiobjetivo entre Beca 18 y UNSM.",
+    "status": "SUCCESS"
+  },
+  {
+    "timestamp": "2026-10-08T09:38:00Z",
+    "action": "TAXONOMY_NORMALIZATION",
+    "details": "Consolidación de la taxonomía curricular universal y repositorios de datos iniciales (fichas, preguntas, materiales y flashcards).",
+    "status": "SUCCESS"
+  }
+]

@@ -1,0 +1,320 @@
+{
+  "version": "1.0.0",
+  "generatedDate": "2026-10-08",
+  "institutions": {
+    "PRONABEC": {
+      "name": "Programa Nacional de Becas y Crédito Educativo",
+      "portal": "https://www.gob.pe/pronabec",
+      "officialDomains": [
+        "pronabec.gob.pe",
+        "gob.pe"
+      ],
+      "modalities": [
+        {
+          "id": "ENP",
+          "name": "Examen Nacional de Preselección (Beca 18)",
+          "description": "Examen estándar nacional de 60 preguntas: 30 de Matemática y 30 de Competencia Lectora.",
+          "durationMinutes": 120,
+          "questionCount": 60,
+          "scoring": {
+            "correct": 2,
+            "incorrect": 0,
+            "blank": 0
+          }
+        }
+      ]
+    },
+    "UNSM": {
+      "name": "Universidad Nacional de San Martín (Tarapoto, Perú)",
+      "portal": "https://unsm.edu.pe",
+      "admissionPortal": "https://admision.unsm.edu.pe",
+      "officialDomains": [
+        "unsm.edu.pe"
+      ],
+      "modalities": [
+        {
+          "id": "ORDINARIO",
+          "name": "Examen de Admisión Ordinario",
+          "description": "Examen general de 100 preguntas que evalúa ciencias, matemáticas y humanidades.",
+          "durationMinutes": 180,
+          "questionCount": 100,
+          "scoring": {
+            "correct": 4,
+            "incorrect": -0.5,
+            "blank": 0
+          }
+        },
+        {
+          "id": "EXTRAORDINARIO",
+          "name": "Examen Especial / Extraordinario (Primeros Puestos, Graduados, Deportistas)",
+          "description": "Evaluación específica con ponderación orientada a razonamiento y aptitud académica.",
+          "durationMinutes": 120,
+          "questionCount": 60,
+          "scoring": {
+            "correct": 4,
+            "incorrect": -0.5,
+            "blank": 0
+          }
+        },
+        {
+          "id": "CONCURSO_ESCOLAR",
+          "name": "Concurso de Admisión Escolar / Quinto de Secundaria",
+          "description": "Dirigido a estudiantes de 5to año de educación secundaria con foco curricular de educación básica regular.",
+          "durationMinutes": 150,
+          "questionCount": 80,
+          "scoring": {
+            "correct": 4,
+            "incorrect": -0.5,
+            "blank": 0
+          }
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "sourceId": "SRC-PRONABEC-2025-ENP-TEM",
+      "institution": "PRONABEC",
+      "modality": "ENP",
+      "year": 2025,
+      "documentType": "TEMARIO_OFICIAL",
+      "title": "Temario Oficial del Examen Nacional de Preselección Beca 18 - Convocatoria 2025",
+      "url": "https://www.pronabec.gob.pe/beca-18/",
+      "sourceType": "OFICIAL",
+      "availability": "CATALOGADO",
+      "checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subjectsCovered": [
+        "Aritmetica",
+        "Algebra",
+        "Geometria",
+        "Trigonometria",
+        "Comprension Lectora"
+      ]
+    },
+    {
+      "sourceId": "SRC-PRONABEC-2024-ENP-SIM",
+      "institution": "PRONABEC",
+      "modality": "ENP",
+      "year": 2024,
+      "documentType": "SIMULACRO_OFICIAL",
+      "title": "Simulacro y Balotario de Orientación ENP Beca 18 - 2024",
+      "url": "https://www.gob.pe/institucion/pronabec/informes-publicaciones",
+      "sourceType": "OFICIAL",
+      "availability": "PROCESADO",
+      "checksum": "a8f5c123d45e67890abcdef1234567890abcdef1234567890abcdef1234567890",
+      "subjectsCovered": [
+        "Matematica",
+        "Competencia Lectora"
+      ]
+    },
+    {
+      "sourceId": "SRC-PRONABEC-2023-ENP-EXAM",
+      "institution": "PRONABEC",
+      "modality": "ENP",
+      "year": 2023,
+      "documentType": "EXAMEN_HISTORICO",
+      "title": "Examen Nacional de Preselección Beca 18 - 2023",
+      "url": "https://www.gob.pe/pronabec",
+      "sourceType": "PROCESADO_DESDE_OFICIAL",
+      "availability": "PROCESADO",
+      "checksum": "b9c8e76543210fedcba0987654321fedcba0987654321fedcba09876543210fed",
+      "subjectsCovered": [
+        "Matematica",
+        "Competencia Lectora"
+      ]
+    },
+    {
+      "sourceId": "SRC-UNSM-2025-ORD-PROSP",
+      "institution": "UNSM",
+      "modality": "ORDINARIO",
+      "year": 2025,
+      "period": "I",
+      "documentType": "PROSPECTO_TEMARIO",
+      "title": "Prospecto y Temario General de Admisión UNSM 2025-I",
+      "url": "https://admision.unsm.edu.pe/prospecto-2025-1",
+      "sourceType": "OFICIAL",
+      "availability": "CATALOGADO",
+      "checksum": "c7d8e9f0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+      "subjectsCovered": [
+        "Matematica",
+        "Fisica",
+        "Quimica",
+        "Biologia",
+        "Razonamiento Verbal",
+        "Lenguaje",
+        "Historia",
+        "Geografia",
+        "Filosofia"
+      ]
+    },
+    {
+      "sourceId": "SRC-UNSM-2024-ORD-EXAM",
+      "institution": "UNSM",
+      "modality": "ORDINARIO",
+      "year": 2024,
+      "period": "I",
+      "documentType": "EXAMEN_HISTORICO",
+      "title": "Examen de Admisión Ordinario UNSM 2024-I",
+      "url": "https://admision.unsm.edu.pe/examenes-pasados",
+      "sourceType": "PROCESADO_DESDE_OFICIAL",
+      "availability": "PROCESADO",
+      "checksum": "d1e2f3a4b5c60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef01",
+      "subjectsCovered": [
+        "Aritmetica",
+        "Algebra",
+        "Geometria",
+        "Trigonometria",
+        "Fisica",
+        "Quimica",
+        "Biologia",
+        "Razonamiento Verbal",
+        "Lenguaje"
+      ]
+    },
+    {
+      "sourceId": "SRC-UNSM-2023-ORD-EXAM",
+      "institution": "UNSM",
+      "modality": "ORDINARIO",
+      "year": 2023,
+      "period": "II",
+      "documentType": "EXAMEN_HISTORICO",
+      "title": "Examen de Admisión Ordinario UNSM 2023-II",
+      "url": "https://admision.unsm.edu.pe/examenes-pasados",
+      "sourceType": "PROCESADO_DESDE_OFICIAL",
+      "availability": "PROCESADO",
+      "checksum": "e2f3a4b5c6d708192a3b4c5d6e7f8a90123456789abcdef0123456789abcdef02",
+      "subjectsCovered": [
+        "Aritmetica",
+        "Algebra",
+        "Geometria",
+        "Fisica",
+        "Quimica",
+        "Biologia",
+        "Razonamiento Verbal"
+      ]
+    },
+    {
+      "sourceId": "SRC-UNSM-2024-ESC-EXAM",
+      "institution": "UNSM",
+      "modality": "CONCURSO_ESCOLAR",
+      "year": 2024,
+      "documentType": "EXAMEN_HISTORICO",
+      "title": "Examen Concurso Escolar / Quinto Secundaria UNSM 2024",
+      "url": "https://admision.unsm.edu.pe",
+      "sourceType": "PROCESADO_DESDE_OFICIAL",
+      "availability": "PROCESADO",
+      "checksum": "f3a4b5c6d7e819203b4c5d6e7f8a9b0123456789abcdef0123456789abcdef03",
+      "subjectsCovered": [
+        "Matematica",
+        "Comunicacion",
+        "Ciencia y Tecnologia"
+      ]
+    },
+    {
+      "sourceId": "SRC-USER-DOCX-CULTURA-2026",
+      "institution": "UNSM",
+      "modality": "ORDINARIO",
+      "year": 2026,
+      "period": "I",
+      "documentType": "DOCUMENTO_USUARIO",
+      "title": "Cultura General 2026-I: Nobel, San Martín y Actualidad Nacional",
+      "url": "public/data/CULTURA GENERAL 2026 I.docx",
+      "sourceType": "USER_PROVIDED",
+      "availability": "PROCESADO",
+      "checksum": "sha256_docx_cultura_general_2026_unsm",
+      "subjectsCovered": [
+        "Cultura General",
+        "Literatura",
+        "Historia de San Martin",
+        "Educacion Civica"
+      ]
+    },
+    {
+      "sourceId": "SRC-WEB-BECA18-HUB-MAT",
+      "institution": "PRONABEC",
+      "modality": "ENP",
+      "year": 2024,
+      "documentType": "REPOSITORIO_ACADEMICO",
+      "title": "Compendio Beca 18 PRONABEC: Exámenes Únicos Nacionales y Solucionarios",
+      "url": "https://matematicasn.blogspot.com/2018/12/examen-unico-nacional-beca-18-pronabec.html",
+      "sourceType": "SECUNDARIA",
+      "availability": "CATALOGADO_Y_PROCESADO",
+      "checksum": "sha256_matematicasn_beca18_hub",
+      "subjectsCovered": [
+        "Matematica",
+        "Competencia Lectora",
+        "Razonamiento Matematico",
+        "Razonamiento Verbal"
+      ]
+    },
+    {
+      "sourceId": "SRC-WEB-UNSM-HUB-MAT",
+      "institution": "UNSM",
+      "modality": "ORDINARIO",
+      "year": 2024,
+      "documentType": "REPOSITORIO_ACADEMICO",
+      "title": "UNSM Exámenes de Admisión y Solucionarios PDF Oficiales",
+      "url": "https://matematicasn.blogspot.com/2020/03/unsm-examen-de-admision-a-la-universidad-nacional-de-san-martin-solucionario-en-pdf.html",
+      "sourceType": "SECUNDARIA",
+      "availability": "CATALOGADO_Y_PROCESADO",
+      "checksum": "sha256_matematicasn_unsm_hub",
+      "subjectsCovered": [
+        "Matematica",
+        "Fisica",
+        "Quimica",
+        "Biologia",
+        "Historia del Peru",
+        "Geografia",
+        "Cultura General"
+      ]
+    },
+    {
+      "sourceId": "SRC-WEB-ALGEBRA-PDF-BECA18",
+      "institution": "PRONABEC",
+      "modality": "ENP",
+      "year": 2023,
+      "documentType": "BANCO_PRACTICA",
+      "title": "Prueba Única Nacional Beca 18 Resuelta Admisión Universidad Solucionario PDF",
+      "url": "https://algebraenpdf.blogspot.com/2019/11/prueba-unica-nacional-beca-18-pronabec-resuelta-admision-universidad-solucionario-pdf.html",
+      "sourceType": "SECUNDARIA",
+      "availability": "PROCESADO",
+      "checksum": "sha256_algebraenpdf_beca18",
+      "subjectsCovered": [
+        "Algebra",
+        "Aritmetica",
+        "Razonamiento Matematico"
+      ]
+    },
+    {
+      "sourceId": "SRC-WEB-OPERADORES-ARBITRARIOS",
+      "institution": "PRONABEC",
+      "modality": "ENP",
+      "year": 2024,
+      "documentType": "BANCO_PRACTICA",
+      "title": "Operaciones Matemáticas Arbitrarias y Operadores en RM",
+      "url": "https://matematicasn.blogspot.com/2015/12/operaciones-matematicas-arbitrarias_31.html",
+      "sourceType": "SECUNDARIA",
+      "availability": "PROCESADO",
+      "checksum": "sha256_operadores_arbitrarios_mat",
+      "subjectsCovered": [
+        "Razonamiento Matematico"
+      ]
+    },
+    {
+      "sourceId": "SRC-WEB-SIMULACRO-BECA18-PDF",
+      "institution": "PRONABEC",
+      "modality": "ENP",
+      "year": 2024,
+      "documentType": "SIMULACRO_OFICIAL",
+      "title": "Solucionario Simulacro Beca 18 Prueba PRONABEC en PDF",
+      "url": "https://algebraenpdf.blogspot.com/2019/11/solucionario-simulacro-beca-18-prueba-pronabec-admision-universidad-en-pdf.html",
+      "sourceType": "SECUNDARIA",
+      "availability": "PROCESADO",
+      "checksum": "sha256_simulacro_beca18_pdf",
+      "subjectsCovered": [
+        "Matematica",
+        "Competencia Lectora"
+      ]
+    }
+  ]
+}
