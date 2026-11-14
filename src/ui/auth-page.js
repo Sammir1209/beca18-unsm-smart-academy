@@ -31,7 +31,7 @@ export function renderAuthPage(container, route, navigate) {
           ${mode === 'confirm' ? '<button id="auth-continue" class="btn btn-primary auth-submit">Continuar a la academia</button>' : `
             <form id="auth-route-form" class="auth-route-form">
               ${mode !== 'confirm' ? '<label for="auth-route-email">Correo electrónico</label><input id="auth-route-email" type="email" autocomplete="email" placeholder="nombre@correo.com" required>' : ''}
-              ${mode === 'login' || mode === 'register' ? '<label for="auth-route-password">Contraseña</label><input id="auth-route-password" type="password" autocomplete="${mode === 'login' ? 'current-password' : 'new-password'}" minlength="8" placeholder="Mínimo 8 caracteres" required>' : ''}
+              ${mode === 'login' || mode === 'register' ? '<label for="auth-route-password">Contraseña</label><input id="auth-route-password" type="password" autocomplete="current-password" minlength="8" placeholder="Mínimo 8 caracteres" required>' : ''}
               ${mode === 'forgot' ? '' : ''}
               ${mode === 'register' ? '<label for="auth-route-confirm">Confirmar contraseña</label><input id="auth-route-confirm" type="password" autocomplete="new-password" minlength="8" placeholder="Repite tu contraseña" required>' : ''}
               ${mode === 'new-password' ? '<label for="auth-route-new-password">Nueva contraseña</label><input id="auth-route-new-password" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres" required>' : ''}
