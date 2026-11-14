@@ -50,6 +50,7 @@ export function mountTutorChat(container, {
   let sendTimer = null;
   let sessionTimer = null;
   let isStarting = false;
+  let isChatSending = false;
   let isLive = false;
   let isClosing = false;
   let liveAttemptId = 0;
@@ -181,7 +182,8 @@ export function mountTutorChat(container, {
 
   async function sendText(text) {
     const clean = String(text || '').trim();
-    if (!clean || isStarting) return;
+    if (!clean || isChatSending) return;
+    isChatSending = true;
     const userMessage = { role: 'user', content: clean };
     messages.push(userMessage);
     addMessage('user', clean);
@@ -213,6 +215,7 @@ export function mountTutorChat(container, {
       addMessage('assistant', error.message || 'No se pudo conectar con el tutor.');
       setStatus('No se pudo conectar', 'error');
     } finally {
+      isChatSending = false;
       chatSendButton.disabled = false;
       chatInput.focus();
     }
