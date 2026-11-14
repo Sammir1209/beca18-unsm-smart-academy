@@ -54,7 +54,7 @@ export class RecommendationEngine {
     const total = attempts.length;
     const correct = attempts.filter(a => a.isCorrect && !a.isDoubt).length;
     const doubts = attempts.filter(a => a.isDoubt).length;
-    const errors = attempts.filter(a => !a.isCorrect && !a.isDoubt).length;
+    const errors = attempts.filter(a => a.isCorrect === false && !a.isDoubt).length;
 
     const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
     const activeMistakes = mistakes.filter(m => !m.mastered);
