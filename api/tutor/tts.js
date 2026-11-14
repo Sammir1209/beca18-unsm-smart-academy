@@ -13,9 +13,15 @@ export default async function handler(req, res) {
   }
 
   const origin = req.headers.origin;
-  const allowedOrigin = process.env.APP_ORIGIN;
-  if (origin && allowedOrigin && origin !== allowedOrigin) {
-    return res.status(403).json({ error: 'Origin not allowed' });
+  const host = req.headers.host;
+  // Accept only same-origin browser requests. Works for production and preview URLs
+  // without maintaining a brittle APP_ORIGIN allowlist for each deployment.
+  if (origin && host) {
+    try {
+      if (new URL(origin).host !== host) return res.status(403).json({ error: 'Origin not allowed' });
+    } catch {
+      return res.status(403).json({ error: 'Origin not allowed' });
+    }
   }
 
   const token = (req.headers.authorization || '').replace(/^Bearer\\s+/i, '');
