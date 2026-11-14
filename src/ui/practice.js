@@ -259,10 +259,10 @@ export function renderPractice(container, navigateTo) {
               <label style="font-size: 0.75rem; font-weight: 800; color: #93C5FD; display: block; margin-bottom: 8px;">ELIGE A TU TUTOR</label>
               <div class="tutor-character-picker" role="group" aria-label="Seleccionar personaje tutor">
                 <button type="button" class="tutor-character-option ${voiceTutor.character === 'male' ? 'active' : ''}" data-tutor-character="male" aria-pressed="${voiceTutor.character === 'male'}">
-                  <span class="tutor-character-icon">👨🏻‍🏫</span><span><strong>Mateo</strong><small>Tutor masculino</small></span>
+                  <span class="tutor-character-icon">👨🏻‍🏫</span><span><strong>Profe Alfredo</strong><small>Tutor masculino</small></span>
                 </button>
                 <button type="button" class="tutor-character-option ${voiceTutor.character === 'female' ? 'active' : ''}" data-tutor-character="female" aria-pressed="${voiceTutor.character === 'female'}">
-                  <span class="tutor-character-icon">👩🏻‍🏫</span><span><strong>Valeria</strong><small>Tutora femenina</small></span>
+                  <span class="tutor-character-icon">👩🏻‍🏫</span><span><strong>Profe Sofía</strong><small>Tutora femenina</small></span>
                 </button>
               </div>
               <p class="tutor-voice-note">Voz neuronal natural · Español latino · Requiere conexión y sesión iniciada</p>
@@ -333,7 +333,7 @@ export function renderPractice(container, navigateTo) {
       });
     }
 
-    // Selector persistente de personaje: Mateo / Valeria
+    // Selector persistente de personaje: Profe Alfredo / Profe Sofía
     document.querySelectorAll('[data-tutor-character]').forEach((button) => {
       button.addEventListener('click', () => {
         const character = button.dataset.tutorCharacter;
@@ -343,8 +343,8 @@ export function renderPractice(container, navigateTo) {
           item.classList.toggle('active', active);
           item.setAttribute('aria-pressed', String(active));
         });
-        updateStatus(character === 'female' ? 'Valeria está lista para ayudarte.' : 'Mateo está listo para ayudarte.');
-        voiceTutor.speak(character === 'female' ? 'Hola, soy Valeria. Vamos a aprender juntos.' : 'Hola, soy Mateo. Vamos a aprender juntos.');
+        updateStatus(character === 'female' ? 'Profe Sofía está lista para ayudarte.' : 'Profe Alfredo está listo para ayudarte.');
+        voiceTutor.speak(character === 'female' ? 'Hola, soy Profe Sofía. Vamos a aprender juntos.' : 'Hola, soy Profe Alfredo. Vamos a aprender juntos.');
       });
     });
 
