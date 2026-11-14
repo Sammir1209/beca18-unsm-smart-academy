@@ -1043,3 +1043,11 @@ img, canvas, svg { max-width: 100%; }
   .tutor-live-footnote {font-size:.5rem}
   .tutor-composer-hint span:last-child {display:none}
 }
+
+/* SVG icon alignment inside the tutor controls */
+.tutor-live-button-icon svg {display:block;width:19px;height:19px}
+.tutor-live-stop svg {display:block;margin:auto}
+.tutor-read-question {display:inline-flex;align-items:center;gap:5px}
+.tutor-read-question svg,.tutor-welcome-mark svg,.tutor-composer button svg {display:block;flex:0 0 auto}
+.tutor-composer button {display:grid;place-items:center}
+.tutor-welcome-mark svg {width:16px;height:16px}
