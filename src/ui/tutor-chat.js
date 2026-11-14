@@ -1,5 +1,5 @@
 import { supabase } from '../core/supabase.js';
-import renderMathInElement from 'katex/contrib/auto-render';
+import { renderMath as renderMathInRoot } from '../core/math-renderer.js';
 import { renderIcons } from '../core/icon-renderer.js';
 
 const LIVE_URL = 'wss://ai-gateway.vercel.sh/v1/live/sessions';
@@ -28,27 +28,7 @@ const liveInstructions = (character) => {
 };
 
 function renderMath(target) {
-  if (!target) return;
-  try {
-    renderMathInElement(target, {
-      delimiters: [
-        { left: '$$', right: '$$', display: true },
-        { left: '\\[', right: '\\]', display: true },
-        { left: '\\(', right: '\\)', display: false },
-      ],
-      throwOnError: false,
-      strict: 'ignore',
-      ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-    });
-  } catch (error) {
-    console.warn('No se pudo representar una fórmula del tutor:', error);
-  }
-}
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, (char) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  }[char]));
+  if (target) void renderMathInRoot(target);
 }
 
 export function mountTutorChat(container, {
