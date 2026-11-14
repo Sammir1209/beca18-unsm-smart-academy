@@ -254,30 +254,21 @@ export function renderPractice(container, navigateTo) {
               <!-- 3D Scene renders here -->
             </div>
 
-            <!-- Selector de Voz y Tonalidad -->
-            <div style="margin-top: 12px; text-align: left; background-color: var(--bg-card); padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-              <label style="font-size: 0.75rem; font-weight: 700; color: #93C5FD; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span>🇵🇪 Seleccionar Voz (Perú / Latam):</span>
-              </label>
-              <select id="select-tutor-voice" style="width: 100%; background-color: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 8px; border-radius: var(--radius-sm); font-size: 0.8rem; margin-bottom: 8px;">
-                ${voiceTutor.availableVoices.length > 0
-                  ? voiceTutor.availableVoices.map(v => {
-                      const isPeru = v.lang === 'es-PE' || v.name.toLowerCase().includes('peru');
-                      const label = isPeru ? `🇵🇪 ${v.name} (Perú)` : `🌎 ${v.name} (${v.lang})`;
-                      return `<option value="${v.name}" ${voiceTutor.selectedVoice && voiceTutor.selectedVoice.name === v.name ? 'selected' : ''}>${label}</option>`;
-                    }).join('')
-                  : `<option>Cargando voces en español...</option>`
-                }
-              </select>
-
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px;">
-                <span>Velocidad de Lectura:</span>
-                <input type="range" id="range-tutor-rate" min="0.8" max="1.3" step="0.05" value="${voiceTutor.rate}" style="width: 100px; cursor: pointer;">
+            <!-- Selección de personaje y voz neuronal -->
+            <div style="margin-top: 12px; text-align: left; background-color: var(--bg-card); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <label style="font-size: 0.75rem; font-weight: 800; color: #93C5FD; display: block; margin-bottom: 8px;">ELIGE A TU TUTOR</label>
+              <div class="tutor-character-picker" role="group" aria-label="Seleccionar personaje tutor">
+                <button type="button" class="tutor-character-option ${voiceTutor.character === 'male' ? 'active' : ''}" data-tutor-character="male" aria-pressed="${voiceTutor.character === 'male'}">
+                  <span class="tutor-character-icon">👨🏻‍🏫</span><span><strong>Mateo</strong><small>Tutor masculino</small></span>
+                </button>
+                <button type="button" class="tutor-character-option ${voiceTutor.character === 'female' ? 'active' : ''}" data-tutor-character="female" aria-pressed="${voiceTutor.character === 'female'}">
+                  <span class="tutor-character-icon">👩🏻‍🏫</span><span><strong>Valeria</strong><small>Tutora femenina</small></span>
+                </button>
               </div>
-
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-dim);">
-                <span>Calidez de Tono:</span>
-                <input type="range" id="range-tutor-pitch" min="0.8" max="1.3" step="0.05" value="${voiceTutor.pitch}" style="width: 100px; cursor: pointer;">
+              <p class="tutor-voice-note">Voz neuronal natural · Español latino · Requiere conexión y sesión iniciada</p>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:var(--text-dim);margin-top:10px;">
+                <span>Velocidad de lectura</span>
+                <input type="range" id="range-tutor-rate" min="0.8" max="1.3" step="0.05" value="${voiceTutor.rate}" style="width:100px;cursor:pointer;">
               </div>
             </div>
 
@@ -342,16 +333,22 @@ export function renderPractice(container, navigateTo) {
       });
     }
 
-    // 2. Enlazar Selector de Voz Dinámico
-    const voiceSelect = document.getElementById('select-tutor-voice');
-    if (voiceSelect) {
-      voiceSelect.addEventListener('change', (e) => {
-        voiceTutor.setVoiceByName(e.target.value);
-        voiceTutor.speak('Hola, he cambiado mi voz. ¿Qué tal me escuchas ahora?');
+    // Selector persistente de personaje: Mateo / Valeria
+    document.querySelectorAll('[data-tutor-character]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const character = button.dataset.tutorCharacter;
+        voiceTutor.setCharacter(character);
+        document.querySelectorAll('[data-tutor-character]').forEach((item) => {
+          const active = item === button;
+          item.classList.toggle('active', active);
+          item.setAttribute('aria-pressed', String(active));
+        });
+        updateStatus(character === 'female' ? 'Valeria está lista para ayudarte.' : 'Mateo está listo para ayudarte.');
+        voiceTutor.speak(character === 'female' ? 'Hola, soy Valeria. Vamos a aprender juntos.' : 'Hola, soy Mateo. Vamos a aprender juntos.');
       });
-    }
+    });
 
-    // Slider de velocidad y tono/calidez
+    // Slider de velocidad de lectura
     document.getElementById('range-tutor-rate')?.addEventListener('input', (e) => {
       voiceTutor.setRate(e.target.value);
     });
@@ -380,15 +377,7 @@ export function renderPractice(container, navigateTo) {
       }
     });
 
-    voiceTutor.onVoicesReadyCallback = (voices) => {
-      if (voiceSelect && voices.length > 0) {
-        voiceSelect.innerHTML = voices.map(v => {
-          const isPeru = v.lang === 'es-PE' || v.name.toLowerCase().includes('peru');
-          const label = isPeru ? `🇵🇪 ${v.name} (Perú)` : `🌎 ${v.name} (${v.lang})`;
-          return `<option value="${v.name}" ${voiceTutor.selectedVoice && voiceTutor.selectedVoice.name === v.name ? 'selected' : ''}>${label}</option>`;
-        }).join('');
-      }
-    };
+    // Las voces locales se conservan como respaldo automático cuando no hay red o sesión.
 
     // 3. Filtros de Institución
     document.getElementById('filter-inst-all')?.addEventListener('click', () => {
