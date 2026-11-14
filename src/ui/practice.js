@@ -5,7 +5,6 @@
 import { repo } from '../core/repository.js';
 import { RecommendationEngine } from '../core/recommendation.js';
 import { voiceTutor } from '../core/voiceTutor.js';
-import { Avatar3D } from './avatar3d.js';
 import { icon } from './icons.js';
 
 export function renderPractice(container, navigateTo) {
@@ -315,12 +314,23 @@ export function renderPractice(container, navigateTo) {
       </div>
     `;
 
-    // 1. Inicializar Avatar 3D
+    // 1. Cargar el tutor 3D solo al entrar a Práctica (reduce el JS inicial).
     const viewport = document.getElementById('avatar-3d-viewport');
     if (viewport) {
       if (avatarInstance) avatarInstance.destroy();
-      avatarInstance = new Avatar3D(viewport);
-      voiceTutor.attachAvatar(avatarInstance);
+      import('./avatar3d.js')
+        .then(({ Avatar3D }) => {
+          // Evita montar el canvas si el usuario ya cambió de pantalla.
+          if (!viewport.isConnected) return;
+          avatarInstance = new Avatar3D(viewport);
+          voiceTutor.attachAvatar(avatarInstance);
+        })
+        .catch((error) => {
+          console.error('No se pudo cargar el tutor visual 3D:', error);
+          if (viewport.isConnected) {
+            viewport.innerHTML = '<p role="status" style="padding:16px;color:var(--text-muted);text-align:center">Tutor visual no disponible. Puedes continuar con la práctica y el tutor de voz.</p>';
+          }
+        });
     }
 
     // 2. Enlazar Selector de Voz Dinámico
