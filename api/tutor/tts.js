@@ -1,4 +1,5 @@
 // Vercel serverless endpoint. Never expose ELEVENLABS_API_KEY to the browser.
+import { enforceTutorUsage } from './_usage.js';
 const MAX_TEXT_LENGTH = 1800;
 const VOICES = {
   male: () => process.env.ELEVENLABS_VOICE_MALE_ID,
@@ -31,11 +32,15 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Inicia sesión para usar la voz neuronal.' });
   }
 
+  let userId;
   try {
     const authResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
       headers: { apikey: supabaseKey, Authorization: `Bearer ${token}` },
     });
     if (!authResponse.ok) return res.status(401).json({ error: 'Sesión no válida. Vuelve a iniciar sesión.' });
+    const authUser = await authResponse.json();
+    userId = authUser?.id;
+    if (!userId) return res.status(401).json({ error: 'Sesión no válida. Vuelve a iniciar sesión.' });
   } catch {
     return res.status(503).json({ error: 'No se pudo verificar tu sesión.' });
   }
@@ -50,6 +55,13 @@ export default async function handler(req, res) {
   const voiceId = VOICES[character]();
   if (!apiKey || !voiceId) {
     return res.status(503).json({ error: 'La voz neuronal todavía no está configurada.' });
+  }
+
+  const quota = await enforceTutorUsage({ userId, token, supabaseUrl, supabaseKey, textLength: text.length });
+  if (quota.unavailable) return res.status(503).json({ error: 'No se pudo validar el límite de uso de voz. Intenta más tarde.' });
+  if (!quota.allowed) {
+    res.setHeader('Retry-After', String(quota.retry_after_seconds || 60));
+    return res.status(429).json({ error: 'Alcanzaste el límite temporal de voz. Espera un momento y vuelve a intentarlo.' });
   }
 
   try {
