@@ -314,23 +314,32 @@ export function renderPractice(container, navigateTo) {
       </div>
     `;
 
-    // 1. Cargar el tutor 3D solo al entrar a Práctica (reduce el JS inicial).
+    // 1. El tutor 3D se descarga únicamente si el estudiante decide activarlo.
     const viewport = document.getElementById('avatar-3d-viewport');
     if (viewport) {
       if (avatarInstance) avatarInstance.destroy();
-      import('./avatar3d.js')
-        .then(({ Avatar3D }) => {
-          // Evita montar el canvas si el usuario ya cambió de pantalla.
+      const activateTutor = document.createElement('button');
+      activateTutor.type = 'button';
+      activateTutor.className = 'btn btn-secondary btn-sm';
+      activateTutor.textContent = 'Activar tutor visual 3D';
+      activateTutor.setAttribute('aria-label', 'Cargar tutor visual 3D');
+      viewport.replaceChildren(activateTutor);
+      activateTutor.addEventListener('click', async () => {
+        activateTutor.disabled = true;
+        activateTutor.textContent = 'Cargando tutor visual…';
+        try {
+          const { Avatar3D } = await import('./avatar3d.js');
           if (!viewport.isConnected) return;
           avatarInstance = new Avatar3D(viewport);
           voiceTutor.attachAvatar(avatarInstance);
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error('No se pudo cargar el tutor visual 3D:', error);
           if (viewport.isConnected) {
-            viewport.innerHTML = '<p role="status" style="padding:16px;color:var(--text-muted);text-align:center">Tutor visual no disponible. Puedes continuar con la práctica y el tutor de voz.</p>';
+            activateTutor.disabled = false;
+            activateTutor.textContent = 'Reintentar cargar tutor 3D';
           }
-        });
+        }
+      });
     }
 
     // 2. Enlazar Selector de Voz Dinámico
