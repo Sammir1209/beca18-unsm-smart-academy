@@ -183,6 +183,7 @@ export function mountTutorChat(container, {
   async function sendText(text) {
     const clean = String(text || '').trim();
     if (!clean || isChatSending) return;
+    if (isLive || isStarting) stopLive();
     isChatSending = true;
     const userMessage = { role: 'user', content: clean };
     messages.push(userMessage);
