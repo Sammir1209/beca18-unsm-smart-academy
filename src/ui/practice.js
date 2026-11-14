@@ -270,13 +270,13 @@ export function renderPractice(container, navigateTo) {
       if (avatarInstance) avatarInstance.destroy();
       const activateTutor = document.createElement('button');
       activateTutor.type = 'button';
-      activateTutor.className = 'btn btn-secondary btn-sm';
-      activateTutor.textContent = 'Activar avatar visual 3D';
+      activateTutor.className = 'tutor-activate-3d';
+      activateTutor.innerHTML = `${icon('sparkles', { size: 20 })}<strong>Activar avatar 3D</strong><small>Vista visual del profesor</small>`;
       activateTutor.setAttribute('aria-label', 'Cargar avatar visual 3D');
       viewport.replaceChildren(activateTutor);
       activateTutor.addEventListener('click', async () => {
         activateTutor.disabled = true;
-        activateTutor.textContent = 'Cargando tutor visual…';
+        activateTutor.textContent = 'Preparando vista 3D…';
         try {
           const { Avatar3D } = await import('./avatar3d.js');
           if (!viewport.isConnected) return;
@@ -286,7 +286,7 @@ export function renderPractice(container, navigateTo) {
           console.error('No se pudo cargar el tutor visual 3D:', error);
           if (viewport.isConnected) {
             activateTutor.disabled = false;
-            activateTutor.textContent = 'Reintentar avatar 3D';
+            activateTutor.innerHTML = `${icon('sparkles', { size: 20 })}<strong>Reintentar avatar 3D</strong><small>No se pudo cargar la vista</small>`;
           }
         }
       });
