@@ -1,8 +1,8 @@
 // Context-aware tutor text chat through Vercel AI Gateway.
 // Vercel injects x-vercel-oidc-token per function invocation; no API key is exposed.
 const MODEL = 'openai/gpt-6-luna';
-const MAX_MESSAGES = 12;
-const MAX_MESSAGE_CHARS = 2000;
+const MAX_MESSAGES = 6;
+const MAX_MESSAGE_CHARS = 1000;
 
 function sameOrigin(req) {
   const origin = req.headers.origin;
@@ -43,7 +43,7 @@ export default async function handler(req, res) {
       .filter((item) => ['user', 'assistant'].includes(item?.role) && typeof item?.content === 'string')
       .map((item) => ({ role: item.role, content: item.content.trim().slice(0, MAX_MESSAGE_CHARS) }))
       .filter((item) => item.content);
-    const context = typeof req.body?.context === 'string' ? req.body.context.slice(0, 4000) : '';
+    const context = typeof req.body?.context === 'string' ? req.body.context.slice(0, 2000) : '';
     const character = req.body?.character === 'female' ? 'female' : 'male';
     const requestChars = messages.reduce((sum, item) => sum + item.content.length, 0) + context.length;
     if (!messages.length || messages[messages.length - 1].role !== 'user' || requestChars > 8000) {
