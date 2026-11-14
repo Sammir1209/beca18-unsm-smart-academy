@@ -6,6 +6,9 @@ import { repo } from '../core/repository.js';
 import { RecommendationEngine } from '../core/recommendation.js';
 import { voiceTutor } from '../core/voiceTutor.js';
 import { icon } from './icons.js';
+import { mountTutorChat } from './tutor-chat.js';
+import renderMathInElement from 'katex/contrib/auto-render';
+import 'katex/dist/katex.min.css';
 
 export function renderPractice(container, navigateTo) {
   let activeFilterInstitution = 'ALL';
@@ -16,7 +19,7 @@ export function renderPractice(container, navigateTo) {
   let selectedOption = null;
   let hasSubmitted = false;
   let wasDoubtMode = false;
-  let voiceStatusText = '';
+  let tutorChatCleanup = null;
   let avatarInstance = null;
 
   function getFilteredQuestions() {
@@ -29,6 +32,7 @@ export function renderPractice(container, navigateTo) {
   }
 
   function renderView() {
+    if (tutorChatCleanup) { tutorChatCleanup(); tutorChatCleanup = null; }
     const questions = getFilteredQuestions();
 
     container.innerHTML = `
@@ -241,66 +245,23 @@ export function renderPractice(container, navigateTo) {
           `}
         </div>
 
-        <!-- PANEL LATERAL DERECHO: TUTOR 3D HOLOGRÁFICO CON SELECTOR DE VOZ -->
-        <div class="practice-tutor-sidebar" style="width: 300px; position: sticky; top: 90px; display: flex; flex-direction: column; gap: 16px;">
-          <div class="card" style="padding: 16px; background: linear-gradient(180deg, #182234 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.4); box-shadow: 0 0 25px rgba(59, 130, 246, 0.15); text-align: center;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span class="tag tag-beca" style="font-size: 0.7rem;">TUTOR IA 3D</span>
-              <span style="font-size: 0.75rem; color: var(--accent-beca); font-weight: 700;">EN LÍNEA</span>
-            </div>
-
-            <!-- Canvas Container 3D WebGL -->
-            <div id="avatar-3d-viewport" style="width: 100%; height: 240px; border-radius: var(--radius-md); background: radial-gradient(circle at center, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.9) 100%); overflow: hidden; position: relative;">
-              <!-- 3D Scene renders here -->
-            </div>
-
-            <!-- Selección de personaje y voz neuronal -->
-            <div style="margin-top: 12px; text-align: left; background-color: var(--bg-card); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-              <label style="font-size: 0.75rem; font-weight: 800; color: #93C5FD; display: block; margin-bottom: 8px;">ELIGE A TU TUTOR</label>
-              <div class="tutor-character-picker" role="group" aria-label="Seleccionar personaje tutor">
-                <button type="button" class="tutor-character-option ${voiceTutor.character === 'male' ? 'active' : ''}" data-tutor-character="male" aria-pressed="${voiceTutor.character === 'male'}">
-                  <span class="tutor-character-icon">👨🏻‍🏫</span><span><strong>Profe Alfredo</strong><small>Tutor masculino</small></span>
-                </button>
-                <button type="button" class="tutor-character-option ${voiceTutor.character === 'female' ? 'active' : ''}" data-tutor-character="female" aria-pressed="${voiceTutor.character === 'female'}">
-                  <span class="tutor-character-icon">👩🏻‍🏫</span><span><strong>Profe Sofía</strong><small>Tutora femenina</small></span>
-                </button>
-              </div>
-              <p class="tutor-voice-note">Voz neuronal natural · Español latino · Requiere conexión y sesión iniciada</p>
-              <div style="display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:var(--text-dim);margin-top:10px;">
-                <span>Velocidad de lectura</span>
-                <input type="range" id="range-tutor-rate" min="0.8" max="1.3" step="0.05" value="${voiceTutor.rate}" style="width:100px;cursor:pointer;">
-              </div>
-            </div>
-
-            <!-- Estado de Voz del Tutor -->
-            <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); min-height: 40px; display: flex; align-items: center; justify-content: center; padding: 0 8px; text-align: center;">
-              <span id="voice-status-label">${voiceStatusText || '¡Hola! Soy tu Tutor IA. Pregúntame o di tu respuesta.'}</span>
-            </div>
-
-            <!-- Botón de Parada Inmediata (Siempre Accesible) -->
-            <div style="margin-top: 8px;">
-              <button id="btn-tutor-stop" class="btn btn-sm" style="width: 100%; background-color: rgba(239, 68, 68, 0.2); border: 1px solid var(--accent-danger); color: #FECACA; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; padding: 8px 10px;">
-                ${icon('stop', { size: 14, color: 'var(--accent-danger)' })}
-                ⏹️ Parar Voz del Tutor
-              </button>
-            </div>
-
-            <!-- Controles de Interacción Rápida -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
-              <button id="btn-tutor-speak-q" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 8px 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                ${icon('compass', { size: 14, color: 'var(--accent-unsm)' })} Leer Pregunta
-              </button>
-              <button id="btn-tutor-listen" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 8px 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                ${icon('mic', { size: 14, color: '#fff' })} Dictar Clave
-              </button>
-            </div>
-
-            <!-- Botón de Ayuda / Permiso de Celular -->
-            <button id="btn-mic-permission-help" class="btn btn-secondary btn-sm" style="margin-top: 8px; width: 100%; font-size: 0.72rem; padding: 6px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px; border: 1px dashed var(--border-subtle);">
-              📱 Permiso de Micrófono en Celular
-            </button>
-          </div>
-        </div>
+        <!-- PANEL DEL TUTOR: selección, avatar y conversación -->
+<aside class="practice-tutor-sidebar">
+  <section class="tutor-panel-card">
+    <div class="tutor-visual-header">
+      <div class="tutor-visual-identity">
+        <span class="tutor-visual-icon">${icon('brain', { size: 18 })}</span>
+        <span><strong>Tu espacio de aprendizaje</strong><small>Asistencia académica inteligente</small></span>
+      </div>
+      <span class="tutor-online-indicator"><i></i> Disponible</span>
+    </div>
+    <div id="avatar-3d-viewport" class="tutor-avatar-stage">
+      <div class="tutor-avatar-stage-glow"></div>
+      <div class="tutor-avatar-stage-placeholder"><span>IA</span><small>Activa el avatar visual 3D</small></div>
+    </div>
+    <div id="tutor-chat-mount"></div>
+  </section>
+</aside>
 
       </div>
     `;
@@ -312,8 +273,8 @@ export function renderPractice(container, navigateTo) {
       const activateTutor = document.createElement('button');
       activateTutor.type = 'button';
       activateTutor.className = 'btn btn-secondary btn-sm';
-      activateTutor.textContent = 'Activar tutor visual 3D';
-      activateTutor.setAttribute('aria-label', 'Cargar tutor visual 3D');
+      activateTutor.textContent = 'Activar avatar visual 3D';
+      activateTutor.setAttribute('aria-label', 'Cargar avatar visual 3D');
       viewport.replaceChildren(activateTutor);
       activateTutor.addEventListener('click', async () => {
         activateTutor.disabled = true;
@@ -327,57 +288,11 @@ export function renderPractice(container, navigateTo) {
           console.error('No se pudo cargar el tutor visual 3D:', error);
           if (viewport.isConnected) {
             activateTutor.disabled = false;
-            activateTutor.textContent = 'Reintentar cargar tutor 3D';
+            activateTutor.textContent = 'Reintentar avatar 3D';
           }
         }
       });
     }
-
-    // Selector persistente de personaje: Profe Alfredo / Profe Sofía
-    document.querySelectorAll('[data-tutor-character]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const character = button.dataset.tutorCharacter;
-        voiceTutor.setCharacter(character);
-        document.querySelectorAll('[data-tutor-character]').forEach((item) => {
-          const active = item === button;
-          item.classList.toggle('active', active);
-          item.setAttribute('aria-pressed', String(active));
-        });
-        updateStatus(character === 'female' ? 'Profe Sofía está lista para ayudarte.' : 'Profe Alfredo está listo para ayudarte.');
-        voiceTutor.speak(character === 'female' ? 'Hola, soy Profe Sofía. Vamos a aprender juntos.' : 'Hola, soy Profe Alfredo. Vamos a aprender juntos.');
-      });
-    });
-
-    // Slider de velocidad de lectura
-    document.getElementById('range-tutor-rate')?.addEventListener('input', (e) => {
-      voiceTutor.setRate(e.target.value);
-    });
-
-    document.getElementById('range-tutor-pitch')?.addEventListener('input', (e) => {
-      voiceTutor.setPitch(e.target.value);
-    });
-
-    // Botón para PARAR la voz inmediatamente si está hablando
-    document.getElementById('btn-tutor-stop')?.addEventListener('click', () => {
-      voiceTutor.stopSpeaking();
-      voiceTutor.stopListening();
-      updateStatus('Voz detenida. Haz clic en "Leer Pregunta" o "Dictar Clave" cuando desees.');
-    });
-
-    // Botón para solicitar explícitamente permiso de micrófono en celulares
-    document.getElementById('btn-mic-permission-help')?.addEventListener('click', async () => {
-      updateStatus('Solicitando permiso de micrófono...');
-      const res = await voiceTutor.promptPermissionOnMobile();
-      if (res.ok) {
-        alert('✅ ¡Permiso de micrófono concedido! Ya puedes usar "Dictar Clave" en tu celular.');
-        updateStatus('Micrófono activado con éxito. Di tu alternativa (A, B, C, D o E).');
-      } else {
-        alert(`⚠️ ${res.message}`);
-        updateStatus('Permiso pendiente o bloqueado en el navegador.');
-      }
-    });
-
-    // Las voces locales se conservan como respaldo automático cuando no hay red o sesión.
 
     // 3. Filtros de Institución
     document.getElementById('filter-inst-all')?.addEventListener('click', () => {
@@ -425,52 +340,58 @@ export function renderPractice(container, navigateTo) {
 
     const q = questions[currentIndex];
 
-    // TUTOR CONTROLS
-    const updateStatus = (txt) => {
-      voiceStatusText = txt;
-      const el = document.getElementById('voice-status-label');
-      if (el) el.innerText = txt;
-    };
-
-    document.getElementById('btn-tutor-speak-q')?.addEventListener('click', () => {
-      updateStatus('Hablando con tono natural...');
-      const readText = `Pregunta ${currentIndex + 1}. Curso de ${q.subject}. ${q.rawQuestion}. Alternativas: ${q.options.map(o => `Opción ${o.id}: ${o.text}`).join('. ')}.`;
-      voiceTutor.speak(readText, () => updateStatus('¿Cuál es tu respuesta?'));
-    });
-
-    document.getElementById('btn-tutor-listen')?.addEventListener('click', () => {
-      updateStatus('Te escucho con atención... (Di: A, B, C, D, E o "No lo sé")');
-      voiceTutor.listen((spokenText) => {
-        const text = spokenText.toLowerCase();
-        let detected = null;
-
-        if (text.includes('no lo sé') || text.includes('no se') || text.includes('duda')) {
-          handleDoubt();
-          return;
+    // Tutor conversacional: voz full-duplex y chat con contexto de la pregunta actual.
+    tutorChatCleanup = mountTutorChat(document.getElementById('tutor-chat-mount'), {
+      getContext: () => {
+        const current = questions[currentIndex];
+        if (!current) return 'No hay una pregunta seleccionada. El estudiante puede consultar cualquier tema de secundaria.';
+        const context = {
+          curso: current.subject,
+          tema: current.topic,
+          enunciado: current.rawQuestion,
+          alternativas: current.options.map((option) => ({ alternativa: option.id, texto: option.text })),
+          estado: hasSubmitted ? 'El estudiante ya terminó su intento.' : 'Pregunta todavía activa; guiar con pistas sin revelar la clave.',
+        };
+        if (hasSubmitted) {
+          context.respuestaCorrecta = current.correctAnswer;
+          context.resolucion = current.explanation.solutionStepByStep;
+          context.conceptoClave = current.explanation.keyConcept;
+          context.consejo = current.explanation.quickTip;
         }
-
-        if (text.includes('opción a') || text.includes('la a') || text.trim() === 'a') detected = 'A';
-        else if (text.includes('opción b') || text.includes('la b') || text.trim() === 'b') detected = 'B';
-        else if (text.includes('opción c') || text.includes('la c') || text.trim() === 'c') detected = 'C';
-        else if (text.includes('opción d') || text.includes('la d') || text.trim() === 'd') detected = 'D';
-        else if (text.includes('opción e') || text.includes('la e') || text.trim() === 'e') detected = 'E';
-
-        if (detected) {
-          selectedOption = detected;
-          updateStatus(`Entendí Opción ${detected}. Verificando...`);
-          handleSubmit();
-        } else {
-          updateStatus(`Escuché: "${spokenText}". Intenta decir: A, B, C, D, E o "No lo sé".`);
-        }
-      });
+        return JSON.stringify(context);
+      },
+      onCharacterChange: (character) => voiceTutor.setCharacter(character),
+      onReadQuestion: () => {
+        const current = questions[currentIndex];
+        if (!current) return;
+        const readText = `Pregunta ${currentIndex + 1}. Curso de ${current.subject}. ${current.rawQuestion}. Alternativas: ${current.options.map((option) => `Opción ${option.id}: ${option.text}`).join('. ')}.`;
+        voiceTutor.speak(readText);
+      },
+      onLiveState: ({ isListening, isSpeaking }) => {
+        if (!avatarInstance) return;
+        avatarInstance.setListening(Boolean(isListening));
+        avatarInstance.setSpeaking(Boolean(isSpeaking));
+      },
     });
 
-    document.getElementById('btn-voice-explain')?.addEventListener('click', () => {
-      updateStatus('Explicando solución detallada...');
-      const explainText = `Atención: la respuesta correcta es la opción ${q.correctAnswer}. ${q.explanation.solutionStepByStep.join('. ')}. Concepto clave: ${q.explanation.keyConcept}. Tip rápido de examen: ${q.explanation.quickTip}.`;
-      voiceTutor.speak(explainText, () => updateStatus('Explicación finalizada. ¿Listo para la siguiente?'));
+    // KaTeX renderiza notación LaTeX en enunciados, alternativas y explicaciones.
+    const mathRoots = container.querySelectorAll('.question-body, .option-item, #explanation-box');
+    mathRoots.forEach((element) => {
+      try {
+        renderMathInElement(element, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '\\[', right: '\\]', display: true },
+            { left: '\\(', right: '\\)', display: false },
+          ],
+          throwOnError: false,
+          strict: 'ignore',
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        });
+      } catch (error) {
+        console.warn('No se pudo renderizar una fórmula:', error);
+      }
     });
-
     // Opciones
     container.querySelectorAll('.option-item').forEach(item => {
       item.addEventListener('click', () => {
@@ -530,8 +451,7 @@ export function renderPractice(container, navigateTo) {
         selectedOption = null;
         hasSubmitted = false;
         wasDoubtMode = false;
-        voiceStatusText = '';
-        renderView();
+          renderView();
       }
     });
 
