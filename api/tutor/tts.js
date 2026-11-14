@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     }
   }
 
-  const token = (req.headers.authorization || '').replace(/^Bearer\\s+/i, '');
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
   if (!token || !supabaseUrl || !supabaseKey) {
