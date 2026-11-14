@@ -481,7 +481,7 @@ export function mountTutorChat(container, {
           case 'session.closed': {
             const seconds = Number(event.usage?.seconds || 0);
             const cost = (seconds / 60) * 0.05;
-            finishLive(`Sesión cerrada · ${Math.ceil(seconds)} s · aprox. ${cost.toFixed(3)}`, 'ready', true);
+            finishLive(`Sesión cerrada · ${Math.ceil(seconds)} s · aprox. US$${cost.toFixed(3)}`, 'ready', true);
             break;
           }
           case 'error':
