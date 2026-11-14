@@ -1,6 +1,6 @@
 import { supabase } from '../core/supabase.js';
 import renderMathInElement from 'katex/contrib/auto-render';
-import { icon } from './icons.js';
+import { renderIcons } from '../core/icon-renderer.js';
 
 const LIVE_URL = 'wss://ai-gateway.vercel.sh/v1/live/sessions';
 const LIVE_MAX_MS = 5 * 60 * 1000;
@@ -104,10 +104,10 @@ export function mountTutorChat(container, {
 
         <div class="tutor-live-actions">
           <button type="button" class="tutor-live-button" id="tutor-live-start">
-            <span class="tutor-live-button-icon">${icon('mic', { size: 19, color: '#ffffff' })}</span>
+            <span class="tutor-live-button-icon"><i data-lucide="mic"></i></span>
             <span><strong>Hablar en vivo</strong><small>Conversación natural por voz</small></span>
           </button>
-          <button type="button" class="tutor-live-stop" id="tutor-live-stop" hidden aria-label="Finalizar conversación">${icon('square', { size: 16, color: '#fecaca' })}</button>
+          <button type="button" class="tutor-live-stop" id="tutor-live-stop" hidden aria-label="Finalizar conversación"><i data-lucide="square"></i></button>
         </div>
         <div class="tutor-live-footnote">
           <span>Full dúplex · Puedes interrumpir y volver a hablar</span>
@@ -118,11 +118,11 @@ export function mountTutorChat(container, {
       <div class="tutor-conversation">
         <div class="tutor-conversation-head">
           <div><strong>Conversación</strong><span>Pregunta lo que necesites, sin limitarte a una alternativa</span></div>
-          <button type="button" class="tutor-read-question" id="tutor-read-question" title="Leer la pregunta actual">${icon('volume2', { size: 14 })} Leer pregunta</button>
+          <button type="button" class="tutor-read-question" id="tutor-read-question" title="Leer la pregunta actual"><i data-lucide="volume-2"></i> Leer pregunta</button>
         </div>
         <div class="tutor-message-list" id="tutor-message-list" aria-live="polite">
           <div class="tutor-welcome-message">
-            <span class="tutor-welcome-mark">${icon('sparkles', { size: 16 })}</span>
+            <span class="tutor-welcome-mark"><i data-lucide="sparkles"></i></span>
             <div><strong>¡Hola! Soy ${tutorNames[character]}.</strong><p>Podemos resolver ejercicios, repasar temas o conversar sobre cualquier duda de tu preparación.</p></div>
           </div>
         </div>
@@ -133,13 +133,14 @@ export function mountTutorChat(container, {
         </div>
         <form class="tutor-composer" id="tutor-chat-form">
           <textarea id="tutor-chat-input" rows="1" maxlength="1800" placeholder="Escribe tu duda o procedimiento…" aria-label="Escribe un mensaje para el tutor"></textarea>
-          <button type="submit" id="tutor-chat-send" aria-label="Enviar mensaje">${icon('send', { size: 15, color: '#ffffff' })}</button>
+          <button type="submit" id="tutor-chat-send" aria-label="Enviar mensaje"><i data-lucide="send"></i></button>
         </form>
         <div class="tutor-composer-hint"><span>Enter para enviar · Shift + Enter para nueva línea</span><span>Respuestas con fórmulas matemáticas</span></div>
       </div>
       <div class="tutor-cost-note">La voz en vivo utiliza AI Gateway y se factura por tiempo conectado (incluido el silencio). Tarifa de referencia: US$ 0.05/min.</div>
     </section>
   `;
+  renderIcons();
 
   const $ = (selector) => container.querySelector(selector);
   const messageList = $('#tutor-message-list');
