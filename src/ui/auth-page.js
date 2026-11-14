@@ -90,12 +90,12 @@ export function renderAuthPage(container, route, navigate) {
         if (password !== confirm) throw new Error('Las contraseñas no coinciden.');
         const { data, error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: `${location.origin}/#auth-confirm` },
+          options: { emailRedirectTo: `${location.origin}/?auth=confirm` },
         });
         if (error) throw error;
         setFeedback(data.session ? 'Cuenta creada correctamente.' : 'Cuenta creada. Revisa tu correo y confirma el registro para continuar.', 'success');
       } else if (mode === 'forgot') {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/#reset-password` });
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/?auth=recovery` });
         if (error) throw error;
         setFeedback('Si el correo está registrado, recibirás un enlace para recuperar tu acceso.', 'success');
       } else if (mode === 'new-password') {
