@@ -467,8 +467,10 @@ export function mountTutorChat(container, {
               finishLive(`Sesión cerrada · ${Math.ceil(seconds)} s · aprox. US$${cost.toFixed(3)}`, 'ready', true);
             } else {
               liveSocket.close();
-              setStatus(`Sesión cerrada · ${Math.ceil(seconds)} s · aprox. US$${cost.toFixed(3)}`, 'ready');
-              finalizeLiveTurn();
+              if (!socket) {
+                setStatus(`Sesión cerrada · ${Math.ceil(seconds)} s · aprox. US${cost.toFixed(3)}`, 'ready');
+                finalizeLiveTurn();
+              }
             }
             break;
           }
