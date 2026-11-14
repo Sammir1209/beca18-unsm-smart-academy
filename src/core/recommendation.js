@@ -9,7 +9,7 @@ export class RecommendationEngine {
     const isCorrect = selectedAnswer === correctAnswer;
 
     // 1. Record Attempt in history
-    await storage.set('attempts', {
+    const localAttemptId = await storage.set('attempts', {
       questionId,
       selectedAnswer,
       correctAnswer,
@@ -19,7 +19,7 @@ export class RecommendationEngine {
       timestamp: Date.now()
     });
 
-    // Encola solo la selección del estudiante; nunca se sincroniza la clave correcta.\n    await queueProgressAttempt({ questionId, selectedAnswer, isDoubt, timeSpentSeconds, timestamp: Date.now() });\n\n    // 2. Intelligent Mistake Tracking ("Mis Errores")
+    // Encola solo la selección del estudiante; nunca se sincroniza la clave correcta.\n    const syncEventId = await queueProgressAttempt({ questionId, selectedAnswer, isDoubt, timeSpentSeconds, timestamp: Date.now() });\n    const localAttempt = await storage.get('attempts', localAttemptId);\n    if (localAttempt) await storage.set('attempts', { ...localAttempt, syncEventId });\n\n    // 2. Intelligent Mistake Tracking ("Mis Errores")
     if (!isCorrect || isDoubt) {
       const existing = (await storage.get('mistakes', questionId)) || {
         questionId,
