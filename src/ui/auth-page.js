@@ -30,11 +30,11 @@ export function renderAuthPage(container, route, navigate) {
           <div id="auth-feedback" class="auth-feedback" role="status" aria-live="polite"></div>
           ${mode === 'confirm' ? '<button id="auth-continue" class="btn btn-primary auth-submit">Continuar a la academia</button>' : `
             <form id="auth-route-form" class="auth-route-form">
-              ${mode !== 'confirm' ? '<label for="auth-route-email">Correo electrónico</label><input id="auth-route-email" type="email" autocomplete="email" placeholder="nombre@correo.com" required>' : ''}
+              ${['login', 'register', 'forgot'].includes(mode) ? '<label for="auth-route-email">Correo electrónico</label><input id="auth-route-email" type="email" autocomplete="email" placeholder="nombre@correo.com" required>' : ''}
               ${mode === 'login' || mode === 'register' ? '<label for="auth-route-password">Contraseña</label><input id="auth-route-password" type="password" autocomplete="current-password" minlength="8" placeholder="Mínimo 8 caracteres" required>' : ''}
               ${mode === 'forgot' ? '' : ''}
               ${mode === 'register' ? '<label for="auth-route-confirm">Confirmar contraseña</label><input id="auth-route-confirm" type="password" autocomplete="new-password" minlength="8" placeholder="Repite tu contraseña" required>' : ''}
-              ${mode === 'new-password' ? '<label for="auth-route-new-password">Nueva contraseña</label><input id="auth-route-new-password" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres" required>' : ''}
+              ${mode === 'new-password' ? '<label for="auth-route-new-password">Nueva contraseña</label><input id="auth-route-new-password" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres" required><label for="auth-route-confirm-new-password">Confirmar nueva contraseña</label><input id="auth-route-confirm-new-password" type="password" autocomplete="new-password" minlength="8" placeholder="Repite la contraseña" required>' : ''}
               <button class="btn btn-primary auth-submit" type="submit">${mode === 'login' ? 'Iniciar sesión' : mode === 'register' ? 'Crear mi cuenta' : mode === 'forgot' ? 'Enviar enlace de recuperación' : 'Guardar contraseña'}</button>
             </form>`}
           <div class="auth-links">
@@ -100,6 +100,8 @@ export function renderAuthPage(container, route, navigate) {
         setFeedback('Si el correo está registrado, recibirás un enlace para recuperar tu acceso.', 'success');
       } else if (mode === 'new-password') {
         const password = form.querySelector('#auth-route-new-password').value;
+        const confirm = form.querySelector('#auth-route-confirm-new-password').value;
+        if (password !== confirm) throw new Error('Las contraseñas no coinciden.');
         const { error } = await supabase.auth.updateUser({ password });
         if (error) throw error;
         setFeedback('Contraseña actualizada. Ya puedes iniciar sesión.', 'success');
