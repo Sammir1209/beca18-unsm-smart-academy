@@ -792,3 +792,25 @@ img, canvas, svg { max-width: 100%; }
   body { padding: 0 12px; }
   .app-layout { border-left: 1px solid #1f293d; border-right: 1px solid #1f293d; }
 }
+
+
+/* Account and offline-sync controls */
+#account-area { position: relative; flex: 0 0 auto; }
+.account-menu { position: relative; }
+.account-menu > summary { list-style: none; cursor: pointer; white-space: nowrap; }
+.account-menu > summary::-webkit-details-marker { display: none; }
+.account-panel {
+  position: absolute; right: 0; top: calc(100% + 10px); z-index: 100;
+  width: min(310px, calc(100vw - 28px)); padding: 16px !important;
+  display: grid; gap: 10px; box-shadow: 0 16px 48px rgba(0,0,0,.4);
+  background: var(--bg-surface, #111827);
+}
+.account-panel form { display: grid; gap: 8px; }
+.account-panel label { font-size: .78rem; color: var(--text-dim); }
+.account-panel input { width: 100%; min-width: 0; }
+.account-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.account-panel [hidden] { display: none !important; }
+@media (max-width: 380px) {
+  .topbar { padding-left: 10px; padding-right: 10px; }
+  #account-area .btn { padding: 7px 9px; font-size: .75rem; }
+}
