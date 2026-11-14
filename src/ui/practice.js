@@ -7,8 +7,6 @@ import { RecommendationEngine } from '../core/recommendation.js';
 import { voiceTutor } from '../core/voiceTutor.js';
 import { icon } from './icons.js';
 import { mountTutorChat } from './tutor-chat.js';
-import renderMathInElement from 'katex/contrib/auto-render';
-import 'katex/dist/katex.min.css';
 
 export function renderPractice(container, navigateTo) {
   let activeFilterInstitution = 'ALL';
@@ -374,24 +372,6 @@ export function renderPractice(container, navigateTo) {
       },
     });
 
-    // KaTeX renderiza notación LaTeX en enunciados, alternativas y explicaciones.
-    const mathRoots = container.querySelectorAll('.question-body, .option-item, #explanation-box');
-    mathRoots.forEach((element) => {
-      try {
-        renderMathInElement(element, {
-          delimiters: [
-            { left: '$$', right: '$$', display: true },
-            { left: '\\[', right: '\\]', display: true },
-            { left: '\\(', right: '\\)', display: false },
-          ],
-          throwOnError: false,
-          strict: 'ignore',
-          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-        });
-      } catch (error) {
-        console.warn('No se pudo renderizar una fórmula:', error);
-      }
-    });
     // Opciones
     container.querySelectorAll('.option-item').forEach(item => {
       item.addEventListener('click', () => {
