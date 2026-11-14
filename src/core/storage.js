@@ -3,7 +3,7 @@
 // ==========================================================================
 
 const DB_NAME = 'SmartAcademyDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 class StorageService {
   constructor() {
@@ -103,7 +103,7 @@ class StorageService {
     });
   }
 
-  async bulkPut(storeName, items) {
+  async delete(storeName, key) {\n    await this.initPromise;\n    return new Promise((resolve, reject) => {\n      const tx = this.db.transaction(storeName, 'readwrite');\n      tx.objectStore(storeName).delete(key);\n      tx.oncomplete = () => resolve();\n      tx.onerror = () => reject(tx.error);\n    });\n  }\n\n  async bulkPut(storeName, items) {
     await this.initPromise;
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction(storeName, 'readwrite');
