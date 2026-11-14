@@ -15,6 +15,7 @@ import { renderSources } from './ui/sources.js';
 import { mountAccount } from './ui/account.js';
 import { startProgressSync } from './core/progress-sync.js';
 import { renderAuthPage } from './ui/auth-page.js';
+import { renderMath } from './core/math-renderer.js';
 
 class App {
   constructor() {
@@ -229,6 +230,9 @@ class App {
         renderDashboard(contentEl, this.navigate.bind(this));
         break;
     }
+
+    // Render mathematical notation consistently across every academy section.
+    renderMath(contentEl);
   }
 }
 
