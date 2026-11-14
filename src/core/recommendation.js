@@ -2,7 +2,7 @@
 // ADAPTIVE RECOMMENDATION ENGINE
 // ==========================================================================
 
-import { storage } from './storage.js';
+import { storage } from './storage.js';\nimport { queueProgressAttempt } from './progress-sync.js';
 
 export class RecommendationEngine {
   static async recordAnswer({ questionId, selectedAnswer, correctAnswer, timeSpentSeconds, topic, isDoubt }) {
@@ -19,7 +19,7 @@ export class RecommendationEngine {
       timestamp: Date.now()
     });
 
-    // 2. Intelligent Mistake Tracking ("Mis Errores")
+    // Encola solo la selección del estudiante; nunca se sincroniza la clave correcta.\n    await queueProgressAttempt({ questionId, selectedAnswer, isDoubt, timeSpentSeconds, timestamp: Date.now() });\n\n    // 2. Intelligent Mistake Tracking ("Mis Errores")
     if (!isCorrect || isDoubt) {
       const existing = (await storage.get('mistakes', questionId)) || {
         questionId,
