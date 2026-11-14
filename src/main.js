@@ -11,7 +11,9 @@ import { renderSimulators } from './ui/simulators.js';
 import { renderFichas } from './ui/fichas.js';
 import { renderFlashcards } from './ui/flashcards.js';
 import { renderMistakes } from './ui/mistakes.js';
-import { renderSources } from './ui/sources.js';\nimport { mountAccount } from './ui/account.js';\nimport { startProgressSync } from './core/progress-sync.js';
+import { renderSources } from './ui/sources.js';
+import { mountAccount } from './ui/account.js';
+import { startProgressSync } from './core/progress-sync.js';
 
 class App {
   constructor() {
@@ -89,7 +91,8 @@ class App {
               <h2 id="topbar-title" class="page-title">Inicio</h2>
             </div>
             <div class="topbar-actions">
-              <div id="account-area"></div>\n              <div class="target-badge">
+              <div id="account-area"></div>
+              <div class="target-badge">
                 <span class="dot-beca"></span>
                 <span>Beca 18 (ENP)</span>
                 <span style="color: var(--border-subtle);">&bull;</span>
@@ -147,7 +150,9 @@ class App {
     });
 
     // Load initial data repository and render first route
-    await repo.loadInitialData();\n    mountAccount(document.getElementById('account-area'));\n    startProgressSync();
+    await repo.loadInitialData();
+    mountAccount(document.getElementById('account-area'));
+    startProgressSync();
     const initialRoute = window.location.hash.replace('#', '') || 'dashboard';
     this.navigate(initialRoute);
   }
