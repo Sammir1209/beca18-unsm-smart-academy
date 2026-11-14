@@ -451,7 +451,7 @@ export function renderPractice(container, navigateTo) {
         selectedOption = null;
         hasSubmitted = false;
         wasDoubtMode = false;
-          renderView();
+        renderView();
       }
     });
 
@@ -463,7 +463,6 @@ export function renderPractice(container, navigateTo) {
         selectedOption = null;
         hasSubmitted = false;
         wasDoubtMode = false;
-        voiceStatusText = '';
         renderView();
       }
     });
