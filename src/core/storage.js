@@ -52,6 +52,11 @@ class StorageService {
           aStore.createIndex('timestamp', 'timestamp', { unique: false });
         }
 
+        if (!db.objectStoreNames.contains('sync_outbox')) {
+          const outbox = db.createObjectStore('sync_outbox', { keyPath: 'id' });
+          outbox.createIndex('queued_at', 'queued_at', { unique: false });
+        }
+
         // Intelligent Mistakes Bank ("Mis Errores")
         if (!db.objectStoreNames.contains('mistakes')) {
           db.createObjectStore('mistakes', { keyPath: 'questionId' });
