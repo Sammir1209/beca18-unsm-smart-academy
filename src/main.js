@@ -14,6 +14,7 @@ import { renderMistakes } from './ui/mistakes.js';
 import { renderSources } from './ui/sources.js';
 import { mountAccount } from './ui/account.js';
 import { startProgressSync } from './core/progress-sync.js';
+import { renderAuthPage } from './ui/auth-page.js';
 
 class App {
   constructor() {
@@ -159,6 +160,8 @@ class App {
 
   navigate(route) {
     this.currentRoute = route;
+    const isAuthRoute = ['login', 'register', 'forgot-password', 'reset-password', 'auth-confirm'].includes(route);
+    document.querySelector('.app-layout')?.classList.toggle('auth-mode', isAuthRoute);
     window.location.hash = `#${route}`;
 
     // Update active nav links
@@ -178,7 +181,12 @@ class App {
       fichas: 'Fichas Temáticas de Alto Rendimiento',
       flashcards: 'Flashcards Mnemotécnicas',
       mistakes: 'Banco de Errores',
-      sources: 'Fuentes Oficiales & Auditoría'
+      sources: 'Fuentes Oficiales & Auditoría',
+      login: 'Iniciar sesión',
+      register: 'Crear cuenta',
+      'forgot-password': 'Recuperar acceso',
+      'reset-password': 'Nueva contraseña',
+      'auth-confirm': 'Confirmación de cuenta'
     };
     const titleEl = document.getElementById('topbar-title');
     if (titleEl) titleEl.innerText = titles[route] || 'Smart Academy';
@@ -188,6 +196,13 @@ class App {
     if (!contentEl) return;
 
     switch (route) {
+      case 'login':
+      case 'register':
+      case 'forgot-password':
+      case 'reset-password':
+      case 'auth-confirm':
+        renderAuthPage(contentEl, route, this.navigate.bind(this));
+        break;
       case 'dashboard':
         renderDashboard(contentEl, this.navigate.bind(this));
         break;
