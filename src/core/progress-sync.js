@@ -41,7 +41,8 @@ export async function syncPendingProgress() {
         synced++;
       }
     }
-    await pullRemoteProgress();\n    return { synced, pending: (await storage.getAll(STORE)).length };
+    await pullRemoteProgress();
+    return { synced, pending: (await storage.getAll(STORE)).length };
   } finally {
     syncing = false;
   }
