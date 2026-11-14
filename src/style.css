@@ -1058,3 +1058,16 @@ img, canvas, svg { max-width: 100%; }
 .tutor-read-question svg {width:14px;height:14px}
 .tutor-welcome-mark svg {width:16px;height:16px}
 .tutor-composer button svg {width:15px;height:15px}
+
+.tutor-activate-3d {
+  position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  width:min(82%,280px);min-height:116px;padding:18px;border:1px solid rgba(96,165,250,.34);
+  border-radius:18px;background:linear-gradient(145deg,rgba(37,99,235,.18),rgba(15,23,42,.82));
+  color:#eaf2ff;cursor:pointer;box-shadow:0 14px 34px rgba(2,6,23,.28),inset 0 1px 0 rgba(255,255,255,.08);
+  transition:transform .18s ease,border-color .18s ease,background .18s ease
+}
+.tutor-activate-3d:hover {transform:translateY(-2px);border-color:rgba(147,197,253,.65);background:linear-gradient(145deg,rgba(37,99,235,.28),rgba(15,23,42,.9))}
+.tutor-activate-3d:disabled {opacity:.7;cursor:wait;transform:none}
+.tutor-activate-3d svg {width:21px;height:21px;color:#93c5fd}
+.tutor-activate-3d strong {font-size:.78rem;font-weight:850}
+.tutor-activate-3d small {font-size:.62rem;color:#8fa8ca}
