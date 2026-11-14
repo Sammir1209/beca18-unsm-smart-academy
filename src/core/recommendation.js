@@ -2,7 +2,8 @@
 // ADAPTIVE RECOMMENDATION ENGINE
 // ==========================================================================
 
-import { storage } from './storage.js';\nimport { queueProgressAttempt } from './progress-sync.js';
+import { storage } from './storage.js';
+import { queueProgressAttempt } from './progress-sync.js';
 
 export class RecommendationEngine {
   static async recordAnswer({ questionId, selectedAnswer, correctAnswer, timeSpentSeconds, topic, isDoubt }) {
@@ -19,7 +20,12 @@ export class RecommendationEngine {
       timestamp: Date.now()
     });
 
-    // Encola solo la selección del estudiante; nunca se sincroniza la clave correcta.\n    const syncEventId = await queueProgressAttempt({ questionId, selectedAnswer, isDoubt, timeSpentSeconds, timestamp: Date.now() });\n    const localAttempt = await storage.get('attempts', localAttemptId);\n    if (localAttempt) await storage.set('attempts', { ...localAttempt, syncEventId });\n\n    // 2. Intelligent Mistake Tracking ("Mis Errores")
+    // Encola solo la selección del estudiante; nunca se sincroniza la clave correcta.
+    const syncEventId = await queueProgressAttempt({ questionId, selectedAnswer, isDoubt, timeSpentSeconds, timestamp: Date.now() });
+    const localAttempt = await storage.get('attempts', localAttemptId);
+    if (localAttempt) await storage.set('attempts', { ...localAttempt, syncEventId });
+
+    // 2. Intelligent Mistake Tracking ("Mis Errores")
     if (!isCorrect || isDoubt) {
       const existing = (await storage.get('mistakes', questionId)) || {
         questionId,
