@@ -1051,3 +1051,10 @@ img, canvas, svg { max-width: 100%; }
 .tutor-read-question svg,.tutor-welcome-mark svg,.tutor-composer button svg {display:block;flex:0 0 auto}
 .tutor-composer button {display:grid;place-items:center}
 .tutor-welcome-mark svg {width:16px;height:16px}
+
+.tutor-visual-icon svg {width:18px;height:18px;display:block}
+.tutor-live-button-icon svg {width:19px;height:19px}
+.tutor-live-stop svg {width:16px;height:16px}
+.tutor-read-question svg {width:14px;height:14px}
+.tutor-welcome-mark svg {width:16px;height:16px}
+.tutor-composer button svg {width:15px;height:15px}
