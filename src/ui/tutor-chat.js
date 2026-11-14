@@ -303,12 +303,9 @@ export function mountTutorChat(container, {
     if (!audioContext || !base64Audio) return;
     const binary = atob(base64Audio);
     const samples = new Int16Array(Math.floor(binary.length / 2));
-    const view = new DataView(new ArrayBuffer(samples.length * 2));
     for (let i = 0; i < samples.length; i += 1) {
-      view.setInt16(i * 2, binary.charCodeAt(i * 2) | (binary.charCodeAt(i * 2 + 1) << 8), true);
-    }
-    for (let i = 0; i < samples.length; i += 1) {
-      samples[i] = view.getInt16(i * 2, true);
+      const value = binary.charCodeAt(i * 2) | (binary.charCodeAt(i * 2 + 1) << 8);
+      samples[i] = value > 0x7fff ? value - 0x10000 : value;
     }
     const audioBuffer = audioContext.createBuffer(1, samples.length, SAMPLE_RATE);
     const channel = audioBuffer.getChannelData(0);
@@ -361,19 +358,20 @@ export function mountTutorChat(container, {
     liveStopButton.hidden = true;
     onLiveState({ isListening: false, isSpeaking: false });
     setStatus(message, state);
-    if (socket && socket.readyState === WebSocket.OPEN) {
+    const closingSocket = socket;
+    socket = null;
+    if (closingSocket && closingSocket.readyState === WebSocket.OPEN) {
       if (serverClosed) {
-        socket.close();
+        closingSocket.close();
       } else {
-        try { socket.send(JSON.stringify({ type: 'session.close' })); } catch {}
+        try { closingSocket.send(JSON.stringify({ type: 'session.close' })); } catch {}
         window.setTimeout(() => {
-          if (socket?.readyState === WebSocket.OPEN) socket.close();
+          if (closingSocket.readyState === WebSocket.OPEN) closingSocket.close();
         }, 4500);
       }
-    } else if (socket && socket.readyState !== WebSocket.CLOSED) {
-      socket.close();
+    } else if (closingSocket && closingSocket.readyState !== WebSocket.CLOSED) {
+      closingSocket.close();
     }
-    socket = null;
     finalizeLiveTurn();
   }
 
@@ -408,8 +406,10 @@ export function mountTutorChat(container, {
         `ai-gateway-auth.${tokenData.token}`,
       ]);
 
-      socket.addEventListener('open', () => {
-        socket.send(JSON.stringify({
+      const liveSocket = socket;
+      liveSocket.addEventListener('open', () => {
+        if (socket !== liveSocket) return;
+        liveSocket.send(JSON.stringify({
           type: 'session.start',
           session: {
             model: 'openai/gpt-live-1',
@@ -424,7 +424,8 @@ export function mountTutorChat(container, {
         }));
       });
 
-      socket.addEventListener('message', (messageEvent) => {
+      liveSocket.addEventListener('message', (messageEvent) => {
+        if (socket !== liveSocket) return;
         let event;
         try { event = JSON.parse(messageEvent.data); } catch { return; }
         switch (event.type) {
@@ -436,7 +437,7 @@ export function mountTutorChat(container, {
             liveStopButton.hidden = false;
             setStatus('Te escucho. Habla con naturalidad.', 'live');
             startMicrophonePump();
-            socket.send(JSON.stringify({
+            liveSocket.send(JSON.stringify({
               type: 'session.thinking.append',
               delegation_id: null,
               content: `Contexto académico de la pantalla actual: ${getContextText()}. Si el estudiante está viendo una pregunta activa, úsala como referencia. No des la clave si aún no ha enviado su respuesta.`,
@@ -455,15 +456,20 @@ export function mountTutorChat(container, {
             onLiveState({ isListening: false, isSpeaking: true });
             break;
           case 'session.output_audio.delta':
-            if (event.delta) playPcmChunk(event.delta);
+            if (event.delta) {
+              playPcmChunk(event.delta);
+              onLiveState({ isListening: true, isSpeaking: true });
+            }
             break;
           case 'session.output_audio.done':
             onLiveState({ isListening: true, isSpeaking: false });
             break;
           case 'session.input_transcript.done':
+            if (liveUserBubble) renderMath(liveUserBubble);
             liveUserBubble = null;
             break;
           case 'session.output_transcript.done':
+            if (liveAssistantBubble) renderMath(liveAssistantBubble);
             liveAssistantBubble = null;
             break;
           case 'session.usage.updated': {
@@ -487,11 +493,11 @@ export function mountTutorChat(container, {
         }
       });
 
-      socket.addEventListener('error', () => {
-        finishLive('No se pudo establecer la conexión de voz.', 'error');
+      liveSocket.addEventListener('error', () => {
+        if (socket === liveSocket) finishLive('No se pudo establecer la conexión de voz.', 'error');
       });
-      socket.addEventListener('close', () => {
-        if (isLive || isStarting) finishLive('La conexión de voz se cerró.', 'error');
+      liveSocket.addEventListener('close', () => {
+        if (socket === liveSocket && (isLive || isStarting)) finishLive('La conexión de voz se cerró.', 'error', true);
       });
     } catch (error) {
       stopAudioGraph();
