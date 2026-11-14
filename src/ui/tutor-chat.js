@@ -1,5 +1,6 @@
 import { supabase } from '../core/supabase.js';
 import renderMathInElement from 'katex/contrib/auto-render';
+import { icon } from './icons.js';
 
 const LIVE_URL = 'wss://ai-gateway.vercel.sh/v1/live/sessions';
 const LIVE_MAX_MS = 5 * 60 * 1000;
@@ -70,7 +71,6 @@ export function mountTutorChat(container, {
   let isStarting = false;
   let isLive = false;
   let isClosing = false;
-  let sessionStartedAt = 0;
   let pendingSamples = new Int16Array(0);
   let outgoingFrames = [];
   let nextPlaybackTime = 0;
@@ -104,10 +104,10 @@ export function mountTutorChat(container, {
 
         <div class="tutor-live-actions">
           <button type="button" class="tutor-live-button" id="tutor-live-start">
-            <span class="tutor-live-button-icon">◉</span>
+            <span class="tutor-live-button-icon">${icon('mic', { size: 19, color: '#ffffff' })}</span>
             <span><strong>Hablar en vivo</strong><small>Conversación natural por voz</small></span>
           </button>
-          <button type="button" class="tutor-live-stop" id="tutor-live-stop" hidden aria-label="Finalizar conversación">■</button>
+          <button type="button" class="tutor-live-stop" id="tutor-live-stop" hidden aria-label="Finalizar conversación">${icon('square', { size: 16, color: '#fecaca' })}</button>
         </div>
         <div class="tutor-live-footnote">
           <span>Full dúplex · Puedes interrumpir y volver a hablar</span>
@@ -118,11 +118,11 @@ export function mountTutorChat(container, {
       <div class="tutor-conversation">
         <div class="tutor-conversation-head">
           <div><strong>Conversación</strong><span>Pregunta lo que necesites, sin limitarte a una alternativa</span></div>
-          <button type="button" class="tutor-read-question" id="tutor-read-question" title="Leer la pregunta actual">Leer pregunta</button>
+          <button type="button" class="tutor-read-question" id="tutor-read-question" title="Leer la pregunta actual">${icon('volume2', { size: 14 })} Leer pregunta</button>
         </div>
         <div class="tutor-message-list" id="tutor-message-list" aria-live="polite">
           <div class="tutor-welcome-message">
-            <span class="tutor-welcome-mark">✦</span>
+            <span class="tutor-welcome-mark">${icon('sparkles', { size: 16 })}</span>
             <div><strong>¡Hola! Soy ${tutorNames[character]}.</strong><p>Podemos resolver ejercicios, repasar temas o conversar sobre cualquier duda de tu preparación.</p></div>
           </div>
         </div>
@@ -133,7 +133,7 @@ export function mountTutorChat(container, {
         </div>
         <form class="tutor-composer" id="tutor-chat-form">
           <textarea id="tutor-chat-input" rows="1" maxlength="1800" placeholder="Escribe tu duda o procedimiento…" aria-label="Escribe un mensaje para el tutor"></textarea>
-          <button type="submit" id="tutor-chat-send" aria-label="Enviar mensaje">↑</button>
+          <button type="submit" id="tutor-chat-send" aria-label="Enviar mensaje">${icon('send', { size: 15, color: '#ffffff' })}</button>
         </form>
         <div class="tutor-composer-hint"><span>Enter para enviar · Shift + Enter para nueva línea</span><span>Respuestas con fórmulas matemáticas</span></div>
       </div>
@@ -172,11 +172,9 @@ export function mountTutorChat(container, {
     if (role === 'user') {
       if (!liveUserBubble) liveUserBubble = addMessage('user', '');
       liveUserBubble.textContent += delta;
-      renderMath(liveUserBubble);
     } else {
       if (!liveAssistantBubble) liveAssistantBubble = addMessage('assistant', '');
       liveAssistantBubble.textContent += delta;
-      renderMath(liveAssistantBubble);
     }
     messageList.scrollTop = messageList.scrollHeight;
   }
@@ -351,7 +349,7 @@ export function mountTutorChat(container, {
     nextPlaybackTime = 0;
   }
 
-  function finishLive(message = 'Conversación finalizada', state = 'ready') {
+  function finishLive(message = 'Conversación finalizada', state = 'ready', serverClosed = false) {
     if (sessionTimer) window.clearTimeout(sessionTimer);
     sessionTimer = null;
     isLive = false;
@@ -364,10 +362,14 @@ export function mountTutorChat(container, {
     onLiveState({ isListening: false, isSpeaking: false });
     setStatus(message, state);
     if (socket && socket.readyState === WebSocket.OPEN) {
-      try { socket.send(JSON.stringify({ type: 'session.close' })); } catch {}
-      window.setTimeout(() => {
-        if (socket?.readyState === WebSocket.OPEN) socket.close();
-      }, 4500);
+      if (serverClosed) {
+        socket.close();
+      } else {
+        try { socket.send(JSON.stringify({ type: 'session.close' })); } catch {}
+        window.setTimeout(() => {
+          if (socket?.readyState === WebSocket.OPEN) socket.close();
+        }, 4500);
+      }
     } else if (socket && socket.readyState !== WebSocket.CLOSED) {
       socket.close();
     }
@@ -429,8 +431,7 @@ export function mountTutorChat(container, {
           case 'session.started':
             isStarting = false;
             isLive = true;
-            sessionStartedAt = Date.now();
-            liveStartButton.hidden = true;
+                    liveStartButton.hidden = true;
             liveStartButton.disabled = false;
             liveStopButton.hidden = false;
             setStatus('Te escucho. Habla con naturalidad.', 'live');
@@ -474,7 +475,7 @@ export function mountTutorChat(container, {
           case 'session.closed': {
             const seconds = Number(event.usage?.seconds || 0);
             const cost = (seconds / 60) * 0.05;
-            finishLive(`Sesión cerrada · ${Math.ceil(seconds)} s · aprox. $${cost.toFixed(3)}`, 'ready');
+            finishLive(`Sesión cerrada · ${Math.ceil(seconds)} s · aprox. ${cost.toFixed(3)}`, 'ready', true);
             break;
           }
           case 'error':
