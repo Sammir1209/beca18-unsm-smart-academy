@@ -154,7 +154,8 @@ class App {
     await repo.loadInitialData();
     mountAccount(document.getElementById('account-area'));
     startProgressSync();
-    const initialRoute = window.location.hash.replace('#', '') || 'dashboard';
+    const authFlow = new URLSearchParams(window.location.search).get('auth');
+    const initialRoute = authFlow === 'recovery' ? 'reset-password' : authFlow === 'confirm' ? 'auth-confirm' : window.location.hash.replace('#', '') || 'dashboard';
     this.navigate(initialRoute);
   }
 
