@@ -386,7 +386,13 @@ export function mountTutorChat(container, {
       if (!tokenResponse.ok) throw new Error(tokenData.error || 'No se pudo abrir la sesión de voz.');
       if (Date.now() >= tokenData.expiresAt * 1000) throw new Error('El token de voz expiró. Vuelve a intentarlo.');
 
-      audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
+      const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextConstructor) throw new Error('Este navegador no soporta audio en tiempo real.');
+      try {
+        audioContext = new AudioContextConstructor({ sampleRate: SAMPLE_RATE });
+      } catch {
+        audioContext = new AudioContextConstructor();
+      }
       await audioContext.resume();
       if (attemptId !== liveAttemptId) { stopAudioGraph(); return; }
       socket = new WebSocket(LIVE_URL, [
