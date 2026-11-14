@@ -13,6 +13,7 @@ export function mountAccount(container) {
       <summary class="btn btn-secondary btn-sm" id="account-summary">Mi cuenta</summary>
       <div class="card account-panel">
         <div id="account-status" role="status" aria-live="polite">Comprobando sesión…</div>
+        <div class="account-route-links"><a href="#login">Página de acceso</a><a href="#register">Crear cuenta</a></div>
         <form id="account-form">
           <label for="account-email">Correo electrónico</label>
           <input id="account-email" type="email" autocomplete="email" required placeholder="tu@correo.com">
