@@ -114,7 +114,7 @@ export function mountTutorChat(container, {
           <button type="button" data-prompt="Hazme una pregunta para comprobar si entendí.">Ponme a prueba</button>
         </div>
         <form class="tutor-composer" id="tutor-chat-form">
-          <textarea id="tutor-chat-input" rows="1" maxlength="1800" placeholder="Escribe tu duda o procedimiento…" aria-label="Escribe un mensaje para el tutor"></textarea>
+          <textarea id="tutor-chat-input" rows="1" maxlength="1000" placeholder="Escribe tu duda o procedimiento…" aria-label="Escribe un mensaje para el tutor"></textarea>
           <button type="submit" id="tutor-chat-send" aria-label="Enviar mensaje"><i data-lucide="send"></i></button>
         </form>
         <div class="tutor-composer-hint"><span>Enter para enviar · Shift + Enter para nueva línea</span><span>Respuestas con fórmulas matemáticas</span></div>
@@ -167,9 +167,9 @@ export function mountTutorChat(container, {
     liveAssistantBubble = null;
   }
 
-  function getContextText() {
+  function getContextText(maxLength = 3500) {
     const value = getContext();
-    return typeof value === 'string' ? value.slice(0, 3500) : JSON.stringify(value || {}).slice(0, 3500);
+    return typeof value === 'string' ? value.slice(0, maxLength) : JSON.stringify(value || {}).slice(0, maxLength);
   }
 
   async function getAccessToken() {
@@ -198,8 +198,8 @@ export function mountTutorChat(container, {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          messages: messages.slice(-10),
-          context: getContextText(),
+          messages: messages.slice(-6),
+          context: getContextText(2000),
           character,
         }),
       });
