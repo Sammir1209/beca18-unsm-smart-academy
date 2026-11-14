@@ -268,6 +268,7 @@ export function renderPractice(container, navigateTo) {
     const viewport = document.getElementById('avatar-3d-viewport');
     if (viewport) {
       if (avatarInstance) avatarInstance.destroy();
+      avatarInstance = null;
       const activateTutor = document.createElement('button');
       activateTutor.type = 'button';
       activateTutor.className = 'tutor-activate-3d';
