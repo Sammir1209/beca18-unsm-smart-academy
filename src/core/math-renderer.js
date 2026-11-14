@@ -1,6 +1,3 @@
-import renderMathInElement from 'katex/contrib/auto-render';
-import 'katex/dist/katex.min.css';
-
 const MATH_OPTIONS = {
   delimiters: [
     { left: '$$', right: '$$', display: true },
@@ -23,10 +20,23 @@ const MATH_OPTIONS = {
   ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
 };
 
-export function renderMath(root) {
+let rendererPromise;
+
+async function getMathRenderer() {
+  if (!rendererPromise) {
+    rendererPromise = Promise.all([
+      import('katex/contrib/auto-render'),
+      import('katex/dist/katex.min.css'),
+    ]).then(([module]) => module.default);
+  }
+  return rendererPromise;
+}
+
+export async function renderMath(root) {
   if (!root) return;
   try {
-    renderMathInElement(root, MATH_OPTIONS);
+    const renderMathInElement = await getMathRenderer();
+    if (root.isConnected) renderMathInElement(root, MATH_OPTIONS);
   } catch (error) {
     console.warn('Math renderer skipped invalid content:', error);
   }
