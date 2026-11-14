@@ -41,7 +41,7 @@ export async function syncPendingProgress() {
         synced++;
       }
     }
-    return { synced, pending: (await storage.getAll(STORE)).length };
+    await pullRemoteProgress();\n    return { synced, pending: (await storage.getAll(STORE)).length };
   } finally {
     syncing = false;
   }
@@ -55,4 +55,30 @@ export function startProgressSync() {
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') run(); });
   supabase?.auth.onAuthStateChange((_event, session) => { if (session) setTimeout(run, 0); });
   run();
+}
+
+export async function pullRemoteProgress() {
+  if (!supabaseConfigured || !supabase || !navigator.onLine) return { pulled: 0 };
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user) return { pulled: 0 };
+  const { data, error } = await supabase
+    .from('student_progress_events')
+    .select('id,question_ref,selected_option_key,is_doubt,time_spent_seconds,occurred_at')
+    .order('occurred_at', { ascending: true })
+    .limit(5000);
+  if (error) throw error;
+  const local = await storage.getAll('attempts');
+  const known = new Set(local.map(item => item.syncEventId).filter(Boolean));
+  const missing = (data || []).filter(event => !known.has(event.id)).map(event => ({
+    syncEventId: event.id,
+    questionId: event.question_ref,
+    selectedAnswer: event.selected_option_key,
+    isCorrect: null,
+    isDoubt: event.is_doubt,
+    timeSpentSeconds: event.time_spent_seconds,
+    timestamp: new Date(event.occurred_at).getTime(),
+    restoredFromCloud: true
+  }));
+  if (missing.length) await storage.bulkPut('attempts', missing);
+  return { pulled: missing.length };
 }
