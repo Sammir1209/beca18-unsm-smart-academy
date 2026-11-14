@@ -248,7 +248,7 @@ export function renderPractice(container, navigateTo) {
   <section class="tutor-panel-card">
     <div class="tutor-visual-header">
       <div class="tutor-visual-identity">
-        <span class="tutor-visual-icon">${icon('brain', { size: 18 })}</span>
+        <span class="tutor-visual-icon"><i data-lucide="brain"></i></span>
         <span><strong>Tu espacio de aprendizaje</strong><small>Asistencia académica inteligente</small></span>
       </div>
       <span class="tutor-online-indicator"><i></i> Disponible</span>
