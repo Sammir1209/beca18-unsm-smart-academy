@@ -20,7 +20,7 @@ export function mountAccount(container) {
           <input id="account-password" type="password" autocomplete="current-password" minlength="8" required placeholder="Mínimo 8 caracteres">
           <div class="account-actions">
             <button class="btn btn-primary btn-sm" type="submit" data-action="signin">Iniciar sesión</button>
-            <button class="btn btn-secondary btn-sm" type="button" data-action="signup">Crear cuenta</button>
+            <button class="btn btn-secondary btn-sm" type="submit" data-action="signup">Crear cuenta</button>
           </div>
           <button class="btn btn-secondary btn-sm" type="button" data-action="reset">Recuperar contraseña</button>
         </form>
