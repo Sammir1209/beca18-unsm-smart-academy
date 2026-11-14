@@ -52,6 +52,7 @@ export function mountTutorChat(container, {
   let isStarting = false;
   let isLive = false;
   let isClosing = false;
+  let liveAttemptId = 0;
   let pendingSamples = new Int16Array(0);
   let outgoingFrames = [];
   let nextPlaybackTime = 0;
@@ -359,6 +360,7 @@ export function mountTutorChat(container, {
 
   async function startLive() {
     if (isStarting || isLive) return;
+    const attemptId = ++liveAttemptId;
     isStarting = true;
     isClosing = false;
     liveStartButton.disabled = true;
@@ -366,6 +368,7 @@ export function mountTutorChat(container, {
 
     try {
       const token = await getAccessToken();
+      if (attemptId !== liveAttemptId) return;
       if (!navigator.mediaDevices?.getUserMedia) {
         throw new Error('Este navegador no permite acceder al micrófono. Abre UNSM Academy en Chrome con HTTPS.');
       }
@@ -373,16 +376,19 @@ export function mountTutorChat(container, {
         audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true },
         video: false,
       });
+      if (attemptId !== liveAttemptId) { stopAudioGraph(); return; }
       const tokenResponse = await fetch('/api/tutor/live-token', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
       const tokenData = await tokenResponse.json().catch(() => ({}));
+      if (attemptId !== liveAttemptId) { stopAudioGraph(); return; }
       if (!tokenResponse.ok) throw new Error(tokenData.error || 'No se pudo abrir la sesión de voz.');
       if (Date.now() >= tokenData.expiresAt * 1000) throw new Error('El token de voz expiró. Vuelve a intentarlo.');
 
       audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
       await audioContext.resume();
+      if (attemptId !== liveAttemptId) { stopAudioGraph(); return; }
       socket = new WebSocket(LIVE_URL, [
         'ai-gateway-realtime.v1',
         `ai-gateway-auth.${tokenData.token}`,
@@ -491,6 +497,7 @@ export function mountTutorChat(container, {
       });
     } catch (error) {
       stopAudioGraph();
+      if (attemptId !== liveAttemptId) return;
       isStarting = false;
       isLive = false;
       liveStartButton.hidden = false;
@@ -502,6 +509,7 @@ export function mountTutorChat(container, {
 
   function stopLive() {
     if (!isLive && !isStarting) return;
+    liveAttemptId += 1;
     finishLive('Cerrando conversación…', 'ready');
   }
 
