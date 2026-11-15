@@ -5,9 +5,14 @@
 import { repo } from '../core/repository.js';
 import { RecommendationEngine } from '../core/recommendation.js';
 import { icon } from './icons.js';
+import { supabase } from '../core/supabase.js';
 
 export async function renderDashboard(container, navigateTo) {
   const diag = await RecommendationEngine.getDiagnosticSummary(repo.questions);
+  const { data: authData } = await supabase?.auth.getSession?.() || { data: { session: null } };
+  const user = authData?.session?.user;
+  const studentName = String(user?.user_metadata?.full_name || user?.user_metadata?.name || '').trim();
+  const greetingName = studentName ? studentName.split(/\\s+/)[0] : 'Postulante';
 
   container.innerHTML = `
     <div style="display: flex; flex-direction: column; gap: 32px;">
@@ -21,7 +26,7 @@ export async function renderDashboard(container, navigateTo) {
             <span style="font-size: 0.8rem; color: var(--text-dim);">Convocatoria 2027</span>
           </div>
           <h1 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-            Buenos días, Postulante
+            Buenos días, ${greetingName}
           </h1>
           <p style="color: var(--text-muted); max-width: 600px; font-size: 0.95rem;">
             Tu ruta de preparación está optimizada para el <strong>Núcleo Común (Matemática + Comprensión Lectora)</strong> y la especialización en Ciencias para la UNSM.
