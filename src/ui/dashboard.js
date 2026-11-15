@@ -7,6 +7,10 @@ import { RecommendationEngine } from '../core/recommendation.js';
 import { icon } from './icons.js';
 import { supabase } from '../core/supabase.js';
 
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>\"']/g, (char) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;'
+})[char]);
+
 export async function renderDashboard(container, navigateTo) {
   const diag = await RecommendationEngine.getDiagnosticSummary(repo.questions);
   const { data: authData } = await supabase?.auth.getSession?.() || { data: { session: null } };
@@ -121,10 +125,10 @@ export async function renderDashboard(container, navigateTo) {
           ${diag.recommendations.map(rec => `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background-color: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 12px;">
               <div>
-                <span class="tag ${rec.priority === 'ALTA' ? 'tag-diff-adv' : 'tag-diff-mid'}">${rec.priority} PRIORIDAD</span>
-                <strong style="margin-left: 8px; font-size: 0.95rem;">${rec.topic}</strong>
-                <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">(${rec.subject})</span>
-                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${rec.action}</div>
+                <span class="tag ${rec.priority === 'ALTA' ? 'tag-diff-adv' : 'tag-diff-mid'}"'>${escapeHtml(rec.priority)} PRIORIDAD</span>
+                <strong style="margin-left: 8px; font-size: 0.95rem;">${escapeHtml(rec.topic)}</strong>
+                <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">(${escapeHtml(rec.subject)})</span>
+                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${escapeHtml(rec.action)}</div>
               </div>
               <button class="btn btn-secondary btn-sm" onclick="window.location.hash='#fichas'">
                 Estudiar Ficha ${icon('chevronRight', { size: 14 })}
