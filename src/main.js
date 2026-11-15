@@ -41,32 +41,32 @@ class App {
             </div>
           </div>
 
-          <nav class="sidebar-nav">
-            <a class="nav-item active" data-route="dashboard">
+          <nav class="sidebar-nav" aria-label="Navegación principal">
+            <a class="nav-item active" data-route="dashboard" href="#dashboard">
               ${icon('home', { size: 18 })}
               Inicio
             </a>
-            <a class="nav-item" data-route="practice">
+            <a class="nav-item" data-route="practice" href="#practice">
               ${icon('practice', { size: 18 })}
               Práctica Activa
             </a>
-            <a class="nav-item" data-route="simulators">
+            <a class="nav-item" data-route="simulators" href="#simulators">
               ${icon('simulator', { size: 18 })}
               Simuladores Oficiales
             </a>
-            <a class="nav-item" data-route="fichas">
+            <a class="nav-item" data-route="fichas" href="#fichas">
               ${icon('fichas', { size: 18 })}
               Fichas Temáticas
             </a>
-            <a class="nav-item" data-route="flashcards">
+            <a class="nav-item" data-route="flashcards" href="#flashcards">
               ${icon('flashcards', { size: 18 })}
               Flashcards
             </a>
-            <a class="nav-item" data-route="mistakes">
+            <a class="nav-item" data-route="mistakes" href="#mistakes">
               ${icon('mistakes', { size: 18 })}
               Mis Errores
             </a>
-            <a class="nav-item" data-route="sources">
+            <a class="nav-item" data-route="sources" href="#sources">
               ${icon('sources', { size: 18 })}
               Fuentes & Auditoría
             </a>
@@ -111,24 +111,24 @@ class App {
         </div>
 
         <!-- Bottom Navigation (Mobile) -->
-        <nav class="bottom-nav">
-          <a class="bottom-nav-item active" data-route="dashboard">
+        <nav class="bottom-nav" aria-label="Navegación móvil">
+          <a class="bottom-nav-item active" data-route="dashboard" href="#dashboard">
             ${icon('home', { size: 20 })}
             <span>Inicio</span>
           </a>
-          <a class="bottom-nav-item" data-route="practice">
+          <a class="bottom-nav-item" data-route="practice" href="#practice">
             ${icon('practice', { size: 20 })}
             <span>Práctica</span>
           </a>
-          <a class="bottom-nav-item" data-route="simulators">
+          <a class="bottom-nav-item" data-route="simulators" href="#simulators">
             ${icon('simulator', { size: 20 })}
             <span>Simulador</span>
           </a>
-          <a class="bottom-nav-item" data-route="fichas">
+          <a class="bottom-nav-item" data-route="fichas" href="#fichas">
             ${icon('fichas', { size: 20 })}
             <span>Fichas</span>
           </a>
-          <a class="bottom-nav-item" data-route="mistakes">
+          <a class="bottom-nav-item" data-route="mistakes" href="#mistakes">
             ${icon('mistakes', { size: 20 })}
             <span>Errores</span>
           </a>
@@ -171,8 +171,10 @@ class App {
     document.querySelectorAll('[data-route]').forEach(link => {
       if (link.getAttribute('data-route') === route) {
         link.classList.add('active');
+        link.setAttribute('aria-current', 'page');
       } else {
         link.classList.remove('active');
+        link.removeAttribute('aria-current');
       }
     });
 
