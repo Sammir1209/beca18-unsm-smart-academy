@@ -2,77 +2,97 @@ import { supabase, supabaseConfigured } from '../core/supabase.js';
 import { syncPendingProgress } from '../core/progress-sync.js';
 import { storage } from '../core/storage.js';
 
+const displayName = (user) => {
+  const value = user?.user_metadata?.full_name || user?.user_metadata?.name || '';
+  return String(value).trim();
+};
+
 export function mountAccount(container) {
   if (!container) return;
-  if (!supabaseConfigured) {
+  if (!supabaseConfigured || !supabase) {
     container.innerHTML = '<span class="tag">Modo sin conexión · Cuenta no configurada</span>';
     return;
   }
+
   container.innerHTML = `
-    <details class="account-menu">
-      <summary class="btn btn-secondary btn-sm" id="account-summary">Mi cuenta</summary>
-      <div class="card account-panel">
-        <div id="account-status" role="status" aria-live="polite">Comprobando sesión…</div>
-        <div class="account-route-links"><a href="#login">Página de acceso</a><a href="#register">Crear cuenta</a></div>
-        <form id="account-form">
-          <label for="account-email">Correo electrónico</label>
-          <input id="account-email" type="email" autocomplete="email" required placeholder="tu@correo.com">
-          <label for="account-password">Contraseña</label>
-          <input id="account-password" type="password" autocomplete="current-password" minlength="8" required placeholder="Mínimo 8 caracteres">
-          <div class="account-actions">
-            <button class="btn btn-primary btn-sm" type="submit" data-action="signin">Iniciar sesión</button>
-            <button class="btn btn-secondary btn-sm" type="submit" data-action="signup">Crear cuenta</button>
+    <details class="account-menu" id="account-menu">
+      <summary class="account-trigger" id="account-summary" aria-label="Abrir menú de cuenta">
+        <span class="account-trigger-icon" aria-hidden="true"> <i data-lucide="user-round"></i> </span>
+        <span class="account-trigger-label">Mi cuenta</span>
+        <i data-lucide="chevron-down" class="account-chevron" aria-hidden="true"></i>
+      </summary>
+      <div class="card account-panel" id="account-panel">
+        <div class="account-panel-heading">
+          <span class="account-avatar" id="account-avatar"><i data-lucide="user-round"></i></span>
+          <div class="account-identity">
+            <strong id="account-name">Mi cuenta</strong>
+            <small id="account-email-label">No has iniciado sesión</small>
           </div>
-          <button class="btn btn-secondary btn-sm" type="button" data-action="reset">Recuperar contraseña</button>
-        </form>
-        <button class="btn btn-secondary btn-sm" id="account-signout" type="button" hidden>Cerrar sesión</button>
-        <p id="account-sync" class="text-muted"></p>
+        </div>
+        <div id="account-status" role="status" aria-live="polite"></div>
+        <div class="account-guest-actions" id="account-guest-actions">
+          <a href="#login" class="btn btn-primary btn-sm" data-account-route="login">Iniciar sesión</a>
+          <a href="#register" class="btn btn-secondary btn-sm" data-account-route="register">Crear cuenta</a>
+        </div>
+        <div class="account-user-actions" id="account-user-actions" hidden>
+          <a href="#dashboard" class="account-menu-link" data-account-route="dashboard"><i data-lucide="layout-dashboard"></i> Mi panel</a>
+          <button class="account-menu-link account-logout" id="account-signout" type="button"><i data-lucide="log-out"></i> Cerrar sesión</button>
+        </div>
+        <p id="account-sync" class="account-sync-note"></p>
       </div>
     </details>`;
+
+  const menu = container.querySelector('#account-menu');
   const status = container.querySelector('#account-status');
-  const form = container.querySelector('#account-form');
-  const signout = container.querySelector('#account-signout');
+  const nameLabel = container.querySelector('#account-name');
+  const emailLabel = container.querySelector('#account-email-label');
+  const avatar = container.querySelector('#account-avatar');
+  const triggerLabel = container.querySelector('.account-trigger-label');
+  const guestActions = container.querySelector('#account-guest-actions');
+  const userActions = container.querySelector('#account-user-actions');
   const syncLabel = container.querySelector('#account-sync');
+  const signout = container.querySelector('#account-signout');
+
   const setStatus = (message) => { status.textContent = message; };
   const refresh = async (session) => {
     const user = session?.user;
-    setStatus(user ? `Sesión iniciada: ${user.email}` : 'Estás usando el modo local. Inicia sesión para sincronizar.');
-    form.hidden = Boolean(user);
-    signout.hidden = !user;
+    const name = displayName(user);
+    const shortName = name ? name.split(/\s+/)[0] : '';
+    const email = user?.email || '';
+    triggerLabel.textContent = user ? (shortName || 'Mi cuenta') : 'Mi cuenta';
+    nameLabel.textContent = user ? (name || 'Estudiante') : 'Bienvenido';
+    emailLabel.textContent = user ? email : 'Accede o crea tu cuenta';
+    avatar.textContent = (shortName || email || 'U').charAt(0).toUpperCase();
+    guestActions.hidden = Boolean(user);
+    userActions.hidden = !user;
+    setStatus(user ? 'Tu cuenta está activa.' : 'Inicia sesión para sincronizar tu progreso.');
     const pending = (await storage.getAll('sync_outbox').catch(() => [])).length;
-    syncLabel.textContent = pending ? `${pending} cambios pendientes de sincronizar` : 'Progreso sincronizado o guardado localmente.';
+    syncLabel.textContent = pending ? `${pending} cambios pendientes de sincronizar` : user ? 'Tu progreso está guardado.' : 'Tu avance local se conserva en este dispositivo.';
   };
-  supabase.auth.getSession().then(({data}) => refresh(data.session)).catch(() => setStatus('No se pudo comprobar la sesión.'));
-  supabase.auth.onAuthStateChange((_event, session) => { refresh(session); });
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const button = form.querySelector('[type="submit"]');
-    const email = form.querySelector('#account-email').value.trim();
-    const password = form.querySelector('#account-password').value;
-    const action = event.submitter?.dataset.action || 'signin';
-    button.disabled = true;
-    try {
-      if (action === 'signup') {
-        const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${location.origin}/` } });
-        if (error) throw error;
-        setStatus('Solicitud enviada. Revisa tu correo para confirmar la cuenta.');
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        const result = await syncPendingProgress();
-        setStatus(`Sesión iniciada. ${result.synced} cambios sincronizados.`);
-      }
-    } catch (error) { setStatus(error.message || 'No se pudo completar la operación.'); }
-    finally { button.disabled = false; }
+
+  supabase.auth.getSession().then(({ data }) => refresh(data.session)).catch(() => setStatus('No se pudo comprobar la sesión.'));
+  const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Defer storage reads outside the auth callback to avoid blocking Supabase's lock.
+    queueMicrotask(() => refresh(session));
   });
-  form.querySelector('[data-action="reset"]').addEventListener('click', async () => {
-    const email = form.querySelector('#account-email').value.trim();
-    if (!email) return setStatus('Escribe tu correo para enviarte el enlace de recuperación.');
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/` });
-    setStatus(error ? error.message : 'Revisa tu correo para recuperar la contraseña.');
+
+  container.querySelectorAll('[data-account-route]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      menu.open = false;
+      window.location.hash = link.dataset.accountRoute;
+    });
   });
+
   signout.addEventListener('click', async () => {
+    signout.disabled = true;
     const { error } = await supabase.auth.signOut();
-    setStatus(error ? error.message : 'Sesión cerrada. Tus datos locales permanecen en este dispositivo.');
+    setStatus(error ? error.message : 'Sesión cerrada correctamente.');
+    signout.disabled = false;
+    if (!error) menu.open = false;
   });
+
+  // Icon renderer is optional here because this component can mount before route rendering.
+  if (window.lucide?.createIcons) window.lucide.createIcons();
+  return () => authListener?.subscription?.unsubscribe?.();
 }
