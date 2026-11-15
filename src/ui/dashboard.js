@@ -125,7 +125,7 @@ export async function renderDashboard(container, navigateTo) {
           ${diag.recommendations.map(rec => `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background-color: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 12px;">
               <div>
-                <span class="tag ${rec.priority === 'ALTA' ? 'tag-diff-adv' : 'tag-diff-mid'}"'>${escapeHtml(rec.priority)} PRIORIDAD</span>
+                <span class="tag ${rec.priority === 'ALTA' ? 'tag-diff-adv' : 'tag-diff-mid'}">${escapeHtml(rec.priority)} PRIORIDAD</span>
                 <strong style="margin-left: 8px; font-size: 0.95rem;">${escapeHtml(rec.topic)}</strong>
                 <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">(${escapeHtml(rec.subject)})</span>
                 <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${escapeHtml(rec.action)}</div>
