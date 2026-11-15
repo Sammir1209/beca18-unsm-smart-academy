@@ -157,8 +157,10 @@ class App {
     mountAccount(document.getElementById('account-area'));
     startProgressSync();
     const authFlow = new URLSearchParams(window.location.search).get('auth');
-    const isEmailConfirmPath = window.location.pathname.replace(/\/+$/, '') === '/auth/confirm';
-    const initialRoute = authFlow === 'recovery' ? 'reset-password' : authFlow === 'confirm' || isEmailConfirmPath ? 'auth-confirm' : window.location.hash.replace('#', '') || 'dashboard';
+    const currentPath = window.location.pathname.replace(/\\/+$/, '') || '/';
+    const isEmailConfirmPath = currentPath === '/auth/confirm';
+    const isPasswordResetPath = currentPath === '/auth/reset-password';
+    const initialRoute = isPasswordResetPath || authFlow === 'recovery' ? 'reset-password' : authFlow === 'confirm' || isEmailConfirmPath ? 'auth-confirm' : window.location.hash.replace('#', '') || 'dashboard';
     this.navigate(initialRoute);
   }
 
