@@ -72,18 +72,33 @@ export function renderAuthPage(container, route, navigate) {
       setFeedback(errorDescription ? errorDescription.replace(/\+/g, ' ') : 'El enlace de confirmación no es válido o ha caducado.', 'error');
       resendBox.hidden = false;
     }
-    supabase.auth.getSession().then(({ data, error }) => {
-      if (error) {
-        setFeedback('No se pudo verificar la sesión. Solicita un nuevo correo de confirmación.', 'error');
-        resendBox.hidden = false;
-      } else if (data.session?.user?.email_confirmed_at) {
-        setFeedback('Correo confirmado. Tu cuenta está lista.', 'success');
-        resendBox.hidden = true;
-      } else {
-        setFeedback('Abre el enlace más reciente que enviamos a tu correo. Si expiró, puedes solicitar otro.', 'info');
-        resendBox.hidden = false;
-      }
-    });
+    const confirmationParams = new URLSearchParams(window.location.search);
+    const tokenHash = confirmationParams.get('token_hash');
+    const tokenType = confirmationParams.get('type');
+    if (tokenHash && tokenType) {
+      supabase.auth.verifyOtp({ token_hash: tokenHash, type: tokenType }).then(({ error }) => {
+        if (error) {
+          setFeedback('El enlace no es válido o ya expiró. Solicita uno nuevo.', 'error');
+          resendBox.hidden = false;
+        } else {
+          setFeedback('Correo confirmado. Tu cuenta está lista.', 'success');
+          resendBox.hidden = true;
+        }
+      });
+    } else {
+      supabase.auth.getSession().then(({ data, error }) => {
+        if (error) {
+          setFeedback('No se pudo verificar la sesión. Solicita un nuevo correo de confirmación.', 'error');
+          resendBox.hidden = false;
+        } else if (data.session?.user?.email_confirmed_at) {
+          setFeedback('Correo confirmado. Tu cuenta está lista.', 'success');
+          resendBox.hidden = true;
+        } else {
+          setFeedback('Abre el enlace más reciente que enviamos a tu correo. Si expiró, puedes solicitar otro.', 'info');
+          resendBox.hidden = false;
+        }
+      });
+    }
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
         setFeedback('Correo confirmado. Tu cuenta está lista.', 'success');
@@ -140,6 +155,7 @@ export function renderAuthPage(container, route, navigate) {
         });
         if (error) throw error;
         setFeedback(data.session ? 'Cuenta creada correctamente.' : 'Cuenta creada. Revisa tu correo y confirma el registro para continuar.', 'success');
+        if (!data.session) setTimeout(() => navigate('auth-confirm'), 1200);
       } else if (mode === 'forgot') {
         const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/?auth=recovery` });
         if (error) throw error;
