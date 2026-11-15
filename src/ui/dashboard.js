@@ -12,7 +12,7 @@ export async function renderDashboard(container, navigateTo) {
   const { data: authData } = await supabase?.auth.getSession?.() || { data: { session: null } };
   const user = authData?.session?.user;
   const studentName = String(user?.user_metadata?.full_name || user?.user_metadata?.name || '').trim();
-  const greetingName = studentName ? studentName.split(/\\s+/)[0] : 'Postulante';
+  const greetingName = studentName ? studentName.split(/\s+/)[0] : 'Postulante';
 
   container.innerHTML = `
     <div style="display: flex; flex-direction: column; gap: 32px;">
