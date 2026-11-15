@@ -157,7 +157,7 @@ class App {
     mountAccount(document.getElementById('account-area'));
     startProgressSync();
     const authFlow = new URLSearchParams(window.location.search).get('auth');
-    const currentPath = window.location.pathname.replace(/\\/+$/, '') || '/';
+    const currentPath = window.location.pathname.endsWith('/') && window.location.pathname !== '/' ? window.location.pathname.slice(0, -1) : window.location.pathname;
     const isEmailConfirmPath = currentPath === '/auth/confirm';
     const isPasswordResetPath = currentPath === '/auth/reset-password';
     const initialRoute = isPasswordResetPath || authFlow === 'recovery' ? 'reset-password' : authFlow === 'confirm' || isEmailConfirmPath ? 'auth-confirm' : window.location.hash.replace('#', '') || 'dashboard';
