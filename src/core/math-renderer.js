@@ -33,7 +33,21 @@ async function getMathRenderer() {
 }
 
 export async function renderMath(root) {
-  if (!root) return;
+  if (!root || !root.isConnected) return;
+  // Load KaTeX only on views that actually contain math notation.
+  const textContent = root.textContent || '';
+  const hasMath = textContent.includes('$')
+    || textContent.includes('\\[')
+    || textContent.includes('\\(')
+    || textContent.includes('
+    const renderMathInElement = await getMathRenderer();
+    if (root.isConnected) renderMathInElement(root, MATH_OPTIONS);
+  } catch (error) {
+    console.warn('Math renderer skipped invalid content:', error);
+  }
+}
+);
+  if (!hasMath) return;
   try {
     const renderMathInElement = await getMathRenderer();
     if (root.isConnected) renderMathInElement(root, MATH_OPTIONS);
