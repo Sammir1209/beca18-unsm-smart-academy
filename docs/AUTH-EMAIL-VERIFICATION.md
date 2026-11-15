@@ -52,3 +52,18 @@ Si se mantiene la plantilla predeterminada, el enlace `{{ .ConfirmationURL }}` t
 - Si el correo no llega a una cuenta nueva, revisar Auth Logs y el proveedor SMTP.
 - El SMTP de prueba de Supabase no es adecuado para envíos reales: para producción debe configurarse un SMTP propio con dominio autenticado.
 - No desactivar la confirmación de correo para ocultar un problema de entrega.
+
+
+## Recuperación de contraseña
+
+El formulario solicita el enlace con un redirect dedicado y explícito:
+
+`https://unsm-academy.vercel.app/auth/reset-password`
+
+La aplicación reconoce esa ruta directamente y muestra el formulario de nueva contraseña. El cliente Supabase usa PKCE y `detectSessionInUrl: true`, por lo que procesa el código de recuperación al cargar la app. Se conserva compatibilidad con el callback anterior `/?auth=recovery`.
+
+En **Authentication → URL Configuration → Redirect URLs**, confirmar que exista:
+
+- `https://unsm-academy.vercel.app/**`
+
+Después de desplegar este cambio, se debe solicitar un correo nuevo. Los correos ya enviados conservan el redirect con el que fueron generados y no se actualizan retroactivamente.
