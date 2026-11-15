@@ -169,7 +169,8 @@ export function renderAuthPage(container, route, navigate) {
           setTimeout(() => navigate('auth-confirm'), 700);
         }
       } else if (mode === 'forgot') {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/?auth=recovery` });
+        const redirectTo = new URL('/auth/reset-password', window.location.origin).toString();
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
         if (error) throw error;
         setFeedback('Si el correo está registrado, recibirás un enlace para recuperar tu acceso.', 'success');
       } else if (mode === 'new-password') {
