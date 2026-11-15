@@ -156,17 +156,15 @@ class App {
     await repo.loadInitialData();
     mountAccount(document.getElementById('account-area'));
     startProgressSync();
-    const authFlow = new URLSearchParams(window.location.search).get('auth');
-    const currentPath = window.location.pathname.endsWith('/') && window.location.pathname !== '/' ? window.location.pathname.slice(0, -1) : window.location.pathname;
-    const isEmailConfirmPath = currentPath === '/auth/confirm';
-    const isPasswordResetPath = currentPath === '/auth/reset-password';
-    const initialRoute = isPasswordResetPath || authFlow === 'recovery' ? 'reset-password' : authFlow === 'confirm' || isEmailConfirmPath ? 'auth-confirm' : window.location.hash.replace('#', '') || 'dashboard';
-    this.navigate(initialRoute);
+    const initialRoute = window.location.hash.replace('#', '') || 'dashboard';
+    this.navigate(['login', 'register'].includes(initialRoute) ? initialRoute : 'dashboard');
   }
 
   navigate(route) {
     this.currentRoute = route;
-    const isAuthRoute = ['login', 'register', 'forgot-password', 'reset-password', 'auth-confirm'].includes(route);
+    if (!['dashboard', 'practice', 'simulators', 'fichas', 'flashcards', 'mistakes', 'sources', 'login', 'register'].includes(route)) route = 'dashboard';
+    this.currentRoute = route;
+    const isAuthRoute = ['login', 'register'].includes(route);
     document.querySelector('.app-layout')?.classList.toggle('auth-mode', isAuthRoute);
     window.location.hash = `#${route}`;
 
@@ -190,9 +188,6 @@ class App {
       sources: 'Fuentes Oficiales & Auditoría',
       login: 'Iniciar sesión',
       register: 'Crear cuenta',
-      'forgot-password': 'Recuperar acceso',
-      'reset-password': 'Nueva contraseña',
-      'auth-confirm': 'Confirmación de cuenta'
     };
     const titleEl = document.getElementById('topbar-title');
     if (titleEl) titleEl.innerText = titles[route] || 'Smart Academy';
@@ -204,9 +199,6 @@ class App {
     switch (route) {
       case 'login':
       case 'register':
-      case 'forgot-password':
-      case 'reset-password':
-      case 'auth-confirm':
         renderAuthPage(contentEl, route, this.navigate.bind(this));
         break;
       case 'dashboard':
