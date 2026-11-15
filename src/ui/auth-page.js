@@ -64,6 +64,7 @@ export function renderAuthPage(container, route, navigate) {
   if (mode === 'confirm') {
     const resendBox = container.querySelector('#auth-resend-box');
     const resendEmail = container.querySelector('#auth-resend-email');
+    if (resendEmail) resendEmail.value = sessionStorage.getItem('unsm_pending_confirmation_email') || '';
     const continueButton = container.querySelector('#auth-continue');
     const params = new URLSearchParams(window.location.hash.slice(1));
     const errorCode = params.get('error_code');
@@ -82,6 +83,7 @@ export function renderAuthPage(container, route, navigate) {
           resendBox.hidden = false;
         } else {
           setFeedback('Correo confirmado. Tu cuenta está lista.', 'success');
+          sessionStorage.removeItem('unsm_pending_confirmation_email');
           resendBox.hidden = true;
         }
       });
@@ -102,6 +104,7 @@ export function renderAuthPage(container, route, navigate) {
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
         setFeedback('Correo confirmado. Tu cuenta está lista.', 'success');
+        sessionStorage.removeItem('unsm_pending_confirmation_email');
         resendBox.hidden = true;
       }
     });
@@ -118,6 +121,7 @@ export function renderAuthPage(container, route, navigate) {
           options: { emailRedirectTo: `${location.origin}/?auth=confirm` },
         });
         if (error) throw error;
+        sessionStorage.setItem('unsm_pending_confirmation_email', email);
         setFeedback('Te enviamos un nuevo enlace. Usa el correo más reciente y revisa también spam.', 'success');
       } catch (error) {
         setFeedback(error.message || 'No se pudo reenviar el correo.', 'error');
@@ -154,8 +158,16 @@ export function renderAuthPage(container, route, navigate) {
           },
         });
         if (error) throw error;
-        setFeedback(data.session ? 'Cuenta creada correctamente.' : 'Cuenta creada. Revisa tu correo y confirma el registro para continuar.', 'success');
-        if (!data.session) setTimeout(() => navigate('auth-confirm'), 1200);
+        if (data.user?.identities?.length === 0) {
+          setFeedback('Ya existe una cuenta con ese correo. Inicia sesión o recupera tu contraseña.', 'error');
+        } else if (data.session) {
+          setFeedback('Cuenta creada correctamente.', 'success');
+          navigate('dashboard');
+        } else {
+          sessionStorage.setItem('unsm_pending_confirmation_email', email);
+          setFeedback('Cuenta creada. Te enviaremos a la pantalla de verificación.', 'success');
+          setTimeout(() => navigate('auth-confirm'), 700);
+        }
       } else if (mode === 'forgot') {
         const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/?auth=recovery` });
         if (error) throw error;
