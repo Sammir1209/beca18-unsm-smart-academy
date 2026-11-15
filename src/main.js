@@ -161,7 +161,6 @@ class App {
   }
 
   navigate(route) {
-    this.currentRoute = route;
     if (!['dashboard', 'practice', 'simulators', 'fichas', 'flashcards', 'mistakes', 'sources', 'login', 'register'].includes(route)) route = 'dashboard';
     this.currentRoute = route;
     const isAuthRoute = ['login', 'register'].includes(route);
