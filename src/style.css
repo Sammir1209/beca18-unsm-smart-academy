@@ -1208,3 +1208,27 @@ img, canvas, svg { max-width: 100%; }
   outline: 2px solid #93c5fd;
   outline-offset: 3px;
 }
+
+
+/* Mobile readability and touch comfort */
+@media (max-width: 760px) {
+  .bottom-nav-item { font-size: .72rem; gap: 4px; }
+  .bottom-nav-item svg { width: 21px; height: 21px; }
+  .tutor-message-bubble { font-size: .82rem; line-height: 1.58; }
+  .tutor-welcome-message p { font-size: .76rem; }
+  .tutor-welcome-message strong { font-size: .82rem; }
+  .tutor-quick-prompts button { min-height: 40px; padding: 8px 11px; font-size: .72rem; }
+  .tutor-composer textarea { min-height: 44px; font-size: 16px; }
+  .tutor-composer button { width: 44px; height: 44px; flex-basis: 44px; }
+  .tutor-composer-hint, .tutor-cost-note { font-size: .68rem; }
+  .tutor-message-list { max-height: min(34vh, 320px); }
+  .auth-route-form input { min-height: 48px; font-size: 16px; }
+  .auth-submit { min-height: 50px; }
+  .card-header { gap: 8px; }
+}
+@media (hover: none) {
+  .card:hover, .btn:hover, .nav-item:hover, .option-item:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
