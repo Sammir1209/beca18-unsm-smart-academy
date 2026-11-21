@@ -33,7 +33,7 @@ export async function renderDashboard(container, navigateTo) {
             <span style="font-size: 0.8rem; color: var(--text-dim);">Convocatoria 2027</span>
           </div>
           <h1 class="dashboard-hero-title">
-            Buenos días, ${greetingName}
+            ${greeting}, ${greetingName}
           </h1>
           <p class="dashboard-hero-description">
             Tu ruta de preparación está optimizada para el <strong>Núcleo Común (Matemática + Comprensión Lectora)</strong> y la especialización en Ciencias para la UNSM.
