@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 import tempfile
@@ -82,3 +83,33 @@ def extract_with_paddle(image_path: Path, source_id: str, page: int = 1) -> Extr
         normalized_text=normalize_text(text), extraction_method="paddleocr",
         review_status="OCR_REVIEW"
     )
+
+
+def segment_page_questions(page: ExtractedQuestion) -> list[ExtractedQuestion]:
+    """Conservative numbered-question segmentation. Every result remains pending review."""
+    starts = list(re.finditer(r"(?m)^\\s*(\\d{1,3})[.)]\\s+", page.raw_text))
+    segments: list[ExtractedQuestion] = []
+    for index, match in enumerate(starts):
+        end = starts[index + 1].start() if index + 1 < len(starts) else len(page.raw_text)
+        block = page.raw_text[match.end():end].strip()
+        if not block:
+            continue
+        option_matches = list(re.finditer(r"(?m)^\\s*([A-E])[.)]\\s+", block))
+        stem = block[:option_matches[0].start()].strip() if option_matches else block
+        options: list[str] = []
+        for option_index, option_match in enumerate(option_matches):
+            option_end = option_matches[option_index + 1].start() if option_index + 1 < len(option_matches) else len(block)
+            option_text = block[option_match.end():option_end].strip()
+            options.append(f"{option_match.group(1)}. {option_text}")
+        segments.append(ExtractedQuestion(
+            source_id=page.source_id,
+            page=page.page,
+            original_number=int(match.group(1)),
+            raw_text=stem,
+            normalized_text=normalize_text(stem),
+            options=options,
+            extraction_method=page.extraction_method,
+            ocr_confidence=page.ocr_confidence,
+            review_status="SEGMENTATION_REVIEW"
+        ))
+    return segments
