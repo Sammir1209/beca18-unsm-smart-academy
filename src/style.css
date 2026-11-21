@@ -1599,3 +1599,18 @@ html, body { background: #F4F7FC !important; color: #1D2B45; }
   }
   .recommendation-row { padding: 15px !important; }
 }
+
+/* PRE-EINSTEIN — tutor único y superficies claras */
+.einstein-intro-card{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:12px;padding:16px;margin-bottom:14px;border-radius:20px;background:linear-gradient(135deg,#FFF1DB 0%,#FFFFFF 82%);border:1px solid #F0D2AA;box-shadow:0 8px 22px rgba(41,70,143,.06)}
+.einstein-mascot{width:76px;height:82px;display:grid;place-items:center;background:#FFF;border:1px solid #F3D6B4;border-radius:18px}
+.einstein-mascot svg{width:68px;height:74px}.einstein-intro-copy{min-width:0}.einstein-eyebrow{color:#B66A0B;font-size:.66rem;font-weight:800;letter-spacing:.09em}
+.einstein-intro-copy h3{color:#243F7C;font-size:1.05rem;margin:3px 0}.einstein-intro-copy p{color:#5E6878;font-size:.78rem;line-height:1.45}
+.einstein-online{grid-column:1/-1;display:flex;align-items:center;gap:7px;color:#26765B;font-size:.72rem;font-weight:700}.einstein-online i{width:7px;height:7px;border-radius:50%;background:#2BA879;box-shadow:0 0 0 4px #DDF5E9}
+.tutor-live-panel,.tutor-conversation{background:#FFF!important;border-color:#E3E9F3!important;color:#1D2B45!important}
+.tutor-live-heading strong,.tutor-conversation-head strong{color:#1D2B45!important}.tutor-overline{color:#B66A0B!important}
+.tutor-conversation-head span,.tutor-live-footnote{color:#65738A!important}.tutor-message-list{background:#FFFCF8!important}
+.tutor-welcome-message{background:#FFF3E3!important;border-color:#F2D4AE!important}.tutor-welcome-message strong{color:#29468F!important}.tutor-welcome-message p{color:#53627A!important}
+.tutor-quick-prompts button{background:#FFF4E5!important;border-color:#F2D4AE!important;color:#8D570F!important}
+.tutor-composer{background:#FFF!important;border-color:#DCE4F1!important}.tutor-composer textarea{background:#FFF!important;color:#1D2B45!important}
+.tutor-composer textarea::placeholder{color:#8793A6!important}.tutor-cost-note{color:#718096!important}
+@media(max-width:540px){.einstein-intro-card{grid-template-columns:64px minmax(0,1fr);padding:13px}.einstein-mascot{width:64px;height:70px}.einstein-mascot svg{width:58px;height:64px}}
