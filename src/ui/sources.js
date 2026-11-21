@@ -10,7 +10,7 @@ export function renderSources(container, navigateTo) {
       <div style="margin-bottom: 24px;">
         <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 6px;">Inventario de Fuentes Oficiales & Auditoría</h2>
         <p style="color: var(--text-muted); font-size: 0.95rem;">
-          Trazabilidad documental y hash SHA-256 de bases, prospectos y exámenes de PRONABEC (Beca 18) y UNSM (2023 - 2025).
+          Trazabilidad de documentos, procedencia, estados de revisión y huellas SHA-256 calculadas sobre archivos originales.
         </p>
       </div>
 
@@ -31,8 +31,10 @@ export function renderSources(container, navigateTo) {
 
             <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 12px;">
               <div><strong>Portal Oficial:</strong> <a href="${src.url}" target="_blank" rel="noreferrer" style="color: #60A5FA; text-decoration: none;">${src.url}</a></div>
-              <div><strong>Huella Digital (SHA-256):</strong> <code style="font-family: var(--font-mono); color: var(--text-muted);">${src.checksum}</code></div>
+              <div><strong>Huella Digital (SHA-256):</strong> <code style="font-family: var(--font-mono); color: var(--text-muted);">${src.checksum || 'Pendiente de cálculo sobre el archivo original'}</code></div>
             </div>
+
+            <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:10px;">Estado de verificación: <strong>${src.sourceReviewStatus || 'Pendiente de revisión'}</strong></div>
 
             <div style="display: flex; gap: 6px; flex-wrap: wrap;">
               ${src.subjectsCovered ? src.subjectsCovered.map(s => `<span class="tag tag-unsm" style="font-size: 0.7rem;">${s}</span>`).join('') : ''}
