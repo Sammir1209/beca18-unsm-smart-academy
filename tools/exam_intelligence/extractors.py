@@ -77,7 +77,7 @@ def extract_with_paddle(image_path: Path, source_id: str, page: int = 1) -> Extr
             data = item.get("res", item)
             texts = data.get("rec_texts", []) if isinstance(data, dict) else []
             fragments.extend(str(value) for value in texts)
-    text = "\\n".join(fragments)
+    text = "\n".join(fragments)
     return ExtractedQuestion(
         source_id=source_id, page=page, raw_text=text,
         normalized_text=normalize_text(text), extraction_method="paddleocr",
@@ -87,14 +87,14 @@ def extract_with_paddle(image_path: Path, source_id: str, page: int = 1) -> Extr
 
 def segment_page_questions(page: ExtractedQuestion) -> list[ExtractedQuestion]:
     """Conservative numbered-question segmentation. Every result remains pending review."""
-    starts = list(re.finditer(r"(?m)^\\s*(\\d{1,3})[.)]\\s+", page.raw_text))
+    starts = list(re.finditer(r"(?m)^\s*(\d{1,3})[.)]\s+", page.raw_text))
     segments: list[ExtractedQuestion] = []
     for index, match in enumerate(starts):
         end = starts[index + 1].start() if index + 1 < len(starts) else len(page.raw_text)
         block = page.raw_text[match.end():end].strip()
         if not block:
             continue
-        option_matches = list(re.finditer(r"(?m)^\\s*([A-E])[.)]\\s+", block))
+        option_matches = list(re.finditer(r"(?m)^\s*([A-E])[.)]\s+", block))
         stem = block[:option_matches[0].start()].strip() if option_matches else block
         options: list[str] = []
         for option_index, option_match in enumerate(option_matches):
