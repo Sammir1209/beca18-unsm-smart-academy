@@ -93,13 +93,13 @@ Las etiquetas `OFICIAL`, `VALIDATED` y `isFija` requieren evidencia documental, 
 
 ### Cloudflare Pages
 
-El proyecto Pages `beca18-unsm-smart-academy` es actualmente un frontend Vite estático (`dist`) y su configuración de proyecto no detecta Pages Functions (`uses_functions=false`). Se configuraron en producción y preview las variables públicas `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY`. Son credenciales publicables del cliente; nunca colocar aquí una service-role key.
+El despliegue de **producción** de Cloudflare Pages sigue correspondiendo a la versión anterior, estática. La **vista previa más reciente** de la rama de hardening ya incluye Pages Functions (`uses_functions=true`) y expone el proxy de las tres rutas del tutor. Se configuraron en producción y preview las variables públicas `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY`; son credenciales publicables del cliente y nunca debe colocarse aquí una service-role key.
 
-Los endpoints `/api/tutor/chat`, `/api/tutor/tts` y `/api/tutor/live-token` están implementados como funciones serverless de Vercel en `api/tutor/`. No se deben considerar disponibles bajo el dominio `pages.dev` mientras Pages siga siendo un despliegue estático sin funciones o proxy. La publicación principal debe utilizar un hosting que despliegue también esas rutas, o debe implementarse y probarse un proxy Pages Functions hacia un backend Vercel de producción antes de anunciar esas funciones en Pages.
+Las APIs de origen están implementadas como funciones serverless de Vercel en `api/tutor/`. La vista previa de Pages usa `functions/api/tutor/` como proxy de mismo origen. `TUTOR_API_BASE_URL` solo se configuró en el entorno **preview** y apunta al último backend Vercel disponible, que corresponde a un commit anterior de la rama. La variable **no existe en producción** y no se debe copiar a producción hasta contar con un deployment Vercel actualizado y validado.
 
 ### Vercel
 
-El proyecto `unsm-academy` tiene dominio `unsm-academy.vercel.app` y variables Vercel de Supabase configuradas. El despliegue de producción registrado es anterior a la rama de hardening; los despliegues recientes de la rama de trabajo son previews. No promover la rama de hardening a producción hasta cerrar las pruebas E2E y revisar el despliegue de backend.
+El proyecto `unsm-academy` tiene dominio `unsm-academy.vercel.app` y variables Vercel de Supabase configuradas. El despliegue de producción registrado es anterior a la rama de hardening; los despliegues recientes de la rama de trabajo son previews. El último backend Vercel disponible para el proxy de Pages pertenece al commit `2b3ad22feaaf3c30ae6ad13428415639da2369f8`, no al HEAD actual. La creación de nuevos despliegues fue bloqueada por el límite diario gratuito de la API. No promover una URL o backend de preview a producción.
 
 ### Cuotas TTS
 
@@ -119,3 +119,16 @@ Se añadieron Pages Functions en `functions/api/tutor/` para exponer en el mismo
 La variable `TUTOR_API_BASE_URL` está configurada solo en el entorno **preview** de Cloudflare Pages y apunta al deployment Vercel disponible para esta rama. La variable no está configurada en producción. Antes de promover la nueva versión a producción debe actualizarse el backend Vercel de producción y realizar pruebas autenticadas de chat, TTS y voz en tiempo real. No se debe usar una URL de preview como backend estable de producción.
 
 Las pruebas automatizadas `tests/pages-tutor-proxy.test.js` cubren método, validación de origen, configuración ausente, lista de encabezados permitidos, respuestas binarias y rechazo de hosts externos.
+
+
+## Progreso personal y aislamiento entre cuentas
+
+- IndexedDB usa la versión 3 y dispone de un almacén de errores con clave compuesta `[userId, questionId]`; el historial de invitado se mantiene separado.
+- Los intentos locales se etiquetan con el usuario activo. Los eventos sin propietario permanecen como progreso local de invitado y nunca se atribuyen a la siguiente cuenta que inicie sesión.
+- El RPC `sync_student_progress` deriva `user_id` de `auth.uid()`, limita cada lote a 100 elementos y persiste el indicador de acierto como dato de práctica; nunca recibe ni almacena la clave correcta.
+- Al restaurar progreso en otro dispositivo, la aplicación reconstruye el historial de errores a partir de eventos del mismo usuario.
+- La puntuación es un diagnóstico de práctica personal, no un resultado oficial ni un dato de admisión.
+
+## Trazabilidad documental y hashes
+
+Los registros de `research/sources/source-inventory.json` son referencias catalogadas y no una certificación de sus documentos. Las huellas que no se calcularon sobre archivos originales se han eliminado y se marcan como `NOT_COMPUTED`. Las fuentes secundarias y los archivos aportados se identifican como tales en la vista de inventario. Las preguntas permanecen en revisión hasta comprobar el PDF original, página, enunciado, alternativas y clave.
