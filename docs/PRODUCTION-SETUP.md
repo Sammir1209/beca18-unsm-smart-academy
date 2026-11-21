@@ -99,7 +99,7 @@ Las APIs de origen están implementadas como funciones serverless de Vercel en `
 
 ### Vercel
 
-El proyecto `unsm-academy` tiene dominio `unsm-academy.vercel.app` y variables Vercel de Supabase configuradas. El despliegue de producción registrado es anterior a la rama de hardening; los despliegues recientes de la rama de trabajo son previews. El último backend Vercel disponible para el proxy de Pages pertenece al commit `2b3ad22feaaf3c30ae6ad13428415639da2369f8`, no al HEAD actual. La creación de nuevos despliegues fue bloqueada por el límite diario gratuito de la API. No promover una URL o backend de preview a producción.
+El proyecto `unsm-academy` tiene dominio `unsm-academy.vercel.app` y variables Vercel de Supabase configuradas. El despliegue de producción registrado es anterior a la rama de hardening; los despliegues recientes de la rama de trabajo son previews. El backend Vercel de preview seleccionado para el proxy Pages es `https://unsm-academy-9rnn72eml-samirconter-1146s-projects.vercel.app`, asociado al commit `2c85f602ba1bd0d6ad42723af454b275968fc4c4`. Está listo como deployment de preview, pero no coincide con el HEAD actual de la rama; por eso no debe promocionarse a producción. La creación de nuevos despliegues fue bloqueada por el límite diario gratuito de la API. No promover una URL o backend de preview a producción.
 
 ### Cuotas TTS
 
@@ -135,3 +135,12 @@ Los registros de `research/sources/source-inventory.json` son referencias catalo
 
 
 La migración `20261121230005_harden_sync_student_progress_validation.sql` aplica una segunda pasada de validación al RPC de sincronización: comprueba el tipo del lote antes de medir su longitud, rechaza IDs UUID inválidos y mantiene los permisos restringidos al usuario autenticado y al rol de servicio.
+
+
+## Auditoría de revisión final — estado de rama
+
+- Las Pages Functions limitan cuerpos de petición a 32 KiB durante la lectura del stream, validan el origen cuando está presente y solo aceptan el host del deployment Vercel del proyecto.
+- Los archivos de migración locales fueron alineados con las versiones reales que Supabase registra: `20261121220334`, `20261121220511`, `20261121222809`, `20261121225433` y `20261121230005`.
+- La migración `20261121230005_harden_sync_student_progress_validation.sql` comprueba primero el tipo JSON del lote, después su longitud y rechaza UUID inválidos.
+- Se eliminaron las declaraciones de recurrencia fija sin evidencia y el inventario de fuentes no presenta hashes no calculados como huellas verificadas.
+- Las estadísticas de inicio y las recomendaciones se calculan desde intentos reales del usuario; el progreso de invitado queda separado de las cuentas autenticadas.
