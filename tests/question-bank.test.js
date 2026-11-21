@@ -39,3 +39,9 @@ test('unverified content is never silently promoted to published', () => {
     }
   }
 });
+
+test('unverified questions are never marked as fixed exam recurrences', () => {
+  for (const [index, question] of questions.entries()) {
+    assert.notEqual(question.isFija, true, `question[${index}] cannot claim fixed recurrence without verified repeated sources`);
+  }
+});
