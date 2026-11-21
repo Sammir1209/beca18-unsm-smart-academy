@@ -46,7 +46,7 @@ export async function renderDashboard(container, navigateTo) {
           </button>
           <button id="btn-start-simulator" class="btn btn-primary">
             ${icon('simulator', { size: 18, color: '#fff' })}
-            Simulacro Oficial
+            Ver simulacros
           </button>
         </div>
       </section>
@@ -105,7 +105,7 @@ export async function renderDashboard(container, navigateTo) {
           <div class="card-header">
             <div>
               <div class="stat-value">${repo.questions.length}</div>
-              <div class="stat-label">Preguntas Oficiales</div>
+              <div class="stat-label">Preguntas en revisión</div>
             </div>
             <div class="card-icon emerald">
               ${icon('star', { size: 24, color: 'var(--accent-beca)' })}
@@ -113,7 +113,7 @@ export async function renderDashboard(container, navigateTo) {
           </div>
           <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
             ${icon('sources', { size: 14, color: 'var(--accent-beca)' })}
-            UNSM (Ordinario) y Beca 18 (ENP)
+            Banco académico en proceso de validación
           </div>
         </div>
       </div>
@@ -145,10 +145,10 @@ export async function renderDashboard(container, navigateTo) {
       <div class="card">
         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
           ${icon('zap', { size: 18, color: 'var(--accent-alert)' })}
-          Frecuencia Histórica en Exámenes (2023 - 2025)
+          Temas de estudio y práctica
         </h3>
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
-          Distribución de temas que han concentrado mayor recurrencia oficial en Beca 18 y UNSM.
+          Referencias orientativas de estudio. Las frecuencias y ponderaciones oficiales se mostrarán cuando estén respaldadas por prospectos y exámenes verificables.
         </p>
         <div class="frequency-grid">
           <div class="frequency-card frequency-card-beca">
