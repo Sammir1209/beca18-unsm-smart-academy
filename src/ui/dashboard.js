@@ -39,6 +39,7 @@ export async function renderDashboard(container, navigateTo) {
             Tu ruta de preparación está optimizada para el <strong>Núcleo Común (Matemática + Comprensión Lectora)</strong> y la especialización en Ciencias para la UNSM.
           </p>
         </div>
+        <div class="dashboard-einstein-note"><img src="/stickers/einstein-explaining.svg" alt="Einstein explicando"><div><strong>Tu compañero de estudio</strong><span>Einstein te ayuda a comprender, practicar y corregir tus errores.</span></div></div>
         <div class="dashboard-hero-actions">
           <button id="btn-start-practice" class="btn btn-beca">
             ${icon('practice', { size: 18, color: '#064E3B' })}
