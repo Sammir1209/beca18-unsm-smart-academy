@@ -103,7 +103,7 @@ El proyecto `unsm-academy` tiene dominio `unsm-academy.vercel.app` y variables V
 
 ### Cuotas TTS
 
-La migración `20261121223000_harden_tts_quota_parameters.sql` fija en servidor los límites de voz neuronal: 8 peticiones y 9,000 caracteres por ventana de 60 segundos, con máximo de 1,800 caracteres por solicitud. El RPC rechaza valores de política alterados por el cliente. La migración está aplicada en Supabase y versionada en el repositorio.
+La migración `20261121222809_harden_tts_quota_parameters.sql` fija en servidor los límites de voz neuronal: 8 peticiones y 9,000 caracteres por ventana de 60 segundos, con máximo de 1,800 caracteres por solicitud. El RPC rechaza valores de política alterados por el cliente. La migración está aplicada en Supabase y versionada en el repositorio.
 
 
 ## Proxy de APIs del tutor en Cloudflare Pages
@@ -132,3 +132,6 @@ Las pruebas automatizadas `tests/pages-tutor-proxy.test.js` cubren método, vali
 ## Trazabilidad documental y hashes
 
 Los registros de `research/sources/source-inventory.json` son referencias catalogadas y no una certificación de sus documentos. Las huellas que no se calcularon sobre archivos originales se han eliminado y se marcan como `NOT_COMPUTED`. Las fuentes secundarias y los archivos aportados se identifican como tales en la vista de inventario. Las preguntas permanecen en revisión hasta comprobar el PDF original, página, enunciado, alternativas y clave.
+
+
+La migración `20261121230005_harden_sync_student_progress_validation.sql` aplica una segunda pasada de validación al RPC de sincronización: comprueba el tipo del lote antes de medir su longitud, rechaza IDs UUID inválidos y mantiene los permisos restringidos al usuario autenticado y al rol de servicio.
