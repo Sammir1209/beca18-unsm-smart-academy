@@ -95,3 +95,17 @@ test('Pages tutor proxy rejects a non-Vercel upstream host', async () => {
   );
   assert.equal(response.status, 503);
 });
+
+test('Pages tutor proxy rejects oversized request bodies', async () => {
+  const oversized = 'x'.repeat(32 * 1024 + 1);
+  const response = await proxyTutorRequest(
+    new Request('https://academy.pages.dev/api/tutor/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: oversized,
+    }),
+    { TUTOR_API_BASE_URL: API_BASE },
+    'chat'
+  );
+  assert.equal(response.status, 413);
+});
