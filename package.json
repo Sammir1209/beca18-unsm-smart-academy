@@ -7,7 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "gh-pages -d dist -b gh-pages"
+    "deploy": "gh-pages -d dist -b gh-pages",
+    "test": "node --test",
+    "test:content": "node --test tests/*.test.js"
   },
   "devDependencies": {
     "gh-pages": "^6.3.0",
