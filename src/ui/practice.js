@@ -150,6 +150,12 @@ export function renderPractice(container, navigateTo) {
               }).join('')}
             </div>
 
+            <button type="button" class="einstein-help-trigger" id="btn-einstein-help" aria-controls="einstein-help-drawer">
+              <img src="/einstein-mascot.svg" alt="" loading="lazy">
+              <span><strong>¿Necesitas una pista? Pregúntale a Einstein</strong><small>Te ayudará a entender el problema sin revelarte la respuesta.</small></span>
+              <span class="einstein-help-arrow" aria-hidden="true">›</span>
+            </button>
+
             <!-- Panel de Acciones -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
               <button id="btn-dont-know" class="btn btn-doubt" ${hasSubmitted ? 'disabled' : ''}>
@@ -244,8 +250,10 @@ export function renderPractice(container, navigateTo) {
         </div>
 
         <!-- PANEL DEL TUTOR: selección, avatar y conversación -->
-<aside class="practice-tutor-sidebar">
-  <section class="tutor-panel-card">
+<details class="practice-tutor-sidebar einstein-help-drawer" id="einstein-help-drawer">
+  <summary><img src="/einstein-mascot.svg" alt=""><span>Conversar con Einstein<small>Explicaciones paso a paso y ayuda por voz</small></span></summary>
+  <section class="tutor-panel-card einstein-help-content">
+    <div class="einstein-speech-intro"><img src="/einstein-mascot.svg" alt="Einstein, tu guía de aprendizaje"><div class="einstein-speech-bubble"><strong>¡Hola, futuro universitario!</strong>Cuéntame qué parte del ejercicio te está confundiendo. Lo resolveremos juntos, paso a paso.</div></div>
     <div class="tutor-visual-header">
       <div class="tutor-visual-identity">
         <span class="tutor-visual-icon"><i data-lucide="brain"></i></span>
@@ -259,7 +267,7 @@ export function renderPractice(container, navigateTo) {
     </div>
     <div id="tutor-chat-mount"></div>
   </section>
-</aside>
+</details>
 
       </div>
     `;
@@ -292,6 +300,14 @@ export function renderPractice(container, navigateTo) {
         }
       });
     }
+
+    document.getElementById('btn-einstein-help')?.addEventListener('click', () => {
+      const drawer = document.getElementById('einstein-help-drawer');
+      if (!drawer) return;
+      drawer.open = true;
+      drawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.setTimeout(() => document.getElementById('tutor-chat-input')?.focus({ preventScroll: true }), 350);
+    });
 
     // 3. Filtros de Institución
     document.getElementById('filter-inst-all')?.addEventListener('click', () => {
