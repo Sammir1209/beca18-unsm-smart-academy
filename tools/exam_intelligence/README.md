@@ -1,24 +1,34 @@
 # Exam Intelligence
 
-Independent Python pipeline for trusted exam document ingestion and historical recurrence analysis.
+Python 3.11+ document ingestion and recurrence analysis package, separate from the Vite student application.
+
+## Architecture
+
+- **Student app:** Vite/JavaScript, consumes only reviewed JSON question banks.
+- **Admin pipeline:** Python CLI for document intake, OCR, extraction, metadata audit, lexical/semantic recurrence candidates.
+- **Review gate:** OCR output, answer keys, classifications and all recurrence candidates require human review before publication.
 
 ## Install
-
-Use Python 3.11+ and a virtual environment:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -e ".[dev,docling,ocr,semantic]"
+python -m pip install -e ".[dev,docling,ocr]"
 ```
 
-PaddleOCR is intentionally optional because it requires an inference backend and platform-specific installation. Install it separately after selecting CPU/GPU runtime:
+PaddleOCR is an optional fallback because the runtime needs a compatible inference backend. Install it separately after choosing CPU/GPU:
 
 ```bash
 python -m pip install -e ".[paddle]"
 ```
 
-OCRmyPDF also requires system tools such as Tesseract and a PDF rasterizer. Follow the upstream OS-specific installation guide.
+Sentence Transformers is optional and downloads a model on first semantic comparison:
+
+```bash
+python -m pip install -e ".[semantic]"
+```
+
+OCRmyPDF requires system dependencies (Tesseract and a PDF rasterizer; follow the upstream OS-specific installation guide). Do not install PaddleOCR's full `[all]` dependency set by default: select only required capabilities.
 
 ## Commands
 
@@ -27,14 +37,24 @@ exam-intel audit --bank data/questions/questions.json
 exam-intel audit --bank data/questions/questions.json --apply
 exam-intel ingest ./exam.pdf --source-id UNSM-ORD-2026-II --institution UNSM --modality ORDINARIO --year 2026 --title "UNSM Ordinario 2026-II" --ocr
 exam-intel compare --bank data/questions/questions.json
+exam-intel compare --bank data/questions/questions.json --semantic
 ```
 
-## Safety and publication rules
+The `--apply` audit migration only clears unsupported `isFija` labels and marks recurrence `UNVERIFIED`. It does not alter question text, alternatives, answer keys or explanations.
 
-- Original PDFs are immutable; calculate and store a real SHA-256 checksum.
-- Extraction is page-level only. It does not claim question segmentation or key verification.
-- OCR output always requires review; formulas and image-dependent questions must be checked visually.
-- Similarity creates review candidates only. No automatic fixed-question promotion.
-- Topic frequency is counted by distinct source document, not raw question count.
-- Only a separately reviewed/approved dataset may be published to the student application.
-- Do not use source files unless their provenance and usage conditions are recorded.
+## Processing policy
+
+1. Keep the original PDF immutable and calculate its actual SHA-256.
+2. Use PyMuPDF for page-preserving text extraction; Docling is the structured-document fallback for PDFs with no usable text layer.
+3. Use OCRmyPDF to create a searchable PDF from scans. PaddleOCR is an optional page/image OCR fallback.
+4. Never auto-complete illegible text, formulas, graphics or options.
+5. RapidFuzz produces exact/near-text candidates. Sentence Transformers is an optional semantic candidate generator.
+6. Automated matches are never promoted to fixed questions. Human review is mandatory.
+7. Topic frequency counts distinct source documents, not question totals alone.
+8. An extracted PDF page is not yet a segmented question. Each question must be reviewed and assigned its original page/number.
+9. An item without a verified key is not eligible for a scored official simulation.
+10. Do not publish a bank unless modality, source, answer key, options and coverage pass quality gates.
+
+## Why Label Studio is not deployed
+
+Label Studio is a full annotation platform and would add another service and operating surface. The current bank is small enough for a focused review queue in our own admin interface. Reconsider it when multiple reviewers or large-scale labeling justify the extra infrastructure.
