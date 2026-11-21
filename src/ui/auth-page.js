@@ -131,7 +131,7 @@ export function renderAuthPage(container, route, navigate) {
         setFeedback('Cuenta creada correctamente.', 'success');
         navigate('dashboard');
       } else {
-        setFeedback('Supabase todavía está exigiendo confirmación de correo. Desactiva “Confirm email” en Authentication → Providers → Email para habilitar el registro directo.', 'error');
+        setFeedback('Cuenta creada. Revisa tu correo y confirma la dirección; después podrás iniciar sesión. La confirmación de email está activa en Supabase.', 'success');
       }
     } catch (error) {
       const message = error?.message || 'No se pudo completar la solicitud.';
