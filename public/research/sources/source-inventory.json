@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "generatedDate": "2026-10-08",
+  "version": "2.0.0",
+  "generatedDate": "2026-11-21",
   "institutions": {
     "PRONABEC": {
       "name": "Programa Nacional de Becas y Crédito Educativo",
@@ -35,38 +35,47 @@
         {
           "id": "ORDINARIO",
           "name": "Examen de Admisión Ordinario",
-          "description": "Examen general de 100 preguntas que evalúa ciencias, matemáticas y humanidades.",
-          "durationMinutes": 180,
+          "description": "Modalidad ordinaria. La estructura de 100 preguntas y 150 minutos se basa en el Reglamento 2024-I; verificar el prospecto de cada convocatoria antes de declararla oficial.",
+          "durationMinutes": 150,
           "questionCount": 100,
           "scoring": {
-            "correct": 4,
-            "incorrect": -0.5,
-            "blank": 0
-          }
+            "correct": null,
+            "incorrect": 0,
+            "blank": 0,
+            "weighting": "Ponderación por bloque/carrera pendiente de importar desde el prospecto vigente."
+          },
+          "regulationReference": "https://transparencia.unsm.edu.pe/documentos/2024/transparencyportal/admission/432f0a36-4561-4d74-90df-c9e6b93d7826.pdf",
+          "configurationStatus": "REFERENCE_2024_REQUIRES_CURRENT_PROSPECTUS"
         },
         {
-          "id": "EXTRAORDINARIO",
-          "name": "Examen Especial / Extraordinario (Primeros Puestos, Graduados, Deportistas)",
-          "description": "Evaluación específica con ponderación orientada a razonamiento y aptitud académica.",
-          "durationMinutes": 120,
-          "questionCount": 60,
-          "scoring": {
-            "correct": 4,
-            "incorrect": -0.5,
-            "blank": 0
-          }
-        },
-        {
-          "id": "CONCURSO_ESCOLAR",
-          "name": "Concurso de Admisión Escolar / Quinto de Secundaria",
-          "description": "Dirigido a estudiantes de 5to año de educación secundaria con foco curricular de educación básica regular.",
+          "id": "EXTRAORDINARIO_I",
+          "name": "Examen Extraordinario I",
+          "description": "Modalidad extraordinaria I. No reutilizar preguntas del Ordinario. Validar condiciones y pesos con prospecto vigente.",
           "durationMinutes": 150,
-          "questionCount": 80,
+          "questionCount": 100,
           "scoring": {
-            "correct": 4,
-            "incorrect": -0.5,
-            "blank": 0
-          }
+            "correct": null,
+            "incorrect": 0,
+            "blank": 0,
+            "weighting": "Pendiente de matriz oficial vigente."
+          },
+          "regulationReference": "https://transparencia.unsm.edu.pe/documentos/2024/transparencyportal/admission/432f0a36-4561-4d74-90df-c9e6b93d7826.pdf",
+          "configurationStatus": "REFERENCE_2024_REQUIRES_CURRENT_PROSPECTUS"
+        },
+        {
+          "id": "EXTRAORDINARIO_II",
+          "name": "Examen Extraordinario II · Concurso Escolar",
+          "description": "Modalidad Concurso Escolar. No reutilizar preguntas de otras modalidades.",
+          "durationMinutes": 150,
+          "questionCount": 100,
+          "scoring": {
+            "correct": null,
+            "incorrect": 0,
+            "blank": 0,
+            "weighting": "Pendiente de matriz oficial vigente."
+          },
+          "regulationReference": "https://transparencia.unsm.edu.pe/documentos/2024/transparencyportal/admission/432f0a36-4561-4d74-90df-c9e6b93d7826.pdf",
+          "configurationStatus": "REFERENCE_2024_REQUIRES_CURRENT_PROSPECTUS"
         }
       ]
     }
@@ -82,14 +91,16 @@
       "url": "https://www.pronabec.gob.pe/beca-18/",
       "sourceType": "OFICIAL",
       "availability": "CATALOGADO",
-      "checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "checksum": null,
       "subjectsCovered": [
         "Aritmetica",
         "Algebra",
         "Geometria",
         "Trigonometria",
         "Comprension Lectora"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-PRONABEC-2024-ENP-SIM",
@@ -101,11 +112,13 @@
       "url": "https://www.gob.pe/institucion/pronabec/informes-publicaciones",
       "sourceType": "OFICIAL",
       "availability": "PROCESADO",
-      "checksum": "a8f5c123d45e67890abcdef1234567890abcdef1234567890abcdef1234567890",
+      "checksum": null,
       "subjectsCovered": [
         "Matematica",
         "Competencia Lectora"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-PRONABEC-2023-ENP-EXAM",
@@ -117,11 +130,13 @@
       "url": "https://www.gob.pe/pronabec",
       "sourceType": "PROCESADO_DESDE_OFICIAL",
       "availability": "PROCESADO",
-      "checksum": "b9c8e76543210fedcba0987654321fedcba0987654321fedcba09876543210fed",
+      "checksum": null,
       "subjectsCovered": [
         "Matematica",
         "Competencia Lectora"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-UNSM-2025-ORD-PROSP",
@@ -134,7 +149,7 @@
       "url": "https://admision.unsm.edu.pe/prospecto-2025-1",
       "sourceType": "OFICIAL",
       "availability": "CATALOGADO",
-      "checksum": "c7d8e9f0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+      "checksum": null,
       "subjectsCovered": [
         "Matematica",
         "Fisica",
@@ -145,7 +160,9 @@
         "Historia",
         "Geografia",
         "Filosofia"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-UNSM-2024-ORD-EXAM",
@@ -158,7 +175,7 @@
       "url": "https://admision.unsm.edu.pe/examenes-pasados",
       "sourceType": "PROCESADO_DESDE_OFICIAL",
       "availability": "PROCESADO",
-      "checksum": "d1e2f3a4b5c60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef01",
+      "checksum": null,
       "subjectsCovered": [
         "Aritmetica",
         "Algebra",
@@ -169,7 +186,9 @@
         "Biologia",
         "Razonamiento Verbal",
         "Lenguaje"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-UNSM-2023-ORD-EXAM",
@@ -182,7 +201,7 @@
       "url": "https://admision.unsm.edu.pe/examenes-pasados",
       "sourceType": "PROCESADO_DESDE_OFICIAL",
       "availability": "PROCESADO",
-      "checksum": "e2f3a4b5c6d708192a3b4c5d6e7f8a90123456789abcdef0123456789abcdef02",
+      "checksum": null,
       "subjectsCovered": [
         "Aritmetica",
         "Algebra",
@@ -191,7 +210,9 @@
         "Quimica",
         "Biologia",
         "Razonamiento Verbal"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-UNSM-2024-ESC-EXAM",
@@ -203,12 +224,14 @@
       "url": "https://admision.unsm.edu.pe",
       "sourceType": "PROCESADO_DESDE_OFICIAL",
       "availability": "PROCESADO",
-      "checksum": "f3a4b5c6d7e819203b4c5d6e7f8a9b0123456789abcdef0123456789abcdef03",
+      "checksum": null,
       "subjectsCovered": [
         "Matematica",
         "Comunicacion",
         "Ciencia y Tecnologia"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-USER-DOCX-CULTURA-2026",
@@ -221,13 +244,15 @@
       "url": "public/data/CULTURA GENERAL 2026 I.docx",
       "sourceType": "USER_PROVIDED",
       "availability": "PROCESADO",
-      "checksum": "sha256_docx_cultura_general_2026_unsm",
+      "checksum": null,
       "subjectsCovered": [
         "Cultura General",
         "Literatura",
         "Historia de San Martin",
         "Educacion Civica"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-WEB-BECA18-HUB-MAT",
@@ -239,13 +264,15 @@
       "url": "https://matematicasn.blogspot.com/2018/12/examen-unico-nacional-beca-18-pronabec.html",
       "sourceType": "SECUNDARIA",
       "availability": "CATALOGADO_Y_PROCESADO",
-      "checksum": "sha256_matematicasn_beca18_hub",
+      "checksum": null,
       "subjectsCovered": [
         "Matematica",
         "Competencia Lectora",
         "Razonamiento Matematico",
         "Razonamiento Verbal"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-WEB-UNSM-HUB-MAT",
@@ -257,7 +284,7 @@
       "url": "https://matematicasn.blogspot.com/2020/03/unsm-examen-de-admision-a-la-universidad-nacional-de-san-martin-solucionario-en-pdf.html",
       "sourceType": "SECUNDARIA",
       "availability": "CATALOGADO_Y_PROCESADO",
-      "checksum": "sha256_matematicasn_unsm_hub",
+      "checksum": null,
       "subjectsCovered": [
         "Matematica",
         "Fisica",
@@ -266,7 +293,9 @@
         "Historia del Peru",
         "Geografia",
         "Cultura General"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-WEB-ALGEBRA-PDF-BECA18",
@@ -278,12 +307,14 @@
       "url": "https://algebraenpdf.blogspot.com/2019/11/prueba-unica-nacional-beca-18-pronabec-resuelta-admision-universidad-solucionario-pdf.html",
       "sourceType": "SECUNDARIA",
       "availability": "PROCESADO",
-      "checksum": "sha256_algebraenpdf_beca18",
+      "checksum": null,
       "subjectsCovered": [
         "Algebra",
         "Aritmetica",
         "Razonamiento Matematico"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-WEB-OPERADORES-ARBITRARIOS",
@@ -295,10 +326,12 @@
       "url": "https://matematicasn.blogspot.com/2015/12/operaciones-matematicas-arbitrarias_31.html",
       "sourceType": "SECUNDARIA",
       "availability": "PROCESADO",
-      "checksum": "sha256_operadores_arbitrarios_mat",
+      "checksum": null,
       "subjectsCovered": [
         "Razonamiento Matematico"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     },
     {
       "sourceId": "SRC-WEB-SIMULACRO-BECA18-PDF",
@@ -310,11 +343,13 @@
       "url": "https://algebraenpdf.blogspot.com/2019/11/solucionario-simulacro-beca-18-prueba-pronabec-admision-universidad-en-pdf.html",
       "sourceType": "SECUNDARIA",
       "availability": "PROCESADO",
-      "checksum": "sha256_simulacro_beca18_pdf",
+      "checksum": null,
       "subjectsCovered": [
         "Matematica",
         "Competencia Lectora"
-      ]
+      ],
+      "checksumStatus": "NOT_COMPUTED_FROM_ORIGINAL_FILE",
+      "sourceReviewStatus": "NEEDS_SOURCE_AND_FILE_VERIFICATION"
     }
   ]
 }
