@@ -13,7 +13,6 @@ import { supabase } from '../core/supabase.js';
 export function renderPractice(container, navigateTo) {
   let activeFilterInstitution = 'ALL';
   let activeFilterSubjects = new Set();
-  let activeFilterOnlyFijas = false;
 
   let currentIndex = 0;
   let selectedOption = null;
@@ -29,7 +28,6 @@ export function renderPractice(container, navigateTo) {
     const snapshot = {
       institution: activeFilterInstitution,
       subjects: [...activeFilterSubjects],
-      onlyFijas: activeFilterOnlyFijas,
       currentQuestionId: filtered[currentIndex]?.id || null,
       currentIndex, selectedOption, hasSubmitted, wasDoubtMode,
       updatedAt: new Date().toISOString()
@@ -66,7 +64,6 @@ export function renderPractice(container, navigateTo) {
     if (!snapshot) return;
     activeFilterInstitution = ['ALL', 'PRONABEC', 'UNSM'].includes(snapshot.institution) ? snapshot.institution : 'ALL';
     activeFilterSubjects = new Set(Array.isArray(snapshot.subjects) ? snapshot.subjects : []);
-    activeFilterOnlyFijas = Boolean(snapshot.onlyFijas);
     const filtered = getFilteredQuestions();
     const restoredIndex = snapshot.currentQuestionId ? filtered.findIndex(question => question.id === snapshot.currentQuestionId) : -1;
     currentIndex = restoredIndex >= 0 ? restoredIndex : Math.max(0, Math.min(Number(snapshot.currentIndex) || 0, Math.max(0, filtered.length - 1)));
@@ -79,7 +76,6 @@ export function renderPractice(container, navigateTo) {
     return repo.questions.filter(q => {
       if (activeFilterInstitution !== 'ALL' && q.institution !== activeFilterInstitution) return false;
       if (activeFilterSubjects.size > 0 && !activeFilterSubjects.has(q.subject)) return false;
-      if (activeFilterOnlyFijas && !q.isFija) return false;
       return true;
     });
   }
@@ -94,7 +90,7 @@ export function renderPractice(container, navigateTo) {
         <!-- COLUMNA PRINCIPAL DE PREGUNTAS (IZQUIERDA) -->
         <div style="flex: 1; min-width: 320px;" class="question-container">
           
-          <!-- Barra de Filtros de Banco (Fijas, Institución, Cursos) -->
+          <!-- Filtros por institución y curso -->
           <div class="card" style="padding: 16px 20px; margin-bottom: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
               <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
@@ -114,11 +110,6 @@ export function renderPractice(container, navigateTo) {
               </div>
 
               <div style="display: flex; gap: 10px; align-items: center;">
-                <button class="btn btn-sm ${activeFilterOnlyFijas ? 'btn-beca' : 'btn-secondary'}" id="filter-toggle-fijas" style="border: 1px solid var(--accent-alert); display: flex; align-items: center; gap: 6px;">
-                  ${icon('star', { size: 14, color: activeFilterOnlyFijas ? '#064E3B' : 'var(--accent-alert)' })}
-                  Solo Fijas
-                </button>
-
                 <button type="button" class="btn btn-sm btn-secondary" id="clear-subject-filters">Limpiar temas</button>
               </div>
               <div class="practice-subject-picker" aria-label="Seleccionar varios temas">
@@ -161,10 +152,10 @@ export function renderPractice(container, navigateTo) {
               </div>
             </div>
 
-            <!-- Metadatos de la Pregunta Oficial -->
+            <!-- Institución, modalidad y procedencia declarada -->
             <div class="question-meta">
               <span class="tag ${questions[currentIndex].institution === 'PRONABEC' ? 'tag-beca' : 'tag-unsm'}">${questions[currentIndex].institution}</span>
-              <span class="tag tag-unsm">${questions[currentIndex].examType} ${questions[currentIndex].year}</span>
+              <span class="tag tag-unsm">${questions[currentIndex].examType} · ${questions[currentIndex].year}</span>
               <span class="tag ${questions[currentIndex].difficulty === 'BASICO' ? 'tag-diff-basic' : questions[currentIndex].difficulty === 'INTERMEDIO' ? 'tag-diff-mid' : 'tag-diff-adv'}">${questions[currentIndex].difficulty}</span>
               ${questions[currentIndex].status === 'REVIEW_REQUIRED' ? '<span class="tag" style="background:rgba(245,158,11,.12);color:#B45309;">REFERENCIA EN REVISIÓN</span>' : ''}
               ${questions[currentIndex].isFija ? `<span class="tag tag-diff-mid" style="background-color: rgba(245, 158, 11, 0.2); color: #FBBF24; display: inline-flex; align-items: center; gap: 4px;">${icon('star', { size: 12, color: '#FBBF24' })} FIJA DE EXAMEN</span>` : ''}
@@ -346,15 +337,7 @@ export function renderPractice(container, navigateTo) {
       wasDoubtMode = false;
       renderView();
     });
-    document.getElementById('filter-toggle-fijas')?.addEventListener('click', () => {
-      activeFilterOnlyFijas = !activeFilterOnlyFijas;
-      currentIndex = 0;
-      selectedOption = null;
-      hasSubmitted = false;
-      wasDoubtMode = false;
-      renderView();
-    });
-    document.getElementById('clear-subject-filters')?.addEventListener('click', () => {
+        document.getElementById('clear-subject-filters')?.addEventListener('click', () => {
       activeFilterSubjects.clear();
       currentIndex = 0; selectedOption = null; hasSubmitted = false; wasDoubtMode = false;
       savePracticeState();
