@@ -3,7 +3,7 @@
 // ==========================================================================
 
 const DB_NAME = 'SmartAcademyDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 class StorageService {
   constructor() {
@@ -50,6 +50,11 @@ class StorageService {
         if (!db.objectStoreNames.contains('attempts')) {
           const aStore = db.createObjectStore('attempts', { keyPath: 'id', autoIncrement: true });
           aStore.createIndex('timestamp', 'timestamp', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains('sync_outbox')) {
+          const outbox = db.createObjectStore('sync_outbox', { keyPath: 'id' });
+          outbox.createIndex('queued_at', 'queued_at', { unique: false });
         }
 
         // Intelligent Mistakes Bank ("Mis Errores")
@@ -100,6 +105,16 @@ class StorageService {
       const req = store.getAll();
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);
+    });
+  }
+
+  async delete(storeName, key) {
+    await this.initPromise;
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(storeName, 'readwrite');
+      tx.objectStore(storeName).delete(key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
     });
   }
 

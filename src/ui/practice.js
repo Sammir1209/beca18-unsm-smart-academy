@@ -5,31 +5,87 @@
 import { repo } from '../core/repository.js';
 import { RecommendationEngine } from '../core/recommendation.js';
 import { voiceTutor } from '../core/voiceTutor.js';
-import { Avatar3D } from './avatar3d.js';
 import { icon } from './icons.js';
+import { mountTutorChat } from './tutor-chat.js';
+import { renderMath } from '../core/math-renderer.js';
+import { supabase } from '../core/supabase.js';
 
 export function renderPractice(container, navigateTo) {
   let activeFilterInstitution = 'ALL';
-  let activeFilterSubject = 'ALL';
+  let activeFilterSubjects = new Set();
   let activeFilterOnlyFijas = false;
 
   let currentIndex = 0;
   let selectedOption = null;
   let hasSubmitted = false;
   let wasDoubtMode = false;
-  let voiceStatusText = '';
-  let avatarInstance = null;
+  let tutorChatCleanup = null;
+  let currentUserId = 'guest';
+  let stateSaveQueue = Promise.resolve();
+  const practiceStateKey = () => `pre-einstein:practice:${currentUserId}`;
+
+  function savePracticeState() {
+    const filtered = getFilteredQuestions();
+    const snapshot = {
+      institution: activeFilterInstitution,
+      subjects: [...activeFilterSubjects],
+      onlyFijas: activeFilterOnlyFijas,
+      currentQuestionId: filtered[currentIndex]?.id || null,
+      currentIndex, selectedOption, hasSubmitted, wasDoubtMode,
+      updatedAt: new Date().toISOString()
+    };
+    try { localStorage.setItem(practiceStateKey(), JSON.stringify(snapshot)); }
+    catch (error) { console.warn('No se pudo guardar la práctica localmente:', error); }
+    if (!supabase || currentUserId === 'guest') return;
+    stateSaveQueue = stateSaveQueue.then(async () => {
+      const { data: { user } = {} } = await supabase.auth.getUser();
+      if (!user || user.id !== currentUserId) return;
+      const { error } = await supabase.from('student_learning_state').upsert({
+        user_id: user.id, state_key: 'practice', state_data: snapshot, updated_at: snapshot.updatedAt
+      }, { onConflict: 'user_id,state_key' });
+      if (error) throw error;
+    }).catch(error => console.warn('Sincronización de práctica pendiente:', error.message));
+  }
+
+  async function restorePracticeState() {
+    let snapshot = null;
+    if (supabase) {
+      try {
+        const { data: { user } = {} } = await supabase.auth.getUser();
+        if (user) {
+          currentUserId = user.id;
+          const { data, error } = await supabase.from('student_learning_state').select('state_data,updated_at').eq('user_id', user.id).eq('state_key', 'practice').maybeSingle();
+          if (!error && data?.state_data) snapshot = data.state_data;
+        }
+      } catch (error) { console.warn('No se pudo recuperar la práctica desde la nube:', error.message); }
+    }
+    try {
+      const local = JSON.parse(localStorage.getItem(practiceStateKey()) || 'null');
+      if (local && (!snapshot || local.updatedAt > snapshot.updatedAt)) snapshot = local;
+    } catch { /* Ignorar un respaldo local inválido sin bloquear la práctica. */ }
+    if (!snapshot) return;
+    activeFilterInstitution = ['ALL', 'PRONABEC', 'UNSM'].includes(snapshot.institution) ? snapshot.institution : 'ALL';
+    activeFilterSubjects = new Set(Array.isArray(snapshot.subjects) ? snapshot.subjects : []);
+    activeFilterOnlyFijas = Boolean(snapshot.onlyFijas);
+    const filtered = getFilteredQuestions();
+    const restoredIndex = snapshot.currentQuestionId ? filtered.findIndex(question => question.id === snapshot.currentQuestionId) : -1;
+    currentIndex = restoredIndex >= 0 ? restoredIndex : Math.max(0, Math.min(Number(snapshot.currentIndex) || 0, Math.max(0, filtered.length - 1)));
+    selectedOption = snapshot.selectedOption || null;
+    hasSubmitted = Boolean(snapshot.hasSubmitted);
+    wasDoubtMode = Boolean(snapshot.wasDoubtMode);
+  }
 
   function getFilteredQuestions() {
     return repo.questions.filter(q => {
       if (activeFilterInstitution !== 'ALL' && q.institution !== activeFilterInstitution) return false;
-      if (activeFilterSubject !== 'ALL' && q.subject !== activeFilterSubject) return false;
+      if (activeFilterSubjects.size > 0 && !activeFilterSubjects.has(q.subject)) return false;
       if (activeFilterOnlyFijas && !q.isFija) return false;
       return true;
     });
   }
 
   function renderView() {
+    if (tutorChatCleanup) { tutorChatCleanup(); tutorChatCleanup = null; }
     const questions = getFilteredQuestions();
 
     container.innerHTML = `
@@ -63,21 +119,17 @@ export function renderPractice(container, navigateTo) {
                   Solo Fijas
                 </button>
 
-                <select id="select-subject-filter" style="background-color: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 12px; border-radius: var(--radius-md); font-size: 0.85rem;">
-                  <option value="ALL">Todos los Cursos</option>
-                  <option value="Aritmetica" ${activeFilterSubject === 'Aritmetica' ? 'selected' : ''}>Aritmética</option>
-                  <option value="Algebra" ${activeFilterSubject === 'Algebra' ? 'selected' : ''}>Álgebra</option>
-                  <option value="Geometria" ${activeFilterSubject === 'Geometria' ? 'selected' : ''}>Geometría</option>
-                  <option value="Razonamiento Matematico" ${activeFilterSubject === 'Razonamiento Matematico' ? 'selected' : ''}>Razonamiento Matemático (RM)</option>
-                  <option value="Comprension Lectora" ${activeFilterSubject === 'Comprension Lectora' ? 'selected' : ''}>Comprensión Lectora</option>
-                  <option value="Razonamiento Verbal" ${activeFilterSubject === 'Razonamiento Verbal' ? 'selected' : ''}>Razonamiento Verbal</option>
-                  <option value="Fisica" ${activeFilterSubject === 'Fisica' ? 'selected' : ''}>Física</option>
-                  <option value="Quimica" ${activeFilterSubject === 'Quimica' ? 'selected' : ''}>Química</option>
-                  <option value="Biologia" ${activeFilterSubject === 'Biologia' ? 'selected' : ''}>Biología</option>
-                  <option value="Historia del Peru" ${activeFilterSubject === 'Historia del Peru' ? 'selected' : ''}>Historia del Perú</option>
-                  <option value="Geografia" ${activeFilterSubject === 'Geografia' ? 'selected' : ''}>Geografía</option>
-                  <option value="Cultura General" ${activeFilterSubject === 'Cultura General' ? 'selected' : ''}>Cultura General</option>
-                </select>
+                <button type="button" class="btn btn-sm btn-secondary" id="clear-subject-filters">Limpiar temas</button>
+              </div>
+              <div class="practice-subject-picker" aria-label="Seleccionar varios temas">
+                <div class="practice-subject-picker-head"><strong>Temas para practicar</strong><span id="selected-subject-count">${activeFilterSubjects.size ? activeFilterSubjects.size + ' seleccionados' : 'Todos los temas'}</span></div>
+                <div class="practice-subject-chips">
+                  ${[...new Set(repo.questions.map(question => question.subject).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es')).map(subject => `
+                    <button type="button" class="subject-chip ${activeFilterSubjects.has(subject) ? 'is-selected' : ''}" data-subject="${subject}" aria-pressed="${activeFilterSubjects.has(subject)}">${subject}</button>
+                  `).join('')}
+                </div>
+                <p class="practice-subject-hint">Puedes combinar tantos cursos como quieras. Si no eliges ninguno, se mostrarán todos.</p>
+              </div>
               </div>
             </div>
           </div>
@@ -114,6 +166,7 @@ export function renderPractice(container, navigateTo) {
               <span class="tag ${questions[currentIndex].institution === 'PRONABEC' ? 'tag-beca' : 'tag-unsm'}">${questions[currentIndex].institution}</span>
               <span class="tag tag-unsm">${questions[currentIndex].examType} ${questions[currentIndex].year}</span>
               <span class="tag ${questions[currentIndex].difficulty === 'BASICO' ? 'tag-diff-basic' : questions[currentIndex].difficulty === 'INTERMEDIO' ? 'tag-diff-mid' : 'tag-diff-adv'}">${questions[currentIndex].difficulty}</span>
+              ${questions[currentIndex].status === 'REVIEW_REQUIRED' ? '<span class="tag" style="background:rgba(245,158,11,.12);color:#B45309;">REFERENCIA EN REVISIÓN</span>' : ''}
               ${questions[currentIndex].isFija ? `<span class="tag tag-diff-mid" style="background-color: rgba(245, 158, 11, 0.2); color: #FBBF24; display: inline-flex; align-items: center; gap: 4px;">${icon('star', { size: 12, color: '#FBBF24' })} FIJA DE EXAMEN</span>` : ''}
               
               ${questions[currentIndex].sourceReference ? `
@@ -153,7 +206,7 @@ export function renderPractice(container, navigateTo) {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
               <button id="btn-dont-know" class="btn btn-doubt" ${hasSubmitted ? 'disabled' : ''}>
                 ${icon('doubt', { size: 18, color: '#FBBF24' })}
-                No lo sé (Aprender con el Tutor 3D)
+                No lo sé (Aprender con Einstein)
               </button>
 
               <button id="btn-submit-answer" class="btn btn-primary" ${hasSubmitted || !selectedOption ? 'disabled' : ''}>
@@ -173,7 +226,7 @@ export function renderPractice(container, navigateTo) {
                          <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #A7F3D0;">¡Excelente deducción! Respuesta Correcta</h4><div style="font-size: 0.85rem; color: var(--text-muted);">Dominio consolidado</div></div>`
                       : wasDoubtMode
                       ? `<div class="card-icon amber" style="width: 38px; height: 38px;">${icon('lightbulb', { size: 24, color: 'var(--accent-alert)' })}</div>
-                         <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #FDE68A;">Modo Aprendizaje Guiado</h4><div style="font-size: 0.85rem; color: var(--text-muted);">El tutor 3D te guía paso a paso</div></div>`
+                         <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #FDE68A;">Modo Aprendizaje Guiado</h4><div style="font-size: 0.85rem; color: var(--text-muted);">Einstein te guía paso a paso</div></div>`
                       : `<div class="card-icon" style="width: 38px; height: 38px; background-color: rgba(239, 68, 68, 0.15);">${icon('warning', { size: 24, color: 'var(--accent-danger)' })}</div>
                          <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #FECACA;">Respuesta Incorrecta &bull; Análisis</h4><div style="font-size: 0.85rem; color: var(--text-muted);">Aprende la trampa del examen</div></div>`
                     }
@@ -181,7 +234,7 @@ export function renderPractice(container, navigateTo) {
 
                   <button id="btn-voice-explain" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
                     ${icon('zap', { size: 14, color: '#60A5FA' })}
-                    Explicar con Gestos 3D
+                    Explicación de Einstein
                   </button>
                 </div>
 
@@ -242,134 +295,30 @@ export function renderPractice(container, navigateTo) {
           `}
         </div>
 
-        <!-- PANEL LATERAL DERECHO: TUTOR 3D HOLOGRÁFICO CON SELECTOR DE VOZ -->
-        <div class="practice-tutor-sidebar" style="width: 300px; position: sticky; top: 90px; display: flex; flex-direction: column; gap: 16px;">
-          <div class="card" style="padding: 16px; background: linear-gradient(180deg, #182234 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.4); box-shadow: 0 0 25px rgba(59, 130, 246, 0.15); text-align: center;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span class="tag tag-beca" style="font-size: 0.7rem;">TUTOR IA 3D</span>
-              <span style="font-size: 0.75rem; color: var(--accent-beca); font-weight: 700;">EN LÍNEA</span>
-            </div>
-
-            <!-- Canvas Container 3D WebGL -->
-            <div id="avatar-3d-viewport" style="width: 100%; height: 240px; border-radius: var(--radius-md); background: radial-gradient(circle at center, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.9) 100%); overflow: hidden; position: relative;">
-              <!-- 3D Scene renders here -->
-            </div>
-
-            <!-- Selector de Voz y Tonalidad -->
-            <div style="margin-top: 12px; text-align: left; background-color: var(--bg-card); padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-              <label style="font-size: 0.75rem; font-weight: 700; color: #93C5FD; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span>🇵🇪 Seleccionar Voz (Perú / Latam):</span>
-              </label>
-              <select id="select-tutor-voice" style="width: 100%; background-color: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 8px; border-radius: var(--radius-sm); font-size: 0.8rem; margin-bottom: 8px;">
-                ${voiceTutor.availableVoices.length > 0
-                  ? voiceTutor.availableVoices.map(v => {
-                      const isPeru = v.lang === 'es-PE' || v.name.toLowerCase().includes('peru');
-                      const label = isPeru ? `🇵🇪 ${v.name} (Perú)` : `🌎 ${v.name} (${v.lang})`;
-                      return `<option value="${v.name}" ${voiceTutor.selectedVoice && voiceTutor.selectedVoice.name === v.name ? 'selected' : ''}>${label}</option>`;
-                    }).join('')
-                  : `<option>Cargando voces en español...</option>`
-                }
-              </select>
-
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px;">
-                <span>Velocidad de Lectura:</span>
-                <input type="range" id="range-tutor-rate" min="0.8" max="1.3" step="0.05" value="${voiceTutor.rate}" style="width: 100px; cursor: pointer;">
-              </div>
-
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-dim);">
-                <span>Calidez de Tono:</span>
-                <input type="range" id="range-tutor-pitch" min="0.8" max="1.3" step="0.05" value="${voiceTutor.pitch}" style="width: 100px; cursor: pointer;">
-              </div>
-            </div>
-
-            <!-- Estado de Voz del Tutor -->
-            <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); min-height: 40px; display: flex; align-items: center; justify-content: center; padding: 0 8px; text-align: center;">
-              <span id="voice-status-label">${voiceStatusText || '¡Hola! Soy tu Tutor IA. Pregúntame o di tu respuesta.'}</span>
-            </div>
-
-            <!-- Botón de Parada Inmediata (Siempre Accesible) -->
-            <div style="margin-top: 8px;">
-              <button id="btn-tutor-stop" class="btn btn-sm" style="width: 100%; background-color: rgba(239, 68, 68, 0.2); border: 1px solid var(--accent-danger); color: #FECACA; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; padding: 8px 10px;">
-                ${icon('stop', { size: 14, color: 'var(--accent-danger)' })}
-                ⏹️ Parar Voz del Tutor
-              </button>
-            </div>
-
-            <!-- Controles de Interacción Rápida -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
-              <button id="btn-tutor-speak-q" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 8px 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                ${icon('compass', { size: 14, color: 'var(--accent-unsm)' })} Leer Pregunta
-              </button>
-              <button id="btn-tutor-listen" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 8px 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                ${icon('mic', { size: 14, color: '#fff' })} Dictar Clave
-              </button>
-            </div>
-
-            <!-- Botón de Ayuda / Permiso de Celular -->
-            <button id="btn-mic-permission-help" class="btn btn-secondary btn-sm" style="margin-top: 8px; width: 100%; font-size: 0.72rem; padding: 6px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px; border: 1px dashed var(--border-subtle);">
-              📱 Permiso de Micrófono en Celular
-            </button>
-          </div>
-        </div>
+        <!-- PRE-EINSTEIN: tutor único -->
+<aside class="practice-tutor-sidebar">
+  <section class="einstein-intro-card">
+    <div class="einstein-mascot" role="img" aria-label="Einstein, tu compañero de estudio">
+      <svg viewBox="0 0 120 128" aria-hidden="true">
+        <path d="M22 49C7 36 18 18 34 24C31 6 53 4 61 19C73 1 96 12 91 29C111 22 119 45 102 56L99 79H20Z" fill="#E8EDF4" stroke="#263D70" stroke-width="4"/>
+        <path d="M29 47C14 35 28 26 40 34C39 18 54 17 62 32C76 14 91 24 83 39C101 31 108 45 94 53L91 73H28Z" fill="#FFF" stroke="#263D70" stroke-width="3"/>
+        <ellipse cx="60" cy="67" rx="36" ry="39" fill="#F5B27E" stroke="#263D70" stroke-width="4"/>
+        <circle cx="46" cy="68" r="13" fill="none" stroke="#263D70" stroke-width="4"/><circle cx="75" cy="68" r="13" fill="none" stroke="#263D70" stroke-width="4"/><path d="M59 68H62" stroke="#263D70" stroke-width="4"/>
+        <circle cx="46" cy="68" r="4" fill="#263D70"/><circle cx="75" cy="68" r="4" fill="#263D70"/>
+        <path d="M52 91Q61 99 70 91" fill="none" stroke="#A84D40" stroke-width="3" stroke-linecap="round"/>
+        <path d="M43 103L60 113L77 103L88 126H32Z" fill="#FFF" stroke="#263D70" stroke-width="3"/><path d="M55 105L60 113L65 105L62 124H58Z" fill="#F28A00"/>
+      </svg>
+    </div>
+    <div class="einstein-intro-copy"><span class="einstein-eyebrow">TU COMPAÑERO DE ESTUDIO</span><h3>Aprende con Einstein</h3><p>Pide una pista, comprende el procedimiento y resuelve cada ejercicio paso a paso.</p></div>
+    <span class="einstein-online"><i></i> Disponible para ayudarte</span>
+  </section>
+  <div id="tutor-chat-mount"></div>
+</aside>
 
       </div>
     `;
 
-    // 1. Inicializar Avatar 3D
-    const viewport = document.getElementById('avatar-3d-viewport');
-    if (viewport) {
-      if (avatarInstance) avatarInstance.destroy();
-      avatarInstance = new Avatar3D(viewport);
-      voiceTutor.attachAvatar(avatarInstance);
-    }
-
-    // 2. Enlazar Selector de Voz Dinámico
-    const voiceSelect = document.getElementById('select-tutor-voice');
-    if (voiceSelect) {
-      voiceSelect.addEventListener('change', (e) => {
-        voiceTutor.setVoiceByName(e.target.value);
-        voiceTutor.speak('Hola, he cambiado mi voz. ¿Qué tal me escuchas ahora?');
-      });
-    }
-
-    // Slider de velocidad y tono/calidez
-    document.getElementById('range-tutor-rate')?.addEventListener('input', (e) => {
-      voiceTutor.setRate(e.target.value);
-    });
-
-    document.getElementById('range-tutor-pitch')?.addEventListener('input', (e) => {
-      voiceTutor.setPitch(e.target.value);
-    });
-
-    // Botón para PARAR la voz inmediatamente si está hablando
-    document.getElementById('btn-tutor-stop')?.addEventListener('click', () => {
-      voiceTutor.stopSpeaking();
-      voiceTutor.stopListening();
-      updateStatus('Voz detenida. Haz clic en "Leer Pregunta" o "Dictar Clave" cuando desees.');
-    });
-
-    // Botón para solicitar explícitamente permiso de micrófono en celulares
-    document.getElementById('btn-mic-permission-help')?.addEventListener('click', async () => {
-      updateStatus('Solicitando permiso de micrófono...');
-      const res = await voiceTutor.promptPermissionOnMobile();
-      if (res.ok) {
-        alert('✅ ¡Permiso de micrófono concedido! Ya puedes usar "Dictar Clave" en tu celular.');
-        updateStatus('Micrófono activado con éxito. Di tu alternativa (A, B, C, D o E).');
-      } else {
-        alert(`⚠️ ${res.message}`);
-        updateStatus('Permiso pendiente o bloqueado en el navegador.');
-      }
-    });
-
-    voiceTutor.onVoicesReadyCallback = (voices) => {
-      if (voiceSelect && voices.length > 0) {
-        voiceSelect.innerHTML = voices.map(v => {
-          const isPeru = v.lang === 'es-PE' || v.name.toLowerCase().includes('peru');
-          const label = isPeru ? `🇵🇪 ${v.name} (Perú)` : `🌎 ${v.name} (${v.lang})`;
-          return `<option value="${v.name}" ${voiceTutor.selectedVoice && voiceTutor.selectedVoice.name === v.name ? 'selected' : ''}>${label}</option>`;
-        }).join('');
-      }
-    };
+    void renderMath(container);
 
     // 3. Filtros de Institución
     document.getElementById('filter-inst-all')?.addEventListener('click', () => {
@@ -378,6 +327,7 @@ export function renderPractice(container, navigateTo) {
       selectedOption = null;
       hasSubmitted = false;
       wasDoubtMode = false;
+      savePracticeState();
       renderView();
     });
     document.getElementById('filter-inst-beca')?.addEventListener('click', () => {
@@ -404,63 +354,53 @@ export function renderPractice(container, navigateTo) {
       wasDoubtMode = false;
       renderView();
     });
-    document.getElementById('select-subject-filter')?.addEventListener('change', (e) => {
-      activeFilterSubject = e.target.value;
-      currentIndex = 0;
-      selectedOption = null;
-      hasSubmitted = false;
-      wasDoubtMode = false;
+    document.getElementById('clear-subject-filters')?.addEventListener('click', () => {
+      activeFilterSubjects.clear();
+      currentIndex = 0; selectedOption = null; hasSubmitted = false; wasDoubtMode = false;
+      savePracticeState();
       renderView();
+    });
+    container.querySelectorAll('[data-subject]').forEach(button => {
+      button.addEventListener('click', () => {
+        const subject = button.getAttribute('data-subject');
+        if (activeFilterSubjects.has(subject)) activeFilterSubjects.delete(subject);
+        else activeFilterSubjects.add(subject);
+        currentIndex = 0; selectedOption = null; hasSubmitted = false; wasDoubtMode = false;
+        savePracticeState();
+        renderView();
+      });
     });
 
     if (questions.length === 0) return;
 
     const q = questions[currentIndex];
 
-    // TUTOR CONTROLS
-    const updateStatus = (txt) => {
-      voiceStatusText = txt;
-      const el = document.getElementById('voice-status-label');
-      if (el) el.innerText = txt;
-    };
-
-    document.getElementById('btn-tutor-speak-q')?.addEventListener('click', () => {
-      updateStatus('Hablando con tono natural...');
-      const readText = `Pregunta ${currentIndex + 1}. Curso de ${q.subject}. ${q.rawQuestion}. Alternativas: ${q.options.map(o => `Opción ${o.id}: ${o.text}`).join('. ')}.`;
-      voiceTutor.speak(readText, () => updateStatus('¿Cuál es tu respuesta?'));
-    });
-
-    document.getElementById('btn-tutor-listen')?.addEventListener('click', () => {
-      updateStatus('Te escucho con atención... (Di: A, B, C, D, E o "No lo sé")');
-      voiceTutor.listen((spokenText) => {
-        const text = spokenText.toLowerCase();
-        let detected = null;
-
-        if (text.includes('no lo sé') || text.includes('no se') || text.includes('duda')) {
-          handleDoubt();
-          return;
+    // Tutor conversacional: voz full-duplex y chat con contexto de la pregunta actual.
+    tutorChatCleanup = mountTutorChat(document.getElementById('tutor-chat-mount'), {
+      getContext: () => {
+        const current = questions[currentIndex];
+        if (!current) return 'No hay una pregunta seleccionada. El estudiante puede consultar cualquier tema de secundaria.';
+        const context = {
+          curso: current.subject,
+          tema: current.topic,
+          enunciado: current.rawQuestion,
+          alternativas: current.options.map((option) => ({ alternativa: option.id, texto: option.text })),
+          estado: hasSubmitted ? 'El estudiante ya terminó su intento.' : 'Pregunta todavía activa; guiar con pistas sin revelar la clave.',
+        };
+        if (hasSubmitted) {
+          context.respuestaCorrecta = current.correctAnswer;
+          context.resolucion = current.explanation.solutionStepByStep;
+          context.conceptoClave = current.explanation.keyConcept;
+          context.consejo = current.explanation.quickTip;
         }
-
-        if (text.includes('opción a') || text.includes('la a') || text.trim() === 'a') detected = 'A';
-        else if (text.includes('opción b') || text.includes('la b') || text.trim() === 'b') detected = 'B';
-        else if (text.includes('opción c') || text.includes('la c') || text.trim() === 'c') detected = 'C';
-        else if (text.includes('opción d') || text.includes('la d') || text.trim() === 'd') detected = 'D';
-        else if (text.includes('opción e') || text.includes('la e') || text.trim() === 'e') detected = 'E';
-
-        if (detected) {
-          selectedOption = detected;
-          updateStatus(`Entendí Opción ${detected}. Verificando...`);
-          handleSubmit();
-        } else {
-          updateStatus(`Escuché: "${spokenText}". Intenta decir: A, B, C, D, E o "No lo sé".`);
-        }
-      });
-    });
-
-    document.getElementById('btn-voice-explain')?.addEventListener('click', () => {
-      updateStatus('Explicando solución detallada...');
-      const explainText = `Atención: la respuesta correcta es la opción ${q.correctAnswer}. ${q.explanation.solutionStepByStep.join('. ')}. Concepto clave: ${q.explanation.keyConcept}. Tip rápido de examen: ${q.explanation.quickTip}.`;
-      voiceTutor.speak(explainText, () => updateStatus('Explicación finalizada. ¿Listo para la siguiente?'));
+        return JSON.stringify(context);
+      },
+      onReadQuestion: () => {
+        const current = questions[currentIndex];
+        if (!current) return;
+        const readText = `Pregunta ${currentIndex + 1}. Curso de ${current.subject}. ${current.rawQuestion}. Alternativas: ${current.options.map((option) => `Opción ${option.id}: ${option.text}`).join('. ')}.`;
+        voiceTutor.speak(readText);
+      },
     });
 
     // Opciones
@@ -468,13 +408,16 @@ export function renderPractice(container, navigateTo) {
       item.addEventListener('click', () => {
         if (hasSubmitted) return;
         selectedOption = item.getAttribute('data-option');
+        savePracticeState();
         renderView();
       });
     });
 
     async function handleSubmit() {
+      if (!selectedOption || hasSubmitted) return;
       hasSubmitted = true;
       wasDoubtMode = false;
+      savePracticeState();
       const isCorrect = selectedOption === q.correctAnswer;
       const speechFeedback = isCorrect 
         ? `¡Muy bien! Acertaste con la opción ${q.correctAnswer}.`
@@ -482,21 +425,23 @@ export function renderPractice(container, navigateTo) {
       
       voiceTutor.speak(speechFeedback);
 
-      await RecommendationEngine.recordAnswer({
-        questionId: q.id,
-        selectedAnswer: selectedOption,
-        correctAnswer: q.correctAnswer,
-        timeSpentSeconds: 45,
-        topic: q.topic,
-        isDoubt: false
-      });
-      renderView();
+      try {
+        await RecommendationEngine.recordAnswer({
+          questionId: q.id, selectedAnswer: selectedOption, correctAnswer: q.correctAnswer,
+          timeSpentSeconds: 45, topic: q.topic, isDoubt: false
+        });
+      } catch (error) {
+        console.error('No se pudo guardar el intento; se mantiene la corrección local:', error);
+      } finally {
+        renderView();
+      }
     }
 
     async function handleDoubt() {
       hasSubmitted = true;
       wasDoubtMode = true;
       selectedOption = null;
+      savePracticeState();
 
       voiceTutor.speak(`Modo formativo activado. No te preocupes, te explico el concepto: la clave es la opción ${q.correctAnswer}. ${q.explanation.solutionStepByStep[0] || ''}`);
 
@@ -522,7 +467,7 @@ export function renderPractice(container, navigateTo) {
         selectedOption = null;
         hasSubmitted = false;
         wasDoubtMode = false;
-        voiceStatusText = '';
+        savePracticeState();
         renderView();
       }
     });
@@ -535,7 +480,6 @@ export function renderPractice(container, navigateTo) {
         selectedOption = null;
         hasSubmitted = false;
         wasDoubtMode = false;
-        voiceStatusText = '';
         renderView();
       }
     });
@@ -546,5 +490,5 @@ export function renderPractice(container, navigateTo) {
     });
   }
 
-  renderView();
+  void (async () => { await restorePracticeState(); renderView(); })();
 }
