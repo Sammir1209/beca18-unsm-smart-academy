@@ -8,6 +8,7 @@ import { voiceTutor } from '../core/voiceTutor.js';
 import { icon } from './icons.js';
 import { mountTutorChat } from './tutor-chat.js';
 import { renderMath } from '../core/math-renderer.js';
+import { supabase } from '../core/supabase.js';
 
 export function renderPractice(container, navigateTo) {
   let activeFilterInstitution = 'ALL';
@@ -19,6 +20,60 @@ export function renderPractice(container, navigateTo) {
   let hasSubmitted = false;
   let wasDoubtMode = false;
   let tutorChatCleanup = null;
+  let currentUserId = 'guest';
+  let stateSaveQueue = Promise.resolve();
+  const practiceStateKey = () => `pre-einstein:practice:${currentUserId}`;
+
+  function savePracticeState() {
+    const filtered = getFilteredQuestions();
+    const snapshot = {
+      institution: activeFilterInstitution,
+      subjects: [...activeFilterSubjects],
+      onlyFijas: activeFilterOnlyFijas,
+      currentQuestionId: filtered[currentIndex]?.id || null,
+      currentIndex, selectedOption, hasSubmitted, wasDoubtMode,
+      updatedAt: new Date().toISOString()
+    };
+    try { localStorage.setItem(practiceStateKey(), JSON.stringify(snapshot)); }
+    catch (error) { console.warn('No se pudo guardar la práctica localmente:', error); }
+    if (!supabase || currentUserId === 'guest') return;
+    stateSaveQueue = stateSaveQueue.then(async () => {
+      const { data: { user } = {} } = await supabase.auth.getUser();
+      if (!user || user.id !== currentUserId) return;
+      const { error } = await supabase.from('student_learning_state').upsert({
+        user_id: user.id, state_key: 'practice', state_data: snapshot, updated_at: snapshot.updatedAt
+      }, { onConflict: 'user_id,state_key' });
+      if (error) throw error;
+    }).catch(error => console.warn('Sincronización de práctica pendiente:', error.message));
+  }
+
+  async function restorePracticeState() {
+    let snapshot = null;
+    if (supabase) {
+      try {
+        const { data: { user } = {} } = await supabase.auth.getUser();
+        if (user) {
+          currentUserId = user.id;
+          const { data, error } = await supabase.from('student_learning_state').select('state_data,updated_at').eq('user_id', user.id).eq('state_key', 'practice').maybeSingle();
+          if (!error && data?.state_data) snapshot = data.state_data;
+        }
+      } catch (error) { console.warn('No se pudo recuperar la práctica desde la nube:', error.message); }
+    }
+    try {
+      const local = JSON.parse(localStorage.getItem(practiceStateKey()) || 'null');
+      if (local && (!snapshot || local.updatedAt > snapshot.updatedAt)) snapshot = local;
+    } catch { /* Ignorar un respaldo local inválido sin bloquear la práctica. */ }
+    if (!snapshot) return;
+    activeFilterInstitution = ['ALL', 'PRONABEC', 'UNSM'].includes(snapshot.institution) ? snapshot.institution : 'ALL';
+    activeFilterSubjects = new Set(Array.isArray(snapshot.subjects) ? snapshot.subjects : []);
+    activeFilterOnlyFijas = Boolean(snapshot.onlyFijas);
+    const filtered = getFilteredQuestions();
+    const restoredIndex = snapshot.currentQuestionId ? filtered.findIndex(question => question.id === snapshot.currentQuestionId) : -1;
+    currentIndex = restoredIndex >= 0 ? restoredIndex : Math.max(0, Math.min(Number(snapshot.currentIndex) || 0, Math.max(0, filtered.length - 1)));
+    selectedOption = snapshot.selectedOption || null;
+    hasSubmitted = Boolean(snapshot.hasSubmitted);
+    wasDoubtMode = Boolean(snapshot.wasDoubtMode);
+  }
 
   function getFilteredQuestions() {
     return repo.questions.filter(q => {
@@ -271,6 +326,7 @@ export function renderPractice(container, navigateTo) {
       selectedOption = null;
       hasSubmitted = false;
       wasDoubtMode = false;
+      savePracticeState();
       renderView();
     });
     document.getElementById('filter-inst-beca')?.addEventListener('click', () => {
@@ -300,6 +356,7 @@ export function renderPractice(container, navigateTo) {
     document.getElementById('clear-subject-filters')?.addEventListener('click', () => {
       activeFilterSubjects.clear();
       currentIndex = 0; selectedOption = null; hasSubmitted = false; wasDoubtMode = false;
+      savePracticeState();
       renderView();
     });
     container.querySelectorAll('[data-subject]').forEach(button => {
@@ -308,6 +365,7 @@ export function renderPractice(container, navigateTo) {
         if (activeFilterSubjects.has(subject)) activeFilterSubjects.delete(subject);
         else activeFilterSubjects.add(subject);
         currentIndex = 0; selectedOption = null; hasSubmitted = false; wasDoubtMode = false;
+        savePracticeState();
         renderView();
       });
     });
@@ -349,6 +407,7 @@ export function renderPractice(container, navigateTo) {
       item.addEventListener('click', () => {
         if (hasSubmitted) return;
         selectedOption = item.getAttribute('data-option');
+        savePracticeState();
         renderView();
       });
     });
@@ -357,6 +416,7 @@ export function renderPractice(container, navigateTo) {
       if (!selectedOption || hasSubmitted) return;
       hasSubmitted = true;
       wasDoubtMode = false;
+      savePracticeState();
       const isCorrect = selectedOption === q.correctAnswer;
       const speechFeedback = isCorrect 
         ? `¡Muy bien! Acertaste con la opción ${q.correctAnswer}.`
@@ -380,6 +440,7 @@ export function renderPractice(container, navigateTo) {
       hasSubmitted = true;
       wasDoubtMode = true;
       selectedOption = null;
+      savePracticeState();
 
       voiceTutor.speak(`Modo formativo activado. No te preocupes, te explico el concepto: la clave es la opción ${q.correctAnswer}. ${q.explanation.solutionStepByStep[0] || ''}`);
 
@@ -405,6 +466,7 @@ export function renderPractice(container, navigateTo) {
         selectedOption = null;
         hasSubmitted = false;
         wasDoubtMode = false;
+        savePracticeState();
         renderView();
       }
     });
@@ -427,5 +489,5 @@ export function renderPractice(container, navigateTo) {
     });
   }
 
-  renderView();
+  void (async () => { await restorePracticeState(); renderView(); })();
 }
