@@ -54,7 +54,7 @@ def compare(bank: Path = typer.Option(Path("data/questions/questions.json"), exi
         "semanticCandidateCount": len(semantic_matches),
         "semanticCandidates": semantic_matches,
         "topicFrequency": topics
-    }, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     typer.echo(f"{len(candidates)} recurrence candidates written to {output}")
 
 
