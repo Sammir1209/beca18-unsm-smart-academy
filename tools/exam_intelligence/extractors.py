@@ -68,9 +68,14 @@ def extract_with_paddle(image_path: Path, source_id: str, page: int = 1) -> Extr
     for item in result or []:
         payload = getattr(item, "json", None)
         if isinstance(payload, dict):
-            fragments.append(str(payload))
+            data = payload.get("res", payload)
+            texts = data.get("rec_texts", []) if isinstance(data, dict) else []
+            if texts:
+                fragments.extend(str(value) for value in texts)
         elif isinstance(item, dict):
-            fragments.append(str(item))
+            data = item.get("res", item)
+            texts = data.get("rec_texts", []) if isinstance(data, dict) else []
+            fragments.extend(str(value) for value in texts)
     text = "\\n".join(fragments)
     return ExtractedQuestion(
         source_id=source_id, page=page, raw_text=text,
