@@ -26,7 +26,7 @@ def audit_question_bank(path: Path, *, apply_safe_migration: bool = False) -> di
         if not item.get("correctAnswer"):
             findings.append({"id": item.get("id"), "issue": "MISSING_ANSWER_KEY"})
     if apply_safe_migration:
-        path.write_text(json.dumps(questions, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+        path.write_text(json.dumps(questions, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return {
         "totalQuestions": len(questions),
         "byInstitutionAndType": dict(Counter(f"{q.get('institution')}/{q.get('examType')}" for q in questions)),
