@@ -195,10 +195,6 @@ export function renderPractice(container, navigateTo) {
 
                 <div style="margin-bottom: 20px; background-color: var(--bg-card); padding: 20px; border-radius: var(--radius-md);">
                   <div class="einstein-solution-heading"><img src="/stickers/einstein-explaining.svg" alt="Einstein explicando"><span>Resolución paso a paso</span></div>
-                  <div style="display:none;font-size: 0.95rem; font-weight: 700; color: #93C5FD; display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                    ${icon('step', { size: 18, color: '#93C5FD' })}
-                    Resolución Paso a Paso:
-                  </div>
                   <div style="display: flex; flex-direction: column; gap: 10px;">
                     ${questions[currentIndex].explanation.solutionStepByStep.map((step, idx) => `
                       <div style="display: flex; align-items: flex-start; gap: 12px; font-size: 0.95rem; color: var(--text-main); line-height: 1.6;">
