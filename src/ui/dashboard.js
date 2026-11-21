@@ -155,29 +155,29 @@ export async function renderDashboard(container, navigateTo) {
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-beca)' })} Tanto por Ciento & Comercio
             </div>
-            <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">FRECUENCIA MUY ALTA</div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">6 preguntas promedio por examen</div>
+            <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">TEMA DE REPASO</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Practica porcentajes, razones y problemas comerciales</div>
           </div>
           <div class="frequency-card frequency-card-unsm">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-unsm)' })} Ecuaciones Cuadráticas & Cardano
             </div>
-            <div style="font-size: 0.8rem; color: var(--accent-unsm); font-weight: 600; margin-top: 4px;">FRECUENCIA ALTA</div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">4 preguntas promedio en Álgebra</div>
+            <div style="font-size: 0.8rem; color: var(--accent-unsm); font-weight: 600; margin-top: 4px;">TEMA DE REPASO</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Refuerza ecuaciones y métodos de resolución</div>
           </div>
           <div class="frequency-card frequency-card-beca">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-beca)' })} Inferencia & Idea Principal (RV)
             </div>
             <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">FRECUENCIA MUY ALTA</div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">50% del ENP Beca 18</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Desarrolla comprensión, inferencia e idea principal</div>
           </div>
           <div class="frequency-card frequency-card-alert">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-alert)' })} Cinemática & MRUV (Física)
             </div>
-            <div style="font-size: 0.8rem; color: var(--accent-alert); font-weight: 600; margin-top: 4px;">RECURRENTE UNSM</div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Clave para ingenierías y ciencias</div>
+            <div style="font-size: 0.8rem; color: var(--accent-alert); font-weight: 600; margin-top: 4px;">TEMA DE REPASO</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Repasa movimiento, velocidad y aceleración</div>
           </div>
         </div>
       </div>
