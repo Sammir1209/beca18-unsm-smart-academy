@@ -1,5 +1,6 @@
 import { storage } from './storage.js';
 import { supabase, supabaseConfigured } from './supabase.js';
+import { repo } from './repository.js';
 
 const STORE = 'sync_outbox';
 let syncing = false;
@@ -84,7 +85,7 @@ export async function pullRemoteProgress() {
 
   const { data, error } = await supabase
     .from('student_progress_events')
-    .select('id,question_ref,selected_option_key,is_doubt,time_spent_seconds,occurred_at')
+    .select('id,question_ref,selected_option_key,is_correct,is_doubt,time_spent_seconds,occurred_at')
     .order('occurred_at', { ascending: true })
     .limit(5000);
   if (error) throw error;
@@ -102,13 +103,45 @@ export async function pullRemoteProgress() {
     userId: session.user.id,
     questionId: event.question_ref,
     selectedAnswer: event.selected_option_key,
-    isCorrect: null,
+    isCorrect: event.is_correct,
     isDoubt: event.is_doubt,
     timeSpentSeconds: event.time_spent_seconds,
     timestamp: new Date(event.occurred_at).getTime(),
     restoredFromCloud: true
   }));
 
-  if (missing.length) await storage.bulkPut('attempts', missing);
+  if (missing.length) {
+    await storage.bulkPut('attempts', missing);
+
+    // Rebuild the local mistake view from newly imported, user-owned progress events.
+    // The correctness value is a practice diagnostic, not an official admission result.
+    for (const event of (data || []).filter(item => !known.has(item.id))) {
+      const questionId = event.question_ref;
+      const question = repo.questions.find(item => item.id === questionId);
+      const key = [session.user.id, questionId];
+      const existing = await storage.get('mistakes_by_user', key);
+
+      if (event.is_doubt || event.is_correct === false) {
+        const mistake = existing || {
+          userId: session.user.id,
+          questionId,
+          topic: question?.topic || 'Tema por identificar',
+          failCount: 0,
+          doubtCount: 0,
+          firstFailedAt: new Date(event.occurred_at).getTime(),
+          mastered: false
+        };
+        if (event.is_doubt) mistake.doubtCount += 1;
+        if (event.is_correct === false && !event.is_doubt) mistake.failCount += 1;
+        mistake.lastFailedAt = new Date(event.occurred_at).getTime();
+        mistake.mastered = false;
+        await storage.set('mistakes_by_user', mistake);
+      } else if (event.is_correct === true && existing) {
+        existing.mastered = true;
+        existing.masteredAt = new Date(event.occurred_at).getTime();
+        await storage.set('mistakes_by_user', existing);
+      }
+    }
+  }
   return { pulled: missing.length };
 }
