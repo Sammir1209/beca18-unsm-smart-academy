@@ -1546,3 +1546,12 @@ body{background:var(--bg-primary);color:var(--text-main)}.sidebar{background:#ff
 #explanation-box [style*="color: #93C5FD"]{color:#263f88!important}
 #explanation-box [style*="color: #60A5FA"]{color:#3656a3!important}
 @media(max-width:760px){.topbar-einstein-sticker{width:32px;height:32px}.page-title{font-size:1rem}}
+
+.einstein-extra-notes{margin:0 0 14px;border:1px solid #e7eaf1;border-radius:13px;background:#fbfcfe;overflow:hidden}
+.einstein-extra-notes>summary{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;color:#354b78;font-size:.8rem;font-weight:750;list-style:none}
+.einstein-extra-notes>summary::-webkit-details-marker{display:none}
+.einstein-extra-notes>summary img{width:34px;height:34px;object-fit:contain}
+.einstein-extra-notes[open]>summary{border-bottom:1px solid #e7eaf1;background:#fff8ef}
+.einstein-extra-notes-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px}
+.einstein-extra-notes-grid>div{margin:0!important;padding:11px!important}
+@media(max-width:640px){.einstein-extra-notes-grid{grid-template-columns:1fr}}
