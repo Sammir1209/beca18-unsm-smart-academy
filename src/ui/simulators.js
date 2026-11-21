@@ -1,311 +1,223 @@
 // ==========================================================================
-// VIEW: SIMULADORES REALISTAS CON ICONOGRAFÍA LUCIDE
+// VIEW: SIMULACROS DE ADMISIÓN — Beca 18 ENP / UNSM Ordinario / Extraordinario
 // ==========================================================================
 
 import { repo } from '../core/repository.js';
 import { icon } from './icons.js';
 import confetti from 'canvas-confetti';
 
+const MODALITIES = {
+  ENP: {
+    id: 'ENP', institution: 'PRONABEC', examType: 'ENP',
+    title: 'Beca 18 · ENP', subtitle: 'Examen Nacional de Preselección',
+    duration: 120, standardQuestions: 60, correctPoints: 2, wrongPoints: 0,
+    penaltyLabel: 'Sin descuento por error', accent: 'beca',
+    description: 'Matemática y Competencia Lectora. Responde todas las preguntas: las respuestas incorrectas no descuentan puntos.'
+  },
+  ORDINARIO: {
+    id: 'ORDINARIO', institution: 'UNSM', examType: 'ORDINARIO',
+    title: 'UNSM · Ordinario', subtitle: 'Examen de admisión ordinario',
+    duration: 180, standardQuestions: 100, correctPoints: 4, wrongPoints: -0.5,
+    penaltyLabel: '−0.5 puntos por error', accent: 'unsm',
+    description: 'Evaluación de ciencias, matemática y letras con descuento por cada respuesta incorrecta.'
+  },
+  EXTRAORDINARIO: {
+    id: 'EXTRAORDINARIO', institution: 'UNSM', examType: 'EXTRAORDINARIO',
+    title: 'UNSM · Extraordinario', subtitle: 'Modalidad extraordinaria',
+    duration: 180, standardQuestions: null, correctPoints: 4, wrongPoints: -0.5,
+    penaltyLabel: '−0.5 puntos por error*', accent: 'unsm',
+    description: 'Simulacro separado para la modalidad extraordinaria. Se habilitará con preguntas verificadas de esta modalidad.'
+  }
+};
+
 export function renderSimulators(container, navigateTo) {
   let activeSession = null;
   let timerInterval = null;
 
+  const getPool = (modality) => repo.questions.filter(q =>
+    q.institution === modality.institution && q.examType === modality.examType &&
+    Array.isArray(q.options) && q.options.length > 1 && q.correctAnswer
+  );
+
   function renderLobby() {
+    if (timerInterval) clearInterval(timerInterval);
+    const cards = Object.values(MODALITIES).map(modality => {
+      const pool = getPool(modality);
+      const available = pool.length > 0;
+      const countLabel = modality.standardQuestions
+        ? `${modality.standardQuestions} preguntas objetivo`
+        : 'Banco de preguntas por incorporar';
+      return `
+        <article class="sim-modality-card ${modality.accent}" data-modality="${modality.id}">
+          <div class="sim-card-topline">
+            <span class="sim-card-kicker">${modality.institution === 'PRONABEC' ? 'PRONABEC' : 'UNIVERSIDAD NACIONAL DE SAN MARTÍN'}</span>
+            <span class="sim-card-duration">${modality.duration} min</span>
+          </div>
+          <h3>${modality.title}</h3>
+          <p class="sim-card-subtitle">${modality.subtitle}</p>
+          <p class="sim-card-description">${modality.description}</p>
+          <div class="sim-card-meta">
+            <span>${countLabel}</span>
+            <span>${pool.length} preguntas disponibles</span>
+          </div>
+          <div class="sim-card-footer">
+            <span class="sim-score-rule">${modality.penaltyLabel}</span>
+            <button class="btn ${modality.accent === 'beca' ? 'btn-beca' : 'btn-primary'} sim-start-button" data-start="${modality.id}" ${available ? '' : 'disabled'}>
+              ${available ? 'Preparar simulacro' : 'En preparación'}
+              ${icon(available ? 'arrowRight' : 'lock', { size: 16 })}
+            </button>
+          </div>
+          ${modality.id === 'EXTRAORDINARIO' && !available ? '<p class="sim-card-note">No se han cargado preguntas extraordinarias validadas. No se reutilizarán preguntas ordinarias como si fueran extraordinarias.</p>' : ''}
+        </article>
+      `;
+    }).join('');
+
     container.innerHTML = `
-      <div style="max-width: 900px; margin: 0 auto;">
-        <div style="margin-bottom: 28px;">
-          <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-            ${icon('simulator', { size: 28, color: 'var(--accent-unsm)' })}
-            Simuladores de Examen Oficial
-          </h2>
-          <p style="color: var(--text-muted); font-size: 0.95rem;">
-            Reproducción fiel de las condiciones de evaluación de Beca 18 (ENP) y la Universidad Nacional de San Martín (UNSM).
-          </p>
+      <section class="simulator-hub">
+        <header class="simulator-heading">
+          <span class="simulator-eyebrow">PREPARACIÓN DE ADMISIÓN</span>
+          <h2>Simulacros</h2>
+          <p>Elige una modalidad para practicar en condiciones de examen. Cada simulacro tiene su propio tiempo y sistema de puntuación.</p>
+        </header>
+        <div class="simulator-section-label">
+          <div><strong>Modalidades disponibles</strong><span>Selecciona solo una para comenzar</span></div>
+          <span class="simulator-bank-count">${repo.questions.length} preguntas en el banco</span>
         </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
-          
-          <!-- Beca 18 Card -->
-          <div class="card" style="border-top: 4px solid var(--accent-beca);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-              <span class="tag tag-beca">PRONABEC</span>
-              <span style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono); display: flex; align-items: center; gap: 4px;">
-                ${icon('simulator', { size: 14, color: 'var(--text-dim)' })} 120 MINUTOS
-              </span>
-            </div>
-            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px;">Examen Nacional de Preselección (ENP)</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
-              60 preguntas (30 Matemática y 30 Competencia Lectora). Sin penalización por error (estrategia 100% de llenado).
-            </p>
-            <div style="background-color: var(--bg-card); padding: 12px; border-radius: var(--radius-md); font-size: 0.8rem; margin-bottom: 20px;">
-              <strong>Estructura Oficial:</strong> 50% Matemática &bull; 50% Lectura
-            </div>
-            <button id="btn-start-enp" class="btn btn-beca" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
-              ${icon('practice', { size: 18, color: '#064E3B' })}
-              Iniciar Simulacro Beca 18
-            </button>
-          </div>
-
-          <!-- UNSM Ordinario Card -->
-          <div class="card" style="border-top: 4px solid var(--accent-unsm);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-              <span class="tag tag-unsm">UNSM TARAPOTO</span>
-              <span style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono); display: flex; align-items: center; gap: 4px;">
-                ${icon('simulator', { size: 14, color: 'var(--text-dim)' })} 180 MINUTOS
-              </span>
-            </div>
-            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px;">Examen Ordinario de Admisión</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
-              100 preguntas evaluando Ciencias, Matemáticas y Humanidades. Aplica penalización oficial de puntaje en contra por error.
-            </p>
-            <div style="background-color: var(--bg-card); padding: 12px; border-radius: var(--radius-md); font-size: 0.8rem; margin-bottom: 20px;">
-              <strong>Ponderación UNSM:</strong> +4.0 por acierto &bull; -0.5 por fallo
-            </div>
-            <button id="btn-start-unsm" class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
-              ${icon('practice', { size: 18, color: '#fff' })}
-              Iniciar Simulacro UNSM
-            </button>
-          </div>
-
-        </div>
-      </div>
+        <div class="simulator-modalities">${cards}</div>
+        <aside class="simulator-scoring-note">
+          <strong>Cómo se calcula tu puntaje</strong>
+          <p><b>ENP:</b> +2 por acierto y 0 por error o pregunta en blanco, según el esquema configurado para este simulador.</p>
+          <p><b>UNSM Ordinario:</b> +4 por acierto, −0.5 por error y 0 por pregunta en blanco.</p>
+          <p class="simulator-note-muted">La modalidad extraordinaria usará su propia matriz cuando se incorpore documentación y banco de preguntas verificados.</p>
+        </aside>
+      </section>
     `;
 
-    document.getElementById('btn-start-enp')?.addEventListener('click', () => startSimulator('PRONABEC', 120));
-    document.getElementById('btn-start-unsm')?.addEventListener('click', () => startSimulator('UNSM', 180));
+    container.querySelectorAll('[data-start]').forEach(button => {
+      button.addEventListener('click', () => {
+        const modality = MODALITIES[button.dataset.start];
+        if (modality && getPool(modality).length) startSimulator(modality);
+      });
+    });
   }
 
-  function startSimulator(institution, durationMinutes) {
-    const pool = repo.questions.filter(q => q.institution === institution || q.institution === 'GENERAL');
-    const questions = pool.length > 0 ? pool : repo.questions;
-
-    // Epoch based resilient timestamp
-    const endTimestamp = Date.now() + durationMinutes * 60 * 1000;
-
+  function startSimulator(modality) {
+    const pool = getPool(modality);
+    if (!pool.length) return;
+    const questions = [...pool].sort(() => Math.random() - 0.5);
     activeSession = {
-      institution,
-      durationMinutes,
-      endTimestamp,
-      questions,
-      currentIndex: 0,
-      answers: {}, // questionId -> optionId
-      finished: false
+      modality, institution: modality.institution, durationMinutes: modality.duration,
+      endTimestamp: Date.now() + modality.duration * 60 * 1000,
+      questions, currentIndex: 0, answers: {}, finished: false
     };
-
     renderActiveExam();
   }
 
   function renderActiveExam() {
     if (!activeSession) return;
-
-    if (activeSession.finished) {
-      renderResults();
-      return;
-    }
-
+    if (activeSession.finished) return renderResults();
     const q = activeSession.questions[activeSession.currentIndex];
     const remainingMs = Math.max(0, activeSession.endTimestamp - Date.now());
     const totalSec = Math.floor(remainingMs / 1000);
-    const m = Math.floor(totalSec / 60);
-    const s = totalSec % 60;
+    const m = Math.floor(totalSec / 60), s = totalSec % 60;
     const timeFormatted = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    const answered = Object.keys(activeSession.answers).length;
 
     container.innerHTML = `
-      <div style="max-width: 900px; margin: 0 auto;">
-        
-        <!-- Top Bar del Simulacro: Timer & Finalizar -->
-        <div style="display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-surface); padding: 16px 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); margin-bottom: 24px;">
-          <div>
-            <span class="tag ${activeSession.institution === 'PRONABEC' ? 'tag-beca' : 'tag-unsm'}">${activeSession.institution}</span>
-            <span style="font-weight: 700; margin-left: 8px;">Pregunta ${activeSession.currentIndex + 1} de ${activeSession.questions.length}</span>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 1.25rem; font-weight: 700; color: ${m < 10 ? 'var(--accent-danger)' : 'var(--accent-beca)'};">
-              ${icon('simulator', { size: 20, color: m < 10 ? 'var(--accent-danger)' : 'var(--accent-beca)' })}
-              <span id="timer-display">${timeFormatted}</span>
-            </div>
-
-            <button id="btn-finish-exam" class="btn btn-secondary" style="font-size: 0.85rem; padding: 8px 16px;">
-              Finalizar Examen
-            </button>
-          </div>
+      <section class="sim-exam-shell">
+        <header class="sim-exam-header">
+          <div><span class="simulator-eyebrow">${activeSession.modality.title}</span><strong>Pregunta ${activeSession.currentIndex + 1} <small>de ${activeSession.questions.length}</small></strong></div>
+          <div class="sim-exam-header-actions"><span class="sim-exam-timer" id="timer-display">${timeFormatted}</span><button id="btn-finish-exam" class="btn btn-secondary btn-sm">Finalizar</button></div>
+        </header>
+        <div class="sim-exam-progress"><span style="width:${(answered / activeSession.questions.length) * 100}%"></span></div>
+        <div class="sim-exam-context"><span>${q.subject || q.area || 'Área general'}</span><span>${q.topic || ''}</span></div>
+        <article class="question-body sim-question-body">${q.rawQuestion}</article>
+        <div class="options-list sim-options-list">
+          ${q.options.map(opt => `<button type="button" class="option-item ${activeSession.answers[q.id] === opt.id ? 'selected' : ''}" data-option="${opt.id}"><span class="option-key">${opt.id}</span><span>${opt.text}</span></button>`).join('')}
         </div>
-
-        <!-- Enunciado del Examen (Modo Estricto: sin soluciones intermedias) -->
-        <div class="question-body">
-          <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px;">
-            ${q.subject} &bull; ${q.topic}
-          </div>
-          ${q.rawQuestion}
-        </div>
-
-        <!-- Alternativas -->
-        <div class="options-list">
-          ${q.options.map(opt => `
-            <div class="option-item ${activeSession.answers[q.id] === opt.id ? 'selected' : ''}" data-option="${opt.id}">
-              <div class="option-key">${opt.id}</div>
-              <div style="flex: 1;">${opt.text}</div>
-            </div>
-          `).join('')}
-        </div>
-
-        <!-- Navegación & Matriz de Preguntas -->
-        <div style="display: flex; justify-content: space-between; margin-bottom: 24px;">
-          <button id="btn-exam-prev" class="btn btn-secondary" ${activeSession.currentIndex === 0 ? 'disabled' : ''}>
-            ${icon('arrowLeft', { size: 16 })} Anterior
-          </button>
-          <button id="btn-exam-next" class="btn btn-primary" ${activeSession.currentIndex === activeSession.questions.length - 1 ? 'disabled' : ''}>
-            Siguiente ${icon('arrowRight', { size: 16 })}
-          </button>
-        </div>
-
-        <!-- Matriz Rápida de Preguntas -->
-        <div class="card" style="padding: 16px;">
-          <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase;">
-            Navegador Rápido de Preguntas
-          </div>
+        <nav class="sim-exam-navigation">
+          <button id="btn-exam-prev" class="btn btn-secondary" ${activeSession.currentIndex === 0 ? 'disabled' : ''}>${icon('arrowLeft', {size:16})} Anterior</button>
+          <span>${answered} respondidas</span>
+          <button id="btn-exam-next" class="btn btn-primary" ${activeSession.currentIndex === activeSession.questions.length - 1 ? 'disabled' : ''}>Siguiente ${icon('arrowRight', {size:16})}</button>
+        </nav>
+        <details class="sim-question-navigator">
+          <summary>Ver preguntas <span>${answered}/${activeSession.questions.length} respondidas</span></summary>
           <div class="navigator-grid">
-            ${activeSession.questions.map((item, idx) => `
-              <div class="nav-pill ${activeSession.answers[item.id] ? 'answered' : ''} ${idx === activeSession.currentIndex ? 'active' : ''}" data-index="${idx}">
-                ${idx + 1}
-              </div>
-            `).join('')}
+            ${activeSession.questions.map((item, idx) => `<button type="button" class="nav-pill ${activeSession.answers[item.id] ? 'answered' : ''} ${idx === activeSession.currentIndex ? 'active' : ''}" data-index="${idx}">${idx + 1}</button>`).join('')}
           </div>
-        </div>
-
-      </div>
+        </details>
+      </section>
     `;
 
-    // Listeners de Opciones
-    container.querySelectorAll('.option-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const opt = item.getAttribute('data-option');
-        activeSession.answers[q.id] = opt;
-        renderActiveExam();
-      });
-    });
-
-    container.querySelectorAll('.nav-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        activeSession.currentIndex = parseInt(pill.getAttribute('data-index'), 10);
-        renderActiveExam();
-      });
-    });
-
+    container.querySelectorAll('[data-option]').forEach(item => item.addEventListener('click', () => {
+      activeSession.answers[q.id] = item.dataset.option;
+      renderActiveExam();
+    }));
+    container.querySelectorAll('[data-index]').forEach(item => item.addEventListener('click', () => {
+      activeSession.currentIndex = Number(item.dataset.index);
+      renderActiveExam();
+    }));
     document.getElementById('btn-exam-prev')?.addEventListener('click', () => {
-      if (activeSession.currentIndex > 0) {
-        activeSession.currentIndex--;
-        renderActiveExam();
-      }
+      if (activeSession.currentIndex > 0) { activeSession.currentIndex--; renderActiveExam(); }
     });
-
     document.getElementById('btn-exam-next')?.addEventListener('click', () => {
-      if (activeSession.currentIndex < activeSession.questions.length - 1) {
-        activeSession.currentIndex++;
-        renderActiveExam();
-      }
+      if (activeSession.currentIndex < activeSession.questions.length - 1) { activeSession.currentIndex++; renderActiveExam(); }
     });
-
     document.getElementById('btn-finish-exam')?.addEventListener('click', () => {
-      if (confirm('¿Seguro que deseas finalizar y calificar tu examen?')) {
-        finishSession();
-      }
+      if (confirm('¿Finalizar y calificar este simulacro?')) finishSession();
     });
 
-    // Worker/Timer ticker
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
-      const now = Date.now();
-      const diff = Math.max(0, activeSession.endTimestamp - now);
-      if (diff <= 0) {
-        clearInterval(timerInterval);
-        finishSession();
-      } else {
-        const sec = Math.floor(diff / 1000);
-        const mm = Math.floor(sec / 60);
-        const ss = sec % 60;
-        const el = document.getElementById('timer-display');
-        if (el) el.innerText = `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
-      }
+      const diff = Math.max(0, activeSession.endTimestamp - Date.now());
+      if (diff <= 0) { clearInterval(timerInterval); finishSession(); return; }
+      const sec = Math.floor(diff / 1000), el = document.getElementById('timer-display');
+      if (el) el.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
     }, 1000);
   }
 
   function finishSession() {
+    if (!activeSession || activeSession.finished) return;
     if (timerInterval) clearInterval(timerInterval);
     activeSession.finished = true;
-    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-    renderActiveExam();
+    confetti({ particleCount: 55, spread: 58, origin: { y: 0.65 } });
+    renderResults();
   }
 
   function renderResults() {
-    let correct = 0;
-    let incorrect = 0;
-    let blank = 0;
-
-    activeSession.questions.forEach(q => {
-      const ans = activeSession.answers[q.id];
-      if (!ans) blank++;
-      else if (ans === q.correctAnswer) correct++;
-      else incorrect++;
+    const { questions, answers, modality } = activeSession;
+    let correct = 0, incorrect = 0, blank = 0;
+    const bySubject = {};
+    questions.forEach(q => {
+      const answer = answers[q.id];
+      if (!bySubject[q.subject]) bySubject[q.subject] = { correct: 0, incorrect: 0, blank: 0 };
+      if (!answer) { blank++; bySubject[q.subject].blank++; }
+      else if (answer === q.correctAnswer) { correct++; bySubject[q.subject].correct++; }
+      else { incorrect++; bySubject[q.subject].incorrect++; }
     });
-
-    const isUNSM = activeSession.institution === 'UNSM';
-    const score = isUNSM 
-      ? Math.max(0, correct * 4.0 - incorrect * 0.5)
-      : correct * 2.0;
+    const score = Math.max(0, correct * modality.correctPoints + incorrect * modality.wrongPoints);
+    const penalty = incorrect * Math.abs(modality.wrongPoints);
+    const subjectRows = Object.entries(bySubject).map(([subject, data]) => `
+      <div class="sim-result-subject"><span>${subject}</span><strong>${data.correct}/${data.correct + data.incorrect + data.blank}</strong></div>
+    `).join('');
 
     container.innerHTML = `
-      <div style="max-width: 800px; margin: 0 auto;">
-        <div style="background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 36px; text-align: center; margin-bottom: 24px;">
-          <div style="margin-bottom: 12px;">${icon('award', { size: 48, color: 'var(--accent-beca)' })}</div>
-          <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 8px;">Resultados del Simulacro</h2>
-          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">
-            ${activeSession.institution} &bull; Evaluación Completada
-          </p>
-
-          <div style="font-size: 3.5rem; font-weight: 800; color: var(--accent-beca); margin-bottom: 4px;">
-            ${score.toFixed(1)} <span style="font-size: 1.2rem; color: var(--text-muted);">pts</span>
-          </div>
-          <div style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 32px;">
-            ${isUNSM ? 'Puntuación con penalización oficial (-0.5 pts por fallo)' : 'Puntuación ENP Beca 18'}
-          </div>
-
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px;">
-            <div style="background-color: var(--bg-card); padding: 16px; border-radius: var(--radius-md);">
-              <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-beca);">${correct}</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">Aciertos</div>
-            </div>
-            <div style="background-color: var(--bg-card); padding: 16px; border-radius: var(--radius-md);">
-              <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-danger);">${incorrect}</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">Fallos</div>
-            </div>
-            <div style="background-color: var(--bg-card); padding: 16px; border-radius: var(--radius-md);">
-              <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-dim);">${blank}</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">En Blanco</div>
-            </div>
-          </div>
-
-          <div style="display: flex; justify-content: center; gap: 12px;">
-            <button id="btn-back-lobby" class="btn btn-primary">
-              Volver a Simuladores
-            </button>
-            <button id="btn-view-errors" class="btn btn-secondary">
-              Revisar Banco de Errores
-            </button>
-          </div>
+      <section class="sim-results-shell">
+        <header class="sim-results-heading"><span class="simulator-eyebrow">SIMULACRO COMPLETADO</span><h2>Tu resultado</h2><p>${modality.title} · ${questions.length} preguntas</p></header>
+        <div class="sim-score-panel"><span>Puntaje obtenido</span><strong>${score.toFixed(1)} <small>pts</small></strong><div>+ ${(correct * modality.correctPoints).toFixed(1)} por aciertos · − ${penalty.toFixed(1)} por errores</div></div>
+        <div class="sim-result-stats">
+          <div><strong class="positive">${correct}</strong><span>Aciertos</span></div>
+          <div><strong class="negative">${incorrect}</strong><span>Errores</span><small>−${penalty.toFixed(1)} pts</small></div>
+          <div><strong>${blank}</strong><span>En blanco</span><small>0 pts</small></div>
         </div>
-      </div>
+        <div class="sim-result-breakdown"><h3>Desglose por curso</h3>${subjectRows || '<p>Sin datos por curso.</p>'}</div>
+        <div class="sim-result-actions"><button id="btn-back-lobby" class="btn btn-primary">Volver a modalidades</button><button id="btn-view-errors" class="btn btn-secondary">Revisar errores</button></div>
+        <p class="simulator-note-muted">Puntaje calculado con la escala configurada para esta modalidad. Verifica siempre las bases oficiales de admisión de tu convocatoria.</p>
+      </section>
     `;
 
-    document.getElementById('btn-back-lobby')?.addEventListener('click', () => {
-      activeSession = null;
-      renderLobby();
-    });
-
-    document.getElementById('btn-view-errors')?.addEventListener('click', () => {
-      window.location.hash = '#mistakes';
-    });
+    document.getElementById('btn-back-lobby')?.addEventListener('click', () => { activeSession = null; renderLobby(); });
+    document.getElementById('btn-view-errors')?.addEventListener('click', () => { window.location.hash = '#mistakes'; });
   }
 
   renderLobby();
