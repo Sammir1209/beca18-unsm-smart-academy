@@ -36,7 +36,7 @@ export async function renderDashboard(container, navigateTo) {
             Buenos días, ${greetingName}
           </h1>
           <p class="dashboard-hero-description">
-            Tu ruta de preparación está optimizada para el <strong>Núcleo Común (Matemática + Comprensión Lectora)</strong> y la especialización en Ciencias para la UNSM.
+            Organiza tu preparación con práctica, fichas y seguimiento de tus resultados para Beca 18 y la admisión a la UNSM.
           </p>
         </div>
         <div class="dashboard-hero-actions">
@@ -46,7 +46,7 @@ export async function renderDashboard(container, navigateTo) {
           </button>
           <button id="btn-start-simulator" class="btn btn-primary">
             ${icon('simulator', { size: 18, color: '#fff' })}
-            Simulacro Oficial
+            Ver simulacros
           </button>
         </div>
       </section>
@@ -105,7 +105,7 @@ export async function renderDashboard(container, navigateTo) {
           <div class="card-header">
             <div>
               <div class="stat-value">${repo.questions.length}</div>
-              <div class="stat-label">Preguntas Oficiales</div>
+              <div class="stat-label">Preguntas en revisión</div>
             </div>
             <div class="card-icon emerald">
               ${icon('star', { size: 24, color: 'var(--accent-beca)' })}
@@ -113,7 +113,7 @@ export async function renderDashboard(container, navigateTo) {
           </div>
           <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
             ${icon('sources', { size: 14, color: 'var(--accent-beca)' })}
-            UNSM (Ordinario) y Beca 18 (ENP)
+            Banco académico en proceso de validación
           </div>
         </div>
       </div>
@@ -125,7 +125,7 @@ export async function renderDashboard(container, navigateTo) {
           Recomendado para ti hoy (Motor Diagnóstico)
         </h3>
         <div style="display: flex; flex-direction: column; gap: 12px;">
-          ${diag.recommendations.map(rec => `
+          ${diag.recommendations.length ? diag.recommendations.map(rec => `
             <div class="recommendation-row">
               <div class="recommendation-copy">
                 <span class="tag ${rec.priority === 'ALTA' ? 'tag-diff-adv' : 'tag-diff-mid'}">${escapeHtml(rec.priority)} PRIORIDAD</span>
@@ -133,51 +133,54 @@ export async function renderDashboard(container, navigateTo) {
                 <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">(${escapeHtml(rec.subject)})</span>
                 <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${escapeHtml(rec.action)}</div>
               </div>
-              <button class="btn btn-secondary btn-sm" onclick="window.location.hash='#fichas'">
-                Estudiar Ficha ${icon('chevronRight', { size: 14 })}
+              <button class="btn btn-secondary btn-sm" data-open-practice>
+                Practicar tema ${icon('chevronRight', { size: 14 })}
               </button>
             </div>
-          `).join('')}
+          `).join('') : `
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Aún no hay errores suficientes para generar recomendaciones personalizadas. Resuelve algunas preguntas y el diagnóstico se actualizará con tus resultados reales.</p>
+            <button id="btn-first-practice" class="btn btn-secondary btn-sm" style="align-self:flex-start;">Comenzar práctica ${icon('chevronRight', { size: 14 })}</button>
+          `}
         </div>
       </div>
 
-      <!-- Mapa de Frecuencia Curricular -->
+      <!-- Mapa de temas de estudio -->
       <div class="card">
         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
           ${icon('zap', { size: 18, color: 'var(--accent-alert)' })}
-          Frecuencia Histórica en Exámenes (2023 - 2025)
+          Temas de estudio y práctica
         </h3>
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
-          Distribución de temas que han concentrado mayor recurrencia oficial en Beca 18 y UNSM.
+          Referencias orientativas de estudio. Las frecuencias y ponderaciones oficiales se mostrarán cuando estén respaldadas por prospectos y exámenes verificables.
         </p>
         <div class="frequency-grid">
           <div class="frequency-card frequency-card-beca">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-beca)' })} Tanto por Ciento & Comercio
             </div>
-            <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">FRECUENCIA MUY ALTA</div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">6 preguntas promedio por examen</div>
+            <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">TEMA DE REPASO</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Practica porcentajes, razones y problemas comerciales</div>
           </div>
           <div class="frequency-card frequency-card-unsm">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-unsm)' })} Ecuaciones Cuadráticas & Cardano
             </div>
-            <div style="font-size: 0.8rem; color: var(--accent-unsm); font-weight: 600; margin-top: 4px;">FRECUENCIA ALTA</div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">4 preguntas promedio en Álgebra</div>
+            <div style="font-size: 0.8rem; color: var(--accent-unsm); font-weight: 600; margin-top: 4px;">TEMA DE REPASO</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Refuerza ecuaciones y métodos de resolución</div>
           </div>
           <div class="frequency-card frequency-card-beca">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-beca)' })} Inferencia & Idea Principal (RV)
             </div>
-            <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">FRECUENCIA MUY ALTA</div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">50% del ENP Beca 18</div>
+            <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">TEMA DE REPASO</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Desarrolla comprensión, inferencia e idea principal</div>
           </div>
           <div class="frequency-card frequency-card-alert">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-alert)' })} Cinemática & MRUV (Física)
             </div>
-            <div style="font-size: 0.8rem; color: var(--accent-alert); font-weight: 600; margin-top: 4px;">RECURRENTE UNSM</div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Clave para ingenierías y ciencias</div>
+            <div style="font-size: 0.8rem; color: var(--accent-alert); font-weight: 600; margin-top: 4px;">TEMA DE REPASO</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Repasa movimiento, velocidad y aceleración</div>
           </div>
         </div>
       </div>
@@ -187,4 +190,6 @@ export async function renderDashboard(container, navigateTo) {
 
   document.getElementById('btn-start-practice')?.addEventListener('click', () => navigateTo('practice'));
   document.getElementById('btn-start-simulator')?.addEventListener('click', () => navigateTo('simulators'));
+  document.getElementById('btn-first-practice')?.addEventListener('click', () => navigateTo('practice'));
+  container.querySelectorAll('[data-open-practice]').forEach(button => button.addEventListener('click', () => navigateTo('practice')));
 }

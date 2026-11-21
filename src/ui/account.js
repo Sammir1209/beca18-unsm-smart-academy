@@ -66,8 +66,15 @@ export function mountAccount(container) {
     guestActions.hidden = Boolean(user);
     userActions.hidden = !user;
     setStatus(user ? 'Tu cuenta está activa.' : 'Inicia sesión para sincronizar tu progreso.');
-    const pending = (await storage.getAll('sync_outbox').catch(() => [])).length;
-    syncLabel.textContent = pending ? `${pending} cambios pendientes de sincronizar` : user ? 'Tu progreso está guardado.' : 'Tu avance local se conserva en este dispositivo.';
+    const outbox = await storage.getAll('sync_outbox').catch(() => []);
+    const pending = user
+      ? outbox.filter(event => event.owner_user_id === user.id).length
+      : 0;
+    syncLabel.textContent = pending
+      ? `${pending} cambios pendientes de sincronizar`
+      : user
+        ? 'Tu progreso está guardado en tu cuenta.'
+        : 'Tu avance local se conserva en este dispositivo y no se mezcla con otras cuentas.';
   };
 
   supabase.auth.getSession().then(({ data }) => refresh(data.session)).catch(() => setStatus('No se pudo comprobar la sesión.'));

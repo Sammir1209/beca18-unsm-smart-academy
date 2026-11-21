@@ -52,7 +52,7 @@ class App {
             </a>
             <a class="nav-item" data-route="simulators" href="#simulators">
               ${icon('simulator', { size: 18 })}
-              Simuladores Oficiales
+              Simuladores de preparación
             </a>
             <a class="nav-item" data-route="fichas" href="#fichas">
               ${icon('fichas', { size: 18 })}
@@ -182,11 +182,11 @@ class App {
     const titles = {
       dashboard: 'Inicio',
       practice: 'Práctica Adaptativa',
-      simulators: 'Simuladores de Examen Oficial',
+      simulators: 'Simuladores de preparación',
       fichas: 'Fichas Temáticas de Alto Rendimiento',
       flashcards: 'Flashcards Mnemotécnicas',
       mistakes: 'Banco de Errores',
-      sources: 'Fuentes Oficiales & Auditoría',
+      sources: 'Fuentes & Trazabilidad',
       login: 'Iniciar sesión',
       register: 'Crear cuenta',
     };

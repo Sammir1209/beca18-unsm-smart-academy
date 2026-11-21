@@ -2,9 +2,9 @@ name: Quality checks
 
 on:
   push:
-    branches: [main, mobile-first-unsm-academy]
+    branches: [main, mobile-first-unsm-academy, hardening/production-readiness-2026-11]
   pull_request:
-    branches: [main]
+    branches: [main, mobile-first-unsm-academy]
 
 permissions:
   contents: read
@@ -14,23 +14,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Install and production build
+  quality:
+    name: Install, test and production build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: 22
           cache: npm
 
-      # npm install currently reconciles the existing lockfile with package.json.
-      # Once the lockfile is committed in sync, this can be switched to npm ci.
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Validate question bank and project invariants
+        run: npm test
 
       - name: Build production bundle
         run: npm run build

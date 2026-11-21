@@ -51,11 +51,11 @@ class DataRepository {
           name: 'Postulante 2027',
           target: 'BOTH', // 'BECA18' | 'UNSM' | 'BOTH'
           unsmModality: 'ORDINARIO',
-          streakDays: 4,
+          streakDays: 0,
           dailyGoal: 20,
-          completedToday: 8,
-          masteryRate: 72,
-          weakTopics: ['Álgebra: Propiedades de las Raíces', 'Física: Caída Libre Vertical']
+          completedToday: 0,
+          masteryRate: 0,
+          weakTopics: []
         };
         await storage.set('profile', profile);
       }

@@ -38,6 +38,9 @@ export default async function handler(req, res) {
     const auth = await getAuthenticatedUser(req);
     if (!auth) return res.status(401).json({ error: 'Inicia sesión para conversar con tu tutor.' });
 
+    const oidcToken = req.headers['x-vercel-oidc-token'];
+    if (!oidcToken) return res.status(503).json({ error: 'AI Gateway no está disponible en este despliegue.' });
+
     const rawMessages = Array.isArray(req.body?.messages) ? req.body.messages.slice(-MAX_MESSAGES) : [];
     const messages = rawMessages
       .filter((item) => ['user', 'assistant'].includes(item?.role) && typeof item?.content === 'string')
@@ -69,9 +72,6 @@ export default async function handler(req, res) {
       res.setHeader('Retry-After', String(quota?.retry_after_seconds || 60));
       return res.status(429).json({ error: 'Has enviado varios mensajes seguidos. Espera un momento y continúa.' });
     }
-
-    const oidcToken = req.headers['x-vercel-oidc-token'];
-    if (!oidcToken) return res.status(503).json({ error: 'AI Gateway no está disponible en este despliegue.' });
 
     const tutorName = character === 'female' ? 'Profe Sofía' : 'Profe Alfredo';
     const system = [

@@ -3,7 +3,7 @@
 // ==========================================================================
 
 const DB_NAME = 'SmartAcademyDB';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 class StorageService {
   constructor() {
@@ -60,6 +60,11 @@ class StorageService {
         // Intelligent Mistakes Bank ("Mis Errores")
         if (!db.objectStoreNames.contains('mistakes')) {
           db.createObjectStore('mistakes', { keyPath: 'questionId' });
+        }
+
+        // Per-account mistake history. Keep the legacy guest store for existing local data.
+        if (!db.objectStoreNames.contains('mistakes_by_user')) {
+          db.createObjectStore('mistakes_by_user', { keyPath: ['userId', 'questionId'] });
         }
       };
 

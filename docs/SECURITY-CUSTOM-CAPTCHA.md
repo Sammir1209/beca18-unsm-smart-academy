@@ -70,3 +70,12 @@ Respuestas de error genéricas: payload inválido, challenge vencido/usado, lím
 - Alta real con email controlado y confirmación de correo.
 - Rechazo de proof faltante, inválido, expirado y reutilizado.
 - Revisión de logs y prueba de abuso/rate limit.
+
+
+## Endurecimiento adicional — 2026-11-21
+
+La función `captcha-verify` valida que el fingerprint HMAC del cliente que presenta la solución coincida con el fingerprint asociado al desafío emitido. Esto reduce la posibilidad de transferir un desafío resuelto entre clientes distintos. El fingerprint se deriva de la IP observada por el runtime y un secreto del servidor; la IP no se almacena en claro.
+
+La versión activa de `captcha-verify` es v3. La función de emisión `captcha-challenge` continúa en v2. Ambas mantienen `verify_jwt=false` porque son endpoints públicos del flujo de alta; la protección depende de la allowlist de Origin, PoW, límites por fingerprint y la barrera atómica en `auth.users`. Origin/CORS no sustituye autenticación ni es una defensa contra clientes no navegador.
+
+Pendiente de validación E2E: registro real con confirmación de correo, y rechazos de proof ausente, inválido, expirado y reutilizado. El trigger de alta se aplica a todo INSERT en `auth.users`; los flujos administrativos/invitaciones deben probarse antes de habilitarlos.

@@ -11,30 +11,30 @@ const MODALITIES = {
   ENP: {
     id: 'ENP', institution: 'PRONABEC', examType: 'ENP',
     title: 'Beca 18 · ENP', subtitle: 'Examen Nacional de Preselección',
-    duration: 120, standardQuestions: 60, correctPoints: 2, wrongPoints: 0,
-    penaltyLabel: 'Sin descuento por error', accent: 'beca',
-    description: 'Matemática y Competencia Lectora. Responde todas las preguntas: las respuestas incorrectas no descuentan puntos.'
+    duration: null, standardQuestions: null, correctPoints: null, wrongPoints: null, blueprintVerified: false,
+    penaltyLabel: 'Ponderación pendiente de verificar', accent: 'beca',
+    description: 'Modalidad identificada. Su estructura, duración y reglas de calificación deben verificarse con las bases vigentes.'
   },
   ORDINARIO: {
     id: 'ORDINARIO', institution: 'UNSM', examType: 'ORDINARIO',
     title: 'UNSM · Ordinario', subtitle: 'Examen de admisión ordinario',
-    duration: 180, standardQuestions: 100, correctPoints: 4, wrongPoints: -0.5,
-    penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
-    description: 'Examen ordinario. La ponderación mostrada es referencial y debe contrastarse con el prospecto vigente.'
+    duration: null, standardQuestions: null, correctPoints: null, wrongPoints: null, blueprintVerified: false,
+    penaltyLabel: 'Ponderación pendiente de verificar', accent: 'unsm',
+    description: 'Modalidad identificada. Su estructura, duración y reglas de calificación deben verificarse con el prospecto vigente.'
   },
   EXTRAORDINARIO: {
     id: 'EXTRAORDINARIO', institution: 'UNSM', examType: 'EXTRAORDINARIO',
     title: 'UNSM · Extraordinario', subtitle: 'Modalidad extraordinaria',
-    duration: 120, standardQuestions: 60, correctPoints: 4, wrongPoints: -0.5,
-    penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
-    description: 'Modalidad extraordinaria. Requiere un banco propio y la ponderación debe contrastarse con el prospecto vigente.'
+    duration: null, standardQuestions: null, correctPoints: null, wrongPoints: null, blueprintVerified: false,
+    penaltyLabel: 'Ponderación pendiente de verificar', accent: 'unsm',
+    description: 'Modalidad identificada. Requiere un banco propio y un blueprint oficial verificado antes de habilitarse.'
   },
   CONCURSO_ESCOLAR: {
     id: 'CONCURSO_ESCOLAR', institution: 'UNSM', examType: 'CONCURSO_ESCOLAR',
     title: 'UNSM · Concurso escolar', subtitle: 'Quinto de secundaria',
-    duration: 150, standardQuestions: 80, correctPoints: 4, wrongPoints: -0.5,
-    penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
-    description: 'Modalidad escolar para quinto de secundaria. La ponderación es referencial hasta validar el prospecto vigente.'
+    duration: null, standardQuestions: null, correctPoints: null, wrongPoints: null, blueprintVerified: false,
+    penaltyLabel: 'Ponderación pendiente de verificar', accent: 'unsm',
+    description: 'Modalidad identificada. Requiere bases vigentes, distribución oficial y banco de preguntas validado.'
   }
 };
 
@@ -95,7 +95,7 @@ export function renderSimulators(container, navigateTo) {
     const modality = MODALITIES[snapshot.modalityId];
     const byId = new Map(repo.questions.map(question => [question.id, question]));
     const questions = snapshot.questionIds.map(id => byId.get(id)).filter(Boolean);
-    if (!modality || questions.length !== snapshot.questionIds.length || !questions.length) return false;
+    if (!modality || modality.blueprintVerified !== true || questions.length !== snapshot.questionIds.length || !questions.length) return false;
     activeSession = { modality, institution: modality.institution, durationMinutes: modality.duration, endTimestamp: Number(snapshot.endTimestamp), startedAt: snapshot.startedAt || Date.now(), questions, currentIndex: Math.max(0, Math.min(Number(snapshot.currentIndex) || 0, questions.length - 1)), answers: snapshot.answers || {}, finished: Boolean(snapshot.finished) };
     if (!activeSession.finished && activeSession.endTimestamp <= Date.now()) activeSession.finished = true;
     return true;
@@ -110,13 +110,17 @@ export function renderSimulators(container, navigateTo) {
     if (timerInterval) clearInterval(timerInterval);
     const cards = Object.values(MODALITIES).map(modality => {
       const pool = getPool(modality);
-      const available = pool.length >= modality.standardQuestions;
-      const countLabel = `${modality.standardQuestions} preguntas requeridas`;
+      const available = modality.blueprintVerified === true
+        && Number.isInteger(modality.duration) && modality.duration > 0
+        && Number.isInteger(modality.standardQuestions) && modality.standardQuestions > 0
+        && Number.isFinite(modality.correctPoints) && modality.correctPoints > 0
+        && Number.isFinite(modality.wrongPoints) && pool.length >= modality.standardQuestions;
+      const countLabel = modality.blueprintVerified ? `${modality.standardQuestions} preguntas requeridas` : 'Estructura oficial pendiente de validar';
       return `
         <article class="sim-modality-card ${modality.accent}" data-modality="${modality.id}">
           <div class="sim-card-topline">
             <span class="sim-card-kicker">${modality.institution === 'PRONABEC' ? 'PRONABEC' : 'UNIVERSIDAD NACIONAL DE SAN MARTÍN'}</span>
-            <span class="sim-card-duration">${modality.duration} min</span>
+            <span class="sim-card-duration">${modality.duration ? `${modality.duration} min` : "Tiempo por validar"}</span>
           </div>
           <h3>${modality.title}</h3>
           <p class="sim-card-subtitle">${modality.subtitle}</p>
@@ -128,11 +132,11 @@ export function renderSimulators(container, navigateTo) {
           <div class="sim-card-footer">
             <span class="sim-score-rule">${modality.penaltyLabel}</span>
             <button class="btn ${modality.accent === 'beca' ? 'btn-beca' : 'btn-primary'} sim-start-button" data-start="${modality.id}" ${available ? '' : 'disabled'}>
-              ${available ? 'Preparar simulacro' : `Banco insuficiente (${pool.length}/${modality.standardQuestions})`}
+              ${available ? 'Preparar simulacro' : modality.blueprintVerified ? `Banco insuficiente (${pool.length}/${modality.standardQuestions})` : 'Aún no disponible'}
               ${icon(available ? 'arrowRight' : 'lock', { size: 16 })}
             </button>
           </div>
-          ${!available ? `<p class="sim-card-note">Faltan ${Math.max(0, modality.standardQuestions - pool.length)} preguntas validadas. No se completará el examen con preguntas repetidas ni de otra modalidad.</p>` : ''}
+          ${!available ? `<p class="sim-card-note">No se habilitará hasta validar el prospecto de la convocatoria, su distribución y el banco de preguntas correspondiente.</p>` : ''}
         </article>
       `;
     }).join('');
@@ -142,7 +146,7 @@ export function renderSimulators(container, navigateTo) {
         <header class="simulator-heading">
           <span class="simulator-eyebrow">PREPARACIÓN DE ADMISIÓN</span>
           <h2>Simulacros</h2>
-          <p>Elige una modalidad para practicar en condiciones de examen. Cada simulacro tiene su propio tiempo y sistema de puntuación.</p>
+          <p>Consulta las modalidades de preparación. Los simulacros cronometrados se habilitarán cuando exista una estructura oficial verificada y un banco suficiente.</p>
         </header>
         <div class="simulator-section-label">
           <div><strong>Modalidades disponibles</strong><span>Selecciona solo una para comenzar</span></div>
@@ -150,10 +154,10 @@ export function renderSimulators(container, navigateTo) {
         </div>
         <div class="simulator-modalities">${cards}</div>
         <aside class="simulator-scoring-note">
-          <strong>Cómo se calcula tu puntaje</strong>
-          <p><b>ENP:</b> +2 por acierto y 0 por error o pregunta en blanco, según el esquema configurado para este simulador.</p>
-          <p><b>UNSM:</b> ponderación referencial del inventario del proyecto: +4 por acierto, −0.5 por error y 0 en blanco. Debe verificarse con el prospecto vigente.</p>
-          <p class="simulator-note-muted">La puntuación exacta por bloque debe configurarse con el prospecto vigente de cada convocatoria.</p>
+          <strong>Transparencia académica</strong>
+          <p>Los tiempos, la cantidad de preguntas, la distribución por áreas y la puntuación deben verificarse con el prospecto vigente de cada convocatoria.</p>
+          
+          <p class="simulator-note-muted">No se mostrarán simulacros como oficiales ni se inventarán preguntas para completar un banco insuficiente.</p>
         </aside>
       </section>
     `;
@@ -169,7 +173,12 @@ export function renderSimulators(container, navigateTo) {
   function startSimulator(modality) {
     const pool = getPool(modality);
     if (!pool.length) return;
-    if (pool.length < modality.standardQuestions) return;
+    if (modality.blueprintVerified !== true
+        || !Number.isInteger(modality.duration) || modality.duration <= 0
+        || !Number.isInteger(modality.standardQuestions) || modality.standardQuestions <= 0
+        || !Number.isFinite(modality.correctPoints) || modality.correctPoints <= 0
+        || !Number.isFinite(modality.wrongPoints)
+        || pool.length < modality.standardQuestions) return;
     const questions = [...pool];
     for (let i = questions.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [questions[i], questions[j]] = [questions[j], questions[i]]; }
     questions.length = modality.standardQuestions;

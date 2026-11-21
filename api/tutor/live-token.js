@@ -41,24 +41,6 @@ export default async function handler(req, res) {
       return res.status(503).json({ error: 'La conexión segura con AI Gateway no está disponible en este despliegue.' });
     }
 
-    // Mint first; failed Gateway requests must not consume the student's session quota.
-    const gatewayResponse = await fetch('https://ai-gateway.vercel.sh/v1/realtime/client-secrets', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${oidcToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ model: MODEL, routeKind: 'live' }),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!gatewayResponse.ok) {
-      const detail = await gatewayResponse.text().catch(() => '');
-      console.error('AI Gateway Live token error:', gatewayResponse.status, detail.slice(0, 240));
-      return res.status(502).json({ error: 'No se pudo iniciar la sesión de voz en este momento.' });
-    }
-    const { token, expiresAt } = await gatewayResponse.json();
-    if (!token || !expiresAt) return res.status(502).json({ error: 'AI Gateway devolvió una sesión incompleta.' });
-
     // 3 session starts/hour per student. The client closes each session after 5 minutes.
     const quotaResponse = await fetch(`${auth.supabaseUrl}/rest/v1/rpc/consume_tutor_live_quota`, {
       method: 'POST',
@@ -79,6 +61,24 @@ export default async function handler(req, res) {
       res.setHeader('Retry-After', String(quota?.retry_after_seconds || 3600));
       return res.status(429).json({ error: 'Alcanzaste el límite de sesiones de voz por hora. Intenta más tarde.' });
     }
+
+    // Mint first; failed Gateway requests must not consume the student's session quota.
+    const gatewayResponse = await fetch('https://ai-gateway.vercel.sh/v1/realtime/client-secrets', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${oidcToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ model: MODEL, routeKind: 'live' }),
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!gatewayResponse.ok) {
+      const detail = await gatewayResponse.text().catch(() => '');
+      console.error('AI Gateway Live token error:', gatewayResponse.status, detail.slice(0, 240));
+      return res.status(502).json({ error: 'No se pudo iniciar la sesión de voz en este momento.' });
+    }
+    const { token, expiresAt } = await gatewayResponse.json();
+    if (!token || !expiresAt) return res.status(502).json({ error: 'AI Gateway devolvió una sesión incompleta.' });
 
     return res.status(200).json({ token, expiresAt, model: MODEL, maxSessionSeconds: 300 });
   } catch (error) {
