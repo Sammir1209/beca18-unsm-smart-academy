@@ -1366,3 +1366,89 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   .tutor-composer button { width: 52px; height: 52px; flex-basis: 52px; border-radius: 15px; }
   .tutor-composer-hint { padding: 0 12px 10px; font-size: 9px; }
 }
+
+
+/* ==========================================================================
+   ADMISSION SIMULATORS — clearer hierarchy and calmer mobile layout
+   ========================================================================== */
+.simulator-hub,.sim-exam-shell,.sim-results-shell { width:min(100%,900px); margin:0 auto; }
+.simulator-heading { margin:0 0 28px; max-width:680px; }
+.simulator-eyebrow { display:block; color:var(--accent-unsm); font-size:.68rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px; }
+.simulator-heading h2,.sim-results-heading h2 { font-size:clamp(1.55rem,4vw,2rem); line-height:1.15; margin:0 0 9px; font-weight:850; }
+.simulator-heading p,.sim-results-heading p { max-width:620px; margin:0; color:var(--text-muted); font-size:.9rem; line-height:1.65; }
+.simulator-section-label { display:flex; justify-content:space-between; align-items:end; gap:16px; margin-bottom:14px; }
+.simulator-section-label strong,.simulator-section-label span { display:block; }
+.simulator-section-label strong { font-size:.95rem; }
+.simulator-section-label div span,.simulator-bank-count { color:var(--text-dim); font-size:.75rem; margin-top:3px; }
+.simulator-modalities { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; align-items:stretch; }
+.sim-modality-card { min-width:0; display:flex; flex-direction:column; padding:19px; border:1px solid var(--border-subtle); border-radius:17px; background:var(--bg-surface); box-shadow:0 8px 24px rgba(0,0,0,.10); }
+.sim-modality-card.beca { border-top:3px solid var(--accent-beca); }
+.sim-modality-card.unsm { border-top:3px solid var(--accent-unsm); }
+.sim-card-topline { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:16px; }
+.sim-card-kicker { color:var(--text-dim); font-size:.61rem; font-weight:800; letter-spacing:.07em; }
+.sim-card-duration { white-space:nowrap; color:var(--text-muted); font-size:.72rem; font-variant-numeric:tabular-nums; }
+.sim-modality-card h3 { font-size:1.12rem; line-height:1.25; margin:0 0 4px; }
+.sim-card-subtitle { color:var(--text-muted); font-size:.78rem; margin:0 0 13px; }
+.sim-card-description { color:var(--text-dim); font-size:.8rem; line-height:1.55; margin:0 0 17px; }
+.sim-card-meta { display:flex; flex-direction:column; gap:5px; padding:11px 0; border-top:1px solid var(--border-subtle); color:var(--text-muted); font-size:.72rem; }
+.sim-card-footer { display:flex; flex-direction:column; align-items:stretch; gap:12px; margin-top:auto; padding-top:12px; }
+.sim-score-rule { color:var(--text-main); font-size:.76rem; font-weight:750; }
+.sim-start-button { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; min-height:42px; }
+.sim-start-button:disabled { opacity:.55; cursor:not-allowed; }
+.sim-card-note,.simulator-note-muted { color:var(--text-dim); font-size:.72rem; line-height:1.55; margin:11px 0 0; }
+.simulator-scoring-note { margin-top:20px; padding:16px 18px; border:1px solid var(--border-subtle); border-radius:14px; background:var(--bg-card); }
+.simulator-scoring-note strong { display:block; font-size:.82rem; margin-bottom:8px; }
+.simulator-scoring-note p { color:var(--text-muted); font-size:.75rem; line-height:1.55; margin:4px 0; }
+.simulator-scoring-note .simulator-note-muted { margin-top:9px; }
+.sim-exam-header { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:15px 17px; border:1px solid var(--border-subtle); border-radius:15px; background:var(--bg-surface); }
+.sim-exam-header>div:first-child strong { display:block; font-size:1rem; }
+.sim-exam-header>div:first-child small { color:var(--text-dim); font-weight:500; }
+.sim-exam-header-actions { display:flex; align-items:center; gap:12px; }
+.sim-exam-timer { font-variant-numeric:tabular-nums; font-family:var(--font-mono); font-size:1.15rem; font-weight:800; color:var(--accent-beca); }
+.sim-exam-progress { height:4px; overflow:hidden; border-radius:9px; background:var(--bg-card); margin:12px 2px 22px; }
+.sim-exam-progress span { display:block; height:100%; background:var(--accent-unsm); transition:width .2s ease; }
+.sim-exam-context { display:flex; flex-wrap:wrap; gap:8px; color:var(--text-dim); font-size:.76rem; margin-bottom:12px; }
+.sim-question-body { margin-bottom:18px; }
+.sim-options-list { display:grid; gap:9px; }
+.sim-options-list .option-item { width:100%; text-align:left; font:inherit; cursor:pointer; }
+.sim-exam-navigation { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:20px 0; }
+.sim-exam-navigation>span { color:var(--text-dim); font-size:.75rem; }
+.sim-question-navigator { border:1px solid var(--border-subtle); border-radius:13px; background:var(--bg-surface); padding:12px 14px; }
+.sim-question-navigator summary { display:flex; justify-content:space-between; gap:10px; cursor:pointer; color:var(--text-main); font-size:.8rem; font-weight:750; list-style-position:inside; }
+.sim-question-navigator summary span { color:var(--text-dim); font-weight:500; }
+.sim-question-navigator .navigator-grid { padding-top:13px; }
+.sim-question-navigator .nav-pill { cursor:pointer; }
+.sim-results-heading { text-align:center; margin-bottom:20px; }
+.sim-results-heading p { margin:0 auto; }
+.sim-score-panel { text-align:center; padding:24px 18px; border:1px solid var(--border-subtle); border-radius:17px; background:var(--bg-surface); }
+.sim-score-panel>span { display:block; color:var(--text-muted); font-size:.8rem; }
+.sim-score-panel>strong { display:block; color:var(--accent-beca); font-size:clamp(2.7rem,10vw,4rem); line-height:1.2; margin:5px 0; font-weight:900; }
+.sim-score-panel>strong small { font-size:1rem; color:var(--text-muted); }
+.sim-score-panel>div { color:var(--text-dim); font-size:.76rem; }
+.sim-result-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:14px 0 20px; }
+.sim-result-stats>div { padding:14px 8px; text-align:center; border:1px solid var(--border-subtle); border-radius:13px; background:var(--bg-card); }
+.sim-result-stats strong,.sim-result-stats span,.sim-result-stats small { display:block; }
+.sim-result-stats strong { font-size:1.5rem; }
+.sim-result-stats span { color:var(--text-muted); font-size:.72rem; }
+.sim-result-stats small { color:var(--text-dim); font-size:.67rem; margin-top:3px; }
+.sim-result-stats .positive { color:#34d399; }
+.sim-result-stats .negative { color:#fb7185; }
+.sim-result-breakdown { padding:17px; border:1px solid var(--border-subtle); border-radius:14px; background:var(--bg-surface); }
+.sim-result-breakdown h3 { font-size:.9rem; margin:0 0 10px; }
+.sim-result-subject { display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-top:1px solid var(--border-subtle); font-size:.78rem; }
+.sim-result-subject span { color:var(--text-muted); }
+.sim-result-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin:18px 0 8px; }
+@media(max-width:640px) {
+  .simulator-heading { margin-bottom:22px; }
+  .simulator-section-label { align-items:flex-start; flex-direction:column; gap:4px; }
+  .simulator-modalities { grid-template-columns:1fr; gap:11px; }
+  .sim-modality-card { padding:16px; }
+  .simulator-scoring-note { margin-top:14px; }
+  .sim-exam-header { padding:12px; }
+  .sim-exam-header-actions { gap:8px; }
+  .sim-exam-timer { font-size:1rem; }
+  .sim-exam-navigation { gap:7px; }
+  .sim-exam-navigation .btn { padding:8px 10px; font-size:.78rem; }
+  .sim-result-stats { gap:7px; }
+  .sim-result-stats>div { padding:12px 5px; }
+}
