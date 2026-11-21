@@ -104,3 +104,18 @@ El proyecto `unsm-academy` tiene dominio `unsm-academy.vercel.app` y variables V
 ### Cuotas TTS
 
 La migración `20261121223000_harden_tts_quota_parameters.sql` fija en servidor los límites de voz neuronal: 8 peticiones y 9,000 caracteres por ventana de 60 segundos, con máximo de 1,800 caracteres por solicitud. El RPC rechaza valores de política alterados por el cliente. La migración está aplicada en Supabase y versionada en el repositorio.
+
+
+## Proxy de APIs del tutor en Cloudflare Pages
+
+Se añadieron Pages Functions en `functions/api/tutor/` para exponer en el mismo origen las rutas `/api/tutor/chat`, `/api/tutor/tts` y `/api/tutor/live-token`. El proxy:
+
+- Solo admite POST y comprueba el origen del navegador cuando se envía el encabezado `Origin`.
+- Limita el cuerpo a 32 KiB y valida que el destino configurado sea un deployment HTTPS del proyecto Vercel `unsm-academy`.
+- Reenvía únicamente `Authorization`, `Content-Type` y `Accept`; no reenvía cookies ni el encabezado `Origin`.
+- Conserva el código HTTP, tipo de contenido y `Retry-After`, incluido el audio binario de TTS.
+- Devuelve errores cerrados cuando falta la configuración o no responde el backend.
+
+La variable `TUTOR_API_BASE_URL` está configurada solo en el entorno **preview** de Cloudflare Pages y apunta al deployment Vercel disponible para esta rama. La variable no está configurada en producción. Antes de promover la nueva versión a producción debe actualizarse el backend Vercel de producción y realizar pruebas autenticadas de chat, TTS y voz en tiempo real. No se debe usar una URL de preview como backend estable de producción.
+
+Las pruebas automatizadas `tests/pages-tutor-proxy.test.js` cubren método, validación de origen, configuración ausente, lista de encabezados permitidos, respuestas binarias y rechazo de hosts externos.
