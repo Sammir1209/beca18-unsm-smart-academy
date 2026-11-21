@@ -32,12 +32,8 @@ class App {
         <!-- Sidebar Navigation (Desktop) -->
         <aside class="sidebar">
           <div class="sidebar-header">
-            <div class="sidebar-logo">
-              ${icon('award', { size: 22, color: '#fff' })}
-            </div>
-            <div>
-              <div class="sidebar-title">PRE - EINSTEIN</div>
-              <div class="sidebar-subtitle">Tu academia de preparación</div>
+            <div class="sidebar-logo pre-einstein-sidebar-logo">
+              <img src="/pre-einstein-logo.svg" alt="PRE - EINSTEIN" />
             </div>
           </div>
 
