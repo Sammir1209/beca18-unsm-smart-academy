@@ -141,14 +141,14 @@ export function renderFichas(container, navigateTo) {
           <!-- Conceptos Nucleares Visuales -->
           ${f.concepts && f.concepts.length > 0 ? `
             <div style="margin-bottom: 28px;">
-              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 14px; color: #93C5FD; display: flex; align-items: center; gap: 8px;">
+              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 14px; color: var(--accent-unsm); display: flex; align-items: center; gap: 8px;">
                 ${icon('brain', { size: 20, color: 'var(--accent-unsm)' })}
                 Marco Teórico Esencial (Sin rodeos)
               </h3>
               <div style="display: flex; flex-direction: column; gap: 12px;">
                 ${f.concepts.map(c => `
                   <div style="background-color: var(--bg-card); padding: 16px 20px; border-radius: var(--radius-md); border-left: 3px solid var(--accent-unsm);">
-                    <strong style="color: #60A5FA; font-size: 0.95rem; display: block; margin-bottom: 6px;">${c.name}</strong>
+                    <strong style="color: var(--accent-unsm); font-size: 0.95rem; display: block; margin-bottom: 6px;">${c.name}</strong>
                     <div style="color: var(--text-main); font-size: 0.9rem; line-height: 1.6;">${c.description}</div>
                   </div>
                 `).join('')}
