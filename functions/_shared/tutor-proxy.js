@@ -1,5 +1,5 @@
 const MAX_BODY_BYTES = 32 * 1024;
-const ALLOWED_HOST_SUFFIX = ".vercel.app";
+const ALLOWED_HOST_SUFFIX = "-samirconter-1146s-projects.vercel.app";
 
 function jsonError(status, message, headers = {}) {
   return new Response(JSON.stringify({ error: message }), {
@@ -47,7 +47,7 @@ export async function proxyTutorRequest(request, env, endpoint) {
       base.search ||
       base.hash ||
       base.pathname !== "/" ||
-      !base.hostname.startsWith("unsm-academy") ||
+      !base.hostname.startsWith("unsm-academy-") ||
       !base.hostname.endsWith(ALLOWED_HOST_SUFFIX)
     ) {
       return jsonError(503, "La configuración del servicio de tutor no es válida.");
@@ -62,14 +62,37 @@ export async function proxyTutorRequest(request, env, endpoint) {
     return jsonError(413, "La solicitud supera el tamaño permitido.");
   }
 
+  // Read incrementally so requests without Content-Length cannot force
+  // an unbounded ArrayBuffer allocation before the size check.
   let body;
   try {
-    body = await request.arrayBuffer();
+    if (!request.body) {
+      body = new Uint8Array();
+    } else {
+      const reader = request.body.getReader();
+      const chunks = [];
+      let totalBytes = 0;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > MAX_BODY_BYTES) {
+          await reader.cancel().catch(() => {});
+          return jsonError(413, "La solicitud supera el tamaño permitido.");
+        }
+        chunks.push(value);
+      }
+
+      body = new Uint8Array(totalBytes);
+      let offset = 0;
+      for (const chunk of chunks) {
+        body.set(chunk, offset);
+        offset += chunk.byteLength;
+      }
+    }
   } catch {
     return jsonError(400, "No se pudo leer la solicitud.");
-  }
-  if (body.byteLength > MAX_BODY_BYTES) {
-    return jsonError(413, "La solicitud supera el tamaño permitido.");
   }
 
   const headers = new Headers();
