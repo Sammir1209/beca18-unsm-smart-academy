@@ -127,6 +127,20 @@ export function renderFichas(container, navigateTo) {
           </div>
         </div>
 
+        <div class="einstein-learning-note">
+          <div class="einstein-learning-sticker" role="img" aria-label="Einstein te acompaña">
+            <svg viewBox="0 0 120 128" aria-hidden="true">
+              <path d="M22 49C7 36 18 18 34 24C31 6 53 4 61 19C73 1 96 12 91 29C111 22 119 45 102 56L99 79H20Z" fill="#E8EDF4" stroke="#263D70" stroke-width="4"/>
+              <path d="M29 47C14 35 28 26 40 34C39 18 54 17 62 32C76 14 91 24 83 39C101 31 108 45 94 53L91 73H28Z" fill="#FFF" stroke="#263D70" stroke-width="3"/>
+              <ellipse cx="60" cy="67" rx="36" ry="39" fill="#F5B27E" stroke="#263D70" stroke-width="4"/>
+              <circle cx="46" cy="68" r="13" fill="none" stroke="#263D70" stroke-width="4"/><circle cx="75" cy="68" r="13" fill="none" stroke="#263D70" stroke-width="4"/><path d="M59 68H62" stroke="#263D70" stroke-width="4"/>
+              <circle cx="46" cy="68" r="4" fill="#263D70"/><circle cx="75" cy="68" r="4" fill="#263D70"/>
+              <path d="M52 91Q61 99 70 91" fill="none" stroke="#A84D40" stroke-width="3" stroke-linecap="round"/>
+              <path d="M43 103L60 113L77 103L88 126H32Z" fill="#FFF" stroke="#263D70" stroke-width="3"/><path d="M55 105L60 113L65 105L62 124H58Z" fill="#F28A00"/>
+            </svg>
+          </div>
+          <div><strong>Un consejo de Einstein</strong><p>Lee la idea principal, identifica los datos y conecta cada fórmula con su significado antes de resolver.</p></div>
+        </div>
         <div class="card" style="margin-bottom: 24px;">
           <div style="display: flex; gap: 8px; margin-bottom: 12px;">
             <span class="tag tag-unsm">${f.subject}</span>
