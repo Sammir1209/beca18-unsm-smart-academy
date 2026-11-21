@@ -33,6 +33,6 @@ export function buildRecommendations(mistakes = [], questions = []) {
       topic: item.topic,
       subject: item.subject,
       priority: item.failCount >= 2 || item.failCount + item.doubtCount >= 3 ? "ALTA" : "MEDIA",
-      action: `${item.failCount} fallos y ${item.doubtCount} dudas registradas en ${item.questionCount} pregunta(s). Refuerza el concepto y vuelve a practicar el tema.`,
+      action: `${item.failCount} ${item.failCount === 1 ? "fallo" : "fallos"} y ${item.doubtCount} ${item.doubtCount === 1 ? "duda" : "dudas"} registradas en ${item.questionCount} pregunta(s). Refuerza el concepto y vuelve a practicar el tema.`,
     }));
 }
