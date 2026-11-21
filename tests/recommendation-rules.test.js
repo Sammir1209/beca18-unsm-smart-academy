@@ -24,7 +24,7 @@ test('recommendations are generated only from actual active mistakes', () => {
   assert.equal(recommendations[0].topic, 'Porcentajes');
   assert.equal(recommendations[0].subject, 'Aritmetica');
   assert.equal(recommendations[0].priority, 'ALTA');
-  assert.match(recommendations[0].action, /3 fallos y 1 duda registradas/);
+  assert.match(recommendations[0].action, /Fallos: 3 · dudas: 1 · preguntas afectadas: 2/);
   assert.equal(recommendations[1].topic, 'Ecuaciones');
   assert.equal(recommendations[1].priority, 'MEDIA');
 });
