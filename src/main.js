@@ -12,6 +12,11 @@ import { renderFichas } from './ui/fichas.js';
 import { renderFlashcards } from './ui/flashcards.js';
 import { renderMistakes } from './ui/mistakes.js';
 import { renderSources } from './ui/sources.js';
+import { mountAccount } from './ui/account.js';
+import { startProgressSync } from './core/progress-sync.js';
+import { renderAuthPage } from './ui/auth-page.js';
+import { renderMath } from './core/math-renderer.js';
+import { renderIcons } from './core/icon-renderer.js';
 
 class App {
   constructor() {
@@ -31,37 +36,37 @@ class App {
               ${icon('award', { size: 22, color: '#fff' })}
             </div>
             <div>
-              <div class="sidebar-title">Smart Academy</div>
+              <div class="sidebar-title">PRE - EINSTEIN</div>
               <div class="sidebar-subtitle">Beca 18 + UNSM</div>
             </div>
           </div>
 
-          <nav class="sidebar-nav">
-            <a class="nav-item active" data-route="dashboard">
+          <nav class="sidebar-nav" aria-label="Navegación principal">
+            <a class="nav-item active" data-route="dashboard" href="#dashboard">
               ${icon('home', { size: 18 })}
               Inicio
             </a>
-            <a class="nav-item" data-route="practice">
+            <a class="nav-item" data-route="practice" href="#practice">
               ${icon('practice', { size: 18 })}
               Práctica Activa
             </a>
-            <a class="nav-item" data-route="simulators">
+            <a class="nav-item" data-route="simulators" href="#simulators">
               ${icon('simulator', { size: 18 })}
               Simuladores Oficiales
             </a>
-            <a class="nav-item" data-route="fichas">
+            <a class="nav-item" data-route="fichas" href="#fichas">
               ${icon('fichas', { size: 18 })}
               Fichas Temáticas
             </a>
-            <a class="nav-item" data-route="flashcards">
+            <a class="nav-item" data-route="flashcards" href="#flashcards">
               ${icon('flashcards', { size: 18 })}
               Flashcards
             </a>
-            <a class="nav-item" data-route="mistakes">
+            <a class="nav-item" data-route="mistakes" href="#mistakes">
               ${icon('mistakes', { size: 18 })}
               Mis Errores
             </a>
-            <a class="nav-item" data-route="sources">
+            <a class="nav-item" data-route="sources" href="#sources">
               ${icon('sources', { size: 18 })}
               Fuentes & Auditoría
             </a>
@@ -89,6 +94,7 @@ class App {
               <h2 id="topbar-title" class="page-title">Inicio</h2>
             </div>
             <div class="topbar-actions">
+              <div id="account-area"></div>
               <div class="target-badge">
                 <span class="dot-beca"></span>
                 <span>Beca 18 (ENP)</span>
@@ -105,24 +111,24 @@ class App {
         </div>
 
         <!-- Bottom Navigation (Mobile) -->
-        <nav class="bottom-nav">
-          <a class="bottom-nav-item active" data-route="dashboard">
+        <nav class="bottom-nav" aria-label="Navegación móvil">
+          <a class="bottom-nav-item active" data-route="dashboard" href="#dashboard">
             ${icon('home', { size: 20 })}
             <span>Inicio</span>
           </a>
-          <a class="bottom-nav-item" data-route="practice">
+          <a class="bottom-nav-item" data-route="practice" href="#practice">
             ${icon('practice', { size: 20 })}
             <span>Práctica</span>
           </a>
-          <a class="bottom-nav-item" data-route="simulators">
+          <a class="bottom-nav-item" data-route="simulators" href="#simulators">
             ${icon('simulator', { size: 20 })}
             <span>Simulador</span>
           </a>
-          <a class="bottom-nav-item" data-route="fichas">
+          <a class="bottom-nav-item" data-route="fichas" href="#fichas">
             ${icon('fichas', { size: 20 })}
             <span>Fichas</span>
           </a>
-          <a class="bottom-nav-item" data-route="mistakes">
+          <a class="bottom-nav-item" data-route="mistakes" href="#mistakes">
             ${icon('mistakes', { size: 20 })}
             <span>Errores</span>
           </a>
@@ -148,20 +154,27 @@ class App {
 
     // Load initial data repository and render first route
     await repo.loadInitialData();
+    mountAccount(document.getElementById('account-area'));
+    startProgressSync();
     const initialRoute = window.location.hash.replace('#', '') || 'dashboard';
-    this.navigate(initialRoute);
+    this.navigate(['login', 'register'].includes(initialRoute) ? initialRoute : 'dashboard');
   }
 
   navigate(route) {
+    if (!['dashboard', 'practice', 'simulators', 'fichas', 'flashcards', 'mistakes', 'sources', 'login', 'register'].includes(route)) route = 'dashboard';
     this.currentRoute = route;
+    const isAuthRoute = ['login', 'register'].includes(route);
+    document.querySelector('.app-layout')?.classList.toggle('auth-mode', isAuthRoute);
     window.location.hash = `#${route}`;
 
     // Update active nav links
     document.querySelectorAll('[data-route]').forEach(link => {
       if (link.getAttribute('data-route') === route) {
         link.classList.add('active');
+        link.setAttribute('aria-current', 'page');
       } else {
         link.classList.remove('active');
+        link.removeAttribute('aria-current');
       }
     });
 
@@ -173,16 +186,22 @@ class App {
       fichas: 'Fichas Temáticas de Alto Rendimiento',
       flashcards: 'Flashcards Mnemotécnicas',
       mistakes: 'Banco de Errores',
-      sources: 'Fuentes Oficiales & Auditoría'
+      sources: 'Fuentes Oficiales & Auditoría',
+      login: 'Iniciar sesión',
+      register: 'Crear cuenta',
     };
     const titleEl = document.getElementById('topbar-title');
-    if (titleEl) titleEl.innerText = titles[route] || 'Smart Academy';
+    if (titleEl) titleEl.innerText = titles[route] || 'PRE - EINSTEIN';
 
     // Render View
     const contentEl = document.getElementById('main-content');
     if (!contentEl) return;
 
     switch (route) {
+      case 'login':
+      case 'register':
+        renderAuthPage(contentEl, route, this.navigate.bind(this));
+        break;
       case 'dashboard':
         renderDashboard(contentEl, this.navigate.bind(this));
         break;
@@ -208,6 +227,10 @@ class App {
         renderDashboard(contentEl, this.navigate.bind(this));
         break;
     }
+
+    // Render mathematical notation consistently across every academy section.
+    renderIcons();
+    renderMath(contentEl);
   }
 }
 

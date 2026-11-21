@@ -1,3 +1,5 @@
+import { speakWithNeuralVoice, stopNeuralVoice } from './tutorSpeech.js';
+
 // ==========================================================================
 // VOICE TUTOR ENGINE: Voces de Perú/Latinoamérica, Parada Inmediata y Permisos Móvil
 // ==========================================================================
@@ -13,6 +15,9 @@ export class VoiceTutorEngine {
     this.rate = 1.0;
     this.pitch = 1.05;
     this.avatar = null;
+    this.character = localStorage.getItem('unsm-tutor-character') === 'female' ? 'female' : 'male';
+    this.speechMode = 'neural';
+    this.speechRequestId = 0;
     this.onTranscriptCallback = null;
     this.onStateChangeCallback = null;
     this.onVoicesReadyCallback = null;
@@ -23,6 +28,11 @@ export class VoiceTutorEngine {
 
   attachAvatar(avatarInstance) {
     this.avatar = avatarInstance;
+  }
+
+  setCharacter(character) {
+    this.character = character === 'female' ? 'female' : 'male';
+    localStorage.setItem('unsm-tutor-character', this.character);
   }
 
   initVoices() {
@@ -203,49 +213,57 @@ export class VoiceTutorEngine {
   }
 
   speak(text, onEnd) {
-    if (!this.synth) {
-      if (onEnd) onEnd();
-      return;
-    }
+    this.stopSpeaking();
+    const requestId = ++this.speechRequestId;
+    const naturalText = this.cleanTextForNaturalSpeech(String(text || ''));
 
-    this.stopSpeaking(); // Parar de inmediato si ya estaba hablando
-
-    const naturalText = this.cleanTextForNaturalSpeech(text);
-    const utterance = new SpeechSynthesisUtterance(naturalText);
-    
-    if (this.selectedVoice) {
-      utterance.voice = this.selectedVoice;
-    }
-    
-    utterance.lang = this.selectedVoice ? this.selectedVoice.lang : 'es-PE';
-    utterance.rate = this.rate;
-    utterance.pitch = this.pitch;
-
-    utterance.onstart = () => {
-      this.isSpeaking = true;
-      if (this.avatar) this.avatar.setSpeaking(true);
-      if (this.onStateChangeCallback) this.onStateChangeCallback({ isSpeaking: true });
+    const setSpeaking = (speaking) => {
+      if (requestId !== this.speechRequestId) return;
+      this.isSpeaking = speaking;
+      if (this.avatar) this.avatar.setSpeaking(speaking);
+      if (this.onStateChangeCallback) this.onStateChangeCallback({ isSpeaking: speaking });
     };
 
-    utterance.onend = () => {
-      this.isSpeaking = false;
-      if (this.avatar) this.avatar.setSpeaking(false);
-      if (this.onStateChangeCallback) this.onStateChangeCallback({ isSpeaking: false });
-      if (onEnd) onEnd();
-    };
-
-    utterance.onerror = () => {
-      this.isSpeaking = false;
-      if (this.avatar) this.avatar.setSpeaking(false);
-      if (this.onStateChangeCallback) this.onStateChangeCallback({ isSpeaking: false });
-      if (onEnd) onEnd();
-    };
-
-    this.synth.speak(utterance);
+    // Preferencia neuronal: solo funciona con sesión y conexión. En caso contrario,
+    // se conserva la voz local para que la práctica siga funcionando offline.
+    speakWithNeuralVoice(naturalText, this.character, {
+      onStart: () => setSpeaking(true),
+      onEnd: () => {
+        setSpeaking(false);
+        if (onEnd && requestId === this.speechRequestId) onEnd();
+      },
+      onError: () => setSpeaking(false),
+    }).catch((error) => {
+      if (requestId !== this.speechRequestId) return;
+      console.info('Tutor neuronal no disponible; usando voz del dispositivo:', error.message);
+      this.speechMode = 'device-fallback';
+      if (!this.synth || typeof SpeechSynthesisUtterance === 'undefined') {
+        setSpeaking(false);
+        if (onEnd) onEnd();
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(naturalText);
+      if (this.selectedVoice) utterance.voice = this.selectedVoice;
+      utterance.lang = this.selectedVoice ? this.selectedVoice.lang : 'es-PE';
+      utterance.rate = this.rate;
+      utterance.pitch = this.pitch;
+      utterance.onstart = () => setSpeaking(true);
+      utterance.onend = () => {
+        setSpeaking(false);
+        if (onEnd && requestId === this.speechRequestId) onEnd();
+      };
+      utterance.onerror = () => {
+        setSpeaking(false);
+        if (onEnd && requestId === this.speechRequestId) onEnd();
+      };
+      this.synth.speak(utterance);
+    });
   }
 
   // Parar inmediatamente cualquier locución en curso
   stopSpeaking() {
+    this.speechRequestId += 1;
+    stopNeuralVoice();
     if (this.synth) {
       this.synth.cancel();
     }

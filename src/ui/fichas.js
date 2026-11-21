@@ -5,6 +5,7 @@
 import { repo } from '../core/repository.js';
 import { voiceTutor } from '../core/voiceTutor.js';
 import { icon } from './icons.js';
+import { renderMath } from '../core/math-renderer.js';
 
 export function renderFichas(container, navigateTo) {
   let selectedFicha = null;
@@ -126,6 +127,20 @@ export function renderFichas(container, navigateTo) {
           </div>
         </div>
 
+        <div class="einstein-learning-note">
+          <div class="einstein-learning-sticker" role="img" aria-label="Einstein te acompaña">
+            <svg viewBox="0 0 120 128" aria-hidden="true">
+              <path d="M22 49C7 36 18 18 34 24C31 6 53 4 61 19C73 1 96 12 91 29C111 22 119 45 102 56L99 79H20Z" fill="#E8EDF4" stroke="#263D70" stroke-width="4"/>
+              <path d="M29 47C14 35 28 26 40 34C39 18 54 17 62 32C76 14 91 24 83 39C101 31 108 45 94 53L91 73H28Z" fill="#FFF" stroke="#263D70" stroke-width="3"/>
+              <ellipse cx="60" cy="67" rx="36" ry="39" fill="#F5B27E" stroke="#263D70" stroke-width="4"/>
+              <circle cx="46" cy="68" r="13" fill="none" stroke="#263D70" stroke-width="4"/><circle cx="75" cy="68" r="13" fill="none" stroke="#263D70" stroke-width="4"/><path d="M59 68H62" stroke="#263D70" stroke-width="4"/>
+              <circle cx="46" cy="68" r="4" fill="#263D70"/><circle cx="75" cy="68" r="4" fill="#263D70"/>
+              <path d="M52 91Q61 99 70 91" fill="none" stroke="#A84D40" stroke-width="3" stroke-linecap="round"/>
+              <path d="M43 103L60 113L77 103L88 126H32Z" fill="#FFF" stroke="#263D70" stroke-width="3"/><path d="M55 105L60 113L65 105L62 124H58Z" fill="#F28A00"/>
+            </svg>
+          </div>
+          <div><strong>Un consejo de Einstein</strong><p>Lee la idea principal, identifica los datos y conecta cada fórmula con su significado antes de resolver.</p></div>
+        </div>
         <div class="card" style="margin-bottom: 24px;">
           <div style="display: flex; gap: 8px; margin-bottom: 12px;">
             <span class="tag tag-unsm">${f.subject}</span>
@@ -166,7 +181,7 @@ export function renderFichas(container, navigateTo) {
                 ${f.formulas.map(formula => `
                   <div style="background-color: var(--bg-card); padding: 14px 18px; border-radius: var(--radius-md); border-left: 3px solid var(--accent-beca); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <span style="font-size: 0.9rem; font-weight: 600;">${formula.label}</span>
-                    <code style="font-family: var(--font-mono); font-size: 0.95rem; color: #A7F3D0; font-weight: 700; background-color: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 6px;">${formula.formula}</code>
+                    <code style="font-family: var(--font-mono); font-size: 0.95rem; color: #8A4B00; font-weight: 750; background-color: #FFF0D8; border: 1px solid #F2D2A6; padding: 4px 10px; border-radius: 6px;">${formula.formula}</code>
                   </div>
                 `).join('')}
               </div>
@@ -243,6 +258,8 @@ export function renderFichas(container, navigateTo) {
         </div>
       </div>
     `;
+
+    void renderMath(container);
 
     document.getElementById('btn-back-fichas')?.addEventListener('click', () => {
       voiceTutor.stopSpeaking();

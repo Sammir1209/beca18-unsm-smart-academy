@@ -5,29 +5,41 @@
 import { repo } from '../core/repository.js';
 import { RecommendationEngine } from '../core/recommendation.js';
 import { icon } from './icons.js';
+import { supabase } from '../core/supabase.js';
+
+const escapeHtml = (value) => String(value ?? '')
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#39;');
 
 export async function renderDashboard(container, navigateTo) {
   const diag = await RecommendationEngine.getDiagnosticSummary(repo.questions);
+  const { data: authData } = await supabase?.auth.getSession?.() || { data: { session: null } };
+  const user = authData?.session?.user;
+  const studentName = String(user?.user_metadata?.full_name || user?.user_metadata?.name || '').trim();
+  const greetingName = escapeHtml(studentName ? studentName.split(/\s+/)[0] : 'Postulante');
 
   container.innerHTML = `
-    <div style="display: flex; flex-direction: column; gap: 32px;">
+    <div class="dashboard-stack">
       
       <!-- Saludo & Target Banner -->
-      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.12)); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: var(--radius-lg); padding: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px;">
-        <div>
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <section class="dashboard-hero">
+        <div class="dashboard-hero-copy">
+          <div class="dashboard-hero-tags">
             <span class="tag tag-beca">Beca 18</span>
             <span class="tag tag-unsm">UNSM Tarapoto</span>
             <span style="font-size: 0.8rem; color: var(--text-dim);">Convocatoria 2027</span>
           </div>
-          <h1 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-            Buenos días, Postulante
+          <h1 class="dashboard-hero-title">
+            Buenos días, ${greetingName}
           </h1>
-          <p style="color: var(--text-muted); max-width: 600px; font-size: 0.95rem;">
+          <p class="dashboard-hero-description">
             Tu ruta de preparación está optimizada para el <strong>Núcleo Común (Matemática + Comprensión Lectora)</strong> y la especialización en Ciencias para la UNSM.
           </p>
         </div>
-        <div style="display: flex; gap: 12px;">
+        <div class="dashboard-hero-actions">
           <button id="btn-start-practice" class="btn btn-beca">
             ${icon('practice', { size: 18, color: '#064E3B' })}
             Práctica Adaptativa
@@ -37,7 +49,7 @@ export async function renderDashboard(container, navigateTo) {
             Simulacro Oficial
           </button>
         </div>
-      </div>
+      </section>
 
       <!-- Métricas Clave -->
       <div class="grid-cards">
@@ -114,12 +126,12 @@ export async function renderDashboard(container, navigateTo) {
         </h3>
         <div style="display: flex; flex-direction: column; gap: 12px;">
           ${diag.recommendations.map(rec => `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background-color: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 12px;">
-              <div>
-                <span class="tag ${rec.priority === 'ALTA' ? 'tag-diff-adv' : 'tag-diff-mid'}">${rec.priority} PRIORIDAD</span>
-                <strong style="margin-left: 8px; font-size: 0.95rem;">${rec.topic}</strong>
-                <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">(${rec.subject})</span>
-                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${rec.action}</div>
+            <div class="recommendation-row">
+              <div class="recommendation-copy">
+                <span class="tag ${rec.priority === 'ALTA' ? 'tag-diff-adv' : 'tag-diff-mid'}">${escapeHtml(rec.priority)} PRIORIDAD</span>
+                <strong style="margin-left: 8px; font-size: 0.95rem;">${escapeHtml(rec.topic)}</strong>
+                <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">(${escapeHtml(rec.subject)})</span>
+                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${escapeHtml(rec.action)}</div>
               </div>
               <button class="btn btn-secondary btn-sm" onclick="window.location.hash='#fichas'">
                 Estudiar Ficha ${icon('chevronRight', { size: 14 })}
@@ -138,29 +150,29 @@ export async function renderDashboard(container, navigateTo) {
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
           Distribución de temas que han concentrado mayor recurrencia oficial en Beca 18 y UNSM.
         </p>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;">
-          <div style="padding: 16px; background-color: var(--bg-card); border-radius: var(--radius-md); border-left: 4px solid var(--accent-beca);">
+        <div class="frequency-grid">
+          <div class="frequency-card frequency-card-beca">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-beca)' })} Tanto por Ciento & Comercio
             </div>
             <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">FRECUENCIA MUY ALTA</div>
             <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">6 preguntas promedio por examen</div>
           </div>
-          <div style="padding: 16px; background-color: var(--bg-card); border-radius: var(--radius-md); border-left: 4px solid var(--accent-unsm);">
+          <div class="frequency-card frequency-card-unsm">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-unsm)' })} Ecuaciones Cuadráticas & Cardano
             </div>
             <div style="font-size: 0.8rem; color: var(--accent-unsm); font-weight: 600; margin-top: 4px;">FRECUENCIA ALTA</div>
             <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">4 preguntas promedio en Álgebra</div>
           </div>
-          <div style="padding: 16px; background-color: var(--bg-card); border-radius: var(--radius-md); border-left: 4px solid var(--accent-beca);">
+          <div class="frequency-card frequency-card-beca">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-beca)' })} Inferencia & Idea Principal (RV)
             </div>
             <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">FRECUENCIA MUY ALTA</div>
             <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">50% del ENP Beca 18</div>
           </div>
-          <div style="padding: 16px; background-color: var(--bg-card); border-radius: var(--radius-md); border-left: 4px solid var(--accent-alert);">
+          <div class="frequency-card frequency-card-alert">
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-alert)' })} Cinemática & MRUV (Física)
             </div>

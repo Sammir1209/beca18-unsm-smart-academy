@@ -12,7 +12,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Resuelve problemas de cantidad y gestión financiera",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Nacional de Preselección Beca 18 - 2024",
       "page": 4,
@@ -54,7 +54,7 @@
       "commonPitfall": "Confundir el descuento del 20% del fijado con el 20% del costo o de la venta."
     },
     "relatedFichaId": "FICHA-MAT-PORCENTAJES",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-PRONABEC-2025-ENP-005",
@@ -69,7 +69,7 @@
     "difficulty": "BASICO",
     "competency": "Resuelve problemas de cantidad",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Nacional de Preselección Beca 18 - 2025",
       "page": 2,
@@ -110,7 +110,7 @@
       "commonPitfall": "Marcar 30% por sumar 10 + 20."
     },
     "relatedFichaId": "FICHA-MAT-PORCENTAJES",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-PRONABEC-2024-ENP-018",
@@ -125,7 +125,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Resuelve problemas de regularidad y equivalencia",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Simulacro Oficial Beca 18 - 2024",
       "page": 5,
@@ -168,7 +168,7 @@
       "commonPitfall": "Restar 5 solo una vez a la suma total en lugar de 2x5 = 10."
     },
     "relatedFichaId": "FICHA-ALG-ECUACIONES-CUADRATICAS",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-PRONABEC-2023-ENP-022",
@@ -183,7 +183,7 @@
     "difficulty": "BASICO",
     "competency": "Resuelve problemas de regularidad",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Nacional de Preselección Beca 18 - 2023",
       "page": 4,
@@ -224,7 +224,7 @@
       "commonPitfall": "Multiplicar 20 * 6 directamente sin ajustar el término cero o el (n-1)."
     },
     "relatedFichaId": "FICHA-MAT-PORCENTAJES",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-PRONABEC-2024-ENP-031",
@@ -239,7 +239,7 @@
     "difficulty": "BASICO",
     "competency": "Lee diversos tipos de textos en su lengua materna",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Nacional de Preselección Beca 18 - 2024",
       "page": 7,
@@ -280,7 +280,7 @@
       "commonPitfall": "Elegir alternativas que introducen hipótesis verosímiles pero no fundamentadas en el texto."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-PRONABEC-2025-ENP-044",
@@ -295,7 +295,7 @@
     "difficulty": "BASICO",
     "competency": "Escribe y comprende textos coherentes",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Nacional de Preselección Beca 18 - 2025",
       "page": 9,
@@ -335,7 +335,7 @@
       "commonPitfall": "Colocar conectores causales ('porque') donde existe contraste manifiesto."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2024-ORD-023",
@@ -350,7 +350,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Resuelve problemas de regularidad, equivalencia y cambio",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen de Admisión Ordinario UNSM 2024-I",
       "page": 3,
@@ -393,7 +393,7 @@
       "commonPitfall": "Olvidar elevar al cuadrado la diferencia |r1 - r2|."
     },
     "relatedFichaId": "FICHA-ALG-ECUACIONES-CUADRATICAS",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2024-ORD-015",
@@ -408,7 +408,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Resuelve problemas de regularidad",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen de Admisión Ordinario UNSM 2024-I",
       "page": 2,
@@ -450,7 +450,7 @@
       "commonPitfall": "Creer que (x + 1/x)³ = x³ + 1/x³ y marcar 64."
     },
     "relatedFichaId": "FICHA-ALG-ECUACIONES-CUADRATICAS",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2023-ORD-018",
@@ -465,7 +465,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Resuelve problemas de forma, movimiento y localización",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Ordinario UNSM 2023-II",
       "page": 3,
@@ -506,7 +506,7 @@
       "commonPitfall": "Sumar las proyecciones (4+9=13) y dividir entre dos creyendo que es la altura."
     },
     "relatedFichaId": "FICHA-MAT-PORCENTAJES",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2024-ORD-051",
@@ -521,7 +521,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Explica el mundo físico basándose en conocimientos sobre energía y movimiento",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen de Admisión Ordinario UNSM 2024-I",
       "page": 6,
@@ -562,7 +562,7 @@
       "commonPitfall": "Multiplicar g * t = 40 y olvidar que esa es la velocidad de impacto, no la altura recorrida."
     },
     "relatedFichaId": "FICHA-FIS-CINEMATICA-MRUV",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2023-ORD-055",
@@ -577,7 +577,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Explica el mundo físico",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Ordinario UNSM 2023-I",
       "page": 7,
@@ -619,7 +619,7 @@
       "commonPitfall": "Sumar 60 + 30 = 90 N confundiendo los ejes X e Y."
     },
     "relatedFichaId": "FICHA-FIS-CINEMATICA-MRUV",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2024-ORD-062",
@@ -634,7 +634,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Explica el mundo físico",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen de Admisión Ordinario UNSM 2024-I",
       "page": 7,
@@ -676,7 +676,7 @@
       "commonPitfall": "Contar solo los electrones del último subnivel (3p⁵ = 5) olvidando los del 3s²."
     },
     "relatedFichaId": "FICHA-FIS-CINEMATICA-MRUV",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2023-ORD-071",
@@ -691,7 +691,7 @@
     "difficulty": "BASICO",
     "competency": "Explica el mundo físico",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Ordinario UNSM 2023-II",
       "page": 8,
@@ -732,7 +732,7 @@
       "commonPitfall": "Confundir ribosoma (proteínas) con mitocondria (energía ATP)."
     },
     "relatedFichaId": "FICHA-FIS-CINEMATICA-MRUV",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2024-ORD-085",
@@ -747,7 +747,7 @@
     "difficulty": "BASICO",
     "competency": "Construye interpretaciones históricas",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen de Admisión Ordinario UNSM 2024-I",
       "page": 9,
@@ -789,7 +789,7 @@
       "commonPitfall": "Marcar Mita creyendo que todo trabajo incaico recibía ese nombre."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2024-ORD-092",
@@ -804,7 +804,7 @@
     "difficulty": "BASICO",
     "competency": "Gestiona responsablemente el espacio y el ambiente",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Ordinario UNSM 2024-I",
       "page": 10,
@@ -845,7 +845,7 @@
       "commonPitfall": "Confundir el río Mayo (afluente) con el curso principal del Huallaga."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-2024-ESC-011",
@@ -860,7 +860,7 @@
     "difficulty": "BASICO",
     "competency": "Resuelve problemas de cantidad",
     "sourceType": "OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Concurso Escolar UNSM 2024",
       "page": 2,
@@ -902,7 +902,7 @@
       "commonPitfall": "Calcular el MCD (que es 2 minutos) en lugar del MCM."
     },
     "relatedFichaId": "FICHA-MAT-PORCENTAJES",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-CG-2026-001",
@@ -917,7 +917,7 @@
     "difficulty": "BASICO",
     "competency": "Conocimiento del contexto cultural histórico",
     "sourceType": "USER_PROVIDED",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "CULTURA GENERAL 2026 I.docx",
       "page": 1,
@@ -958,7 +958,7 @@
       "commonPitfall": "Confundirla con Isabel Allende (no tiene Nobel)."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-CG-2026-002",
@@ -973,7 +973,7 @@
     "difficulty": "BASICO",
     "competency": "Identidad regional y contexto institucional",
     "sourceType": "USER_PROVIDED",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "CULTURA GENERAL 2026 I.docx",
       "page": 2,
@@ -1014,7 +1014,7 @@
       "commonPitfall": "Marcar Belaúnde Terry (él asumió en julio de 1980 tras las elecciones)."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-CG-2026-003",
@@ -1029,7 +1029,7 @@
     "difficulty": "BASICO",
     "competency": "Espacio geográfico regional",
     "sourceType": "USER_PROVIDED",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "CULTURA GENERAL 2026 I.docx",
       "page": 2,
@@ -1070,7 +1070,7 @@
       "commonPitfall": "Marcar Tarapoto como capital del departamento."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-CG-2026-004",
@@ -1085,7 +1085,7 @@
     "difficulty": "BASICO",
     "competency": "Identidad cultural amazónica",
     "sourceType": "USER_PROVIDED",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "CULTURA GENERAL 2026 I.docx",
       "page": 2,
@@ -1126,7 +1126,7 @@
       "commonPitfall": "Confundir con Arturo Hernández (autor de 'Sangama')."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-CG-2026-005",
@@ -1141,7 +1141,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Educación Cívica y Sistema Político",
     "sourceType": "USER_PROVIDED",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "CULTURA GENERAL 2026 I.docx",
       "page": 3,
@@ -1182,7 +1182,7 @@
       "commonPitfall": "Marcar 130 en total o asumir paridad 100-100."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-HIST-001",
@@ -1197,7 +1197,7 @@
     "difficulty": "BASICO",
     "competency": "Construye interpretaciones históricas",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Historia del Perú Miscelánea I",
       "page": 1,
@@ -1238,7 +1238,7 @@
       "commonPitfall": "Confundir Lauricocha (Huánuco) con Paiján (La Libertad)."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-HIST-002",
@@ -1253,7 +1253,7 @@
     "difficulty": "BASICO",
     "competency": "Construye interpretaciones históricas",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Historia del Perú Miscelánea I",
       "page": 1,
@@ -1294,7 +1294,7 @@
       "commonPitfall": "Marcar Guitarrero (primer horticultor)."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-HIST-003",
@@ -1309,7 +1309,7 @@
     "difficulty": "BASICO",
     "competency": "Construye interpretaciones históricas",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Historia del Perú Miscelánea I",
       "page": 1,
@@ -1350,7 +1350,7 @@
       "commonPitfall": "Confundir la capital Chimú con Cahuachi (Nasca)."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-HIST-004",
@@ -1365,7 +1365,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Construye interpretaciones históricas",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Historia del Perú Miscelánea I",
       "page": 1,
@@ -1406,7 +1406,7 @@
       "commonPitfall": "Asumir que el primer imperio fue el Tahuantinsuyo."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-HIST-005",
@@ -1421,7 +1421,7 @@
     "difficulty": "BASICO",
     "competency": "Construye interpretaciones históricas",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Historia del Perú Miscelánea I",
       "page": 1,
@@ -1462,7 +1462,7 @@
       "commonPitfall": "Marcar 'Gran guerrero' o 'Inca del Sol'."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-HIST-006",
@@ -1477,7 +1477,7 @@
     "difficulty": "BASICO",
     "competency": "Construye interpretaciones históricas",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Historia del Perú Miscelánea I",
       "page": 3,
@@ -1518,7 +1518,7 @@
       "commonPitfall": "Confundirla con la fecha de Junín o la proclamación del 28 de julio."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-PRONABEC-RV-001",
@@ -1533,7 +1533,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Lee diversos tipos de textos",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Banco RV ENP Beca 18",
       "page": 1,
@@ -1574,7 +1574,7 @@
       "commonPitfall": "Marcar 'Pacto' olvidando el rasgo clandestino y negativo de contubernio."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-PRONABEC-RV-002",
@@ -1589,7 +1589,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Lee diversos tipos de textos",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Banco RV ENP Beca 18",
       "page": 3,
@@ -1630,7 +1630,7 @@
       "commonPitfall": "Marcar ignorante (ignorante se opone a sabio, no a egregio)."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-UNSM-RV-003",
@@ -1645,7 +1645,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Razonamiento analógico y verbal",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Banco RV Examen Ordinario UNSM",
       "page": 7,
@@ -1687,7 +1687,7 @@
       "commonPitfall": "Elegir Loreto : Iquitos pensando en región en lugar de nivel provincial."
     },
     "relatedFichaId": "FICHA-RV-COMPRENSION-TEXTUAL",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   },
   {
     "id": "Q-PRONABEC-RM-OPER-001",
@@ -1702,7 +1702,7 @@
     "difficulty": "INTERMEDIO",
     "competency": "Resuelve problemas de regularidad y cambio",
     "sourceType": "PROCESADO_DESDE_OFICIAL",
-    "isFija": true,
+    "isFija": false,
     "sourceReference": {
       "document": "Examen Único Nacional Beca 18 - Operadores",
       "page": 1,
@@ -1744,6 +1744,6 @@
       "commonPitfall": "Operar 4 * (2 * 3) sin respetar la no asociatividad del operador."
     },
     "relatedFichaId": "FICHA-ALG-ECUACIONES-CUADRATICAS",
-    "status": "VALIDATED"
+    "status": "REVIEW_REQUIRED"
   }
 ]

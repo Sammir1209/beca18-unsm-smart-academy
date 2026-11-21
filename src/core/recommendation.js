@@ -3,13 +3,14 @@
 // ==========================================================================
 
 import { storage } from './storage.js';
+import { queueProgressAttempt } from './progress-sync.js';
 
 export class RecommendationEngine {
   static async recordAnswer({ questionId, selectedAnswer, correctAnswer, timeSpentSeconds, topic, isDoubt }) {
     const isCorrect = selectedAnswer === correctAnswer;
 
     // 1. Record Attempt in history
-    await storage.set('attempts', {
+    const localAttemptId = await storage.set('attempts', {
       questionId,
       selectedAnswer,
       correctAnswer,
@@ -18,6 +19,11 @@ export class RecommendationEngine {
       timeSpentSeconds,
       timestamp: Date.now()
     });
+
+    // Encola solo la selección del estudiante; nunca se sincroniza la clave correcta.
+    const syncEventId = await queueProgressAttempt({ questionId, selectedAnswer, isDoubt, timeSpentSeconds, timestamp: Date.now() });
+    const localAttempt = await storage.get('attempts', localAttemptId);
+    if (localAttempt) await storage.set('attempts', { ...localAttempt, syncEventId });
 
     // 2. Intelligent Mistake Tracking ("Mis Errores")
     if (!isCorrect || isDoubt) {
@@ -54,7 +60,7 @@ export class RecommendationEngine {
     const total = attempts.length;
     const correct = attempts.filter(a => a.isCorrect && !a.isDoubt).length;
     const doubts = attempts.filter(a => a.isDoubt).length;
-    const errors = attempts.filter(a => !a.isCorrect && !a.isDoubt).length;
+    const errors = attempts.filter(a => a.isCorrect === false && !a.isDoubt).length;
 
     const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
     const activeMistakes = mistakes.filter(m => !m.mastered);
