@@ -201,7 +201,7 @@ export function renderPractice(container, navigateTo) {
                         <span style="background-color: #1E293B; color: #60A5FA; font-family: var(--font-mono); font-weight: 700; font-size: 0.8rem; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
                           ${idx + 1}
                         </span>
-                        <span>${step}</span>
+                        <span class="math-rich-text">${step}</span>
                       </div>
                     `).join('')}
                   </div>
@@ -211,7 +211,7 @@ export function renderPractice(container, navigateTo) {
                   <div style="flex-shrink: 0; margin-top: 2px;">${icon('brain', { size: 20, color: 'var(--accent-unsm)' })}</div>
                   <div>
                     <strong style="color: #93C5FD;">Concepto Clave Fundamental:</strong>
-                    <div style="color: var(--text-main); margin-top: 4px;">${questions[currentIndex].explanation.keyConcept}</div>
+                    <div class="math-rich-text" style="color: var(--text-main); margin-top: 4px;">${questions[currentIndex].explanation.keyConcept}</div>
                   </div>
                 </div>
 
