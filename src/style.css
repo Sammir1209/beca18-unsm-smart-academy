@@ -1658,3 +1658,21 @@ html, body { background: #F4F7FC !important; color: #1D2B45; }
   .subject-chip { min-height:38px; font-size:.74rem; }
   .practice-subject-picker-head { align-items:flex-start; flex-direction:column; gap:3px; }
 }
+
+.einstein-learning-note {
+  display:flex; align-items:center; gap:13px; margin:0 0 16px;
+  padding:13px 16px; border:1px solid #F0D2AA; border-radius:16px;
+  background:linear-gradient(110deg,#FFF0D9 0%,#FFFFFF 92%);
+}
+.einstein-learning-sticker {
+  flex:0 0 58px; width:58px; height:62px; display:grid; place-items:center;
+  border-radius:15px; background:#FFFFFF; border:1px solid #F2D8B8;
+}
+.einstein-learning-sticker svg { width:54px; height:58px; }
+.einstein-learning-note strong { display:block; color:#29468F; font-size:.85rem; margin-bottom:3px; }
+.einstein-learning-note p { color:#59677D; font-size:.76rem; line-height:1.5; margin:0; }
+@media(max-width:540px) {
+  .einstein-learning-note { padding:11px 12px; gap:10px; }
+  .einstein-learning-sticker { flex-basis:50px; width:50px; height:54px; }
+  .einstein-learning-sticker svg { width:47px; height:51px; }
+}
