@@ -1614,3 +1614,47 @@ html, body { background: #F4F7FC !important; color: #1D2B45; }
 .tutor-composer{background:#FFF!important;border-color:#DCE4F1!important}.tutor-composer textarea{background:#FFF!important;color:#1D2B45!important}
 .tutor-composer textarea::placeholder{color:#8793A6!important}.tutor-cost-note{color:#718096!important}
 @media(max-width:540px){.einstein-intro-card{grid-template-columns:64px minmax(0,1fr);padding:13px}.einstein-mascot{width:64px;height:70px}.einstein-mascot svg{width:58px;height:64px}}
+
+
+/* PRE-EINSTEIN — selector multi-tema y lectura matemática */
+.practice-subject-picker {
+  flex: 1 1 100%;
+  min-width: 0;
+  margin-top: 4px;
+  padding: 14px;
+  border: 1px solid #F0D2AA;
+  border-radius: 16px;
+  background: linear-gradient(135deg,#FFF8EE 0%,#FFFFFF 100%);
+}
+.practice-subject-picker-head {
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-bottom:11px; color:#243F7C; font-size:.84rem;
+}
+.practice-subject-picker-head span { color:#8A5A1D; font-size:.72rem; font-weight:700; }
+.practice-subject-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.subject-chip {
+  min-height:36px; padding:7px 12px; border-radius:999px;
+  border:1px solid #DCE4F1; background:#FFFFFF; color:#34445F;
+  font:600 .76rem/1.2 var(--font-sans); cursor:pointer;
+  transition:background .16s ease,border-color .16s ease,transform .16s ease;
+}
+.subject-chip:hover { border-color:#E7A64E; background:#FFF6E9; }
+.subject-chip.is-selected {
+  background:#29468F; color:#FFFFFF; border-color:#29468F;
+  box-shadow:0 3px 10px rgba(41,70,143,.16);
+}
+.subject-chip:focus-visible { outline:3px solid rgba(242,138,0,.35); outline-offset:2px; }
+.practice-subject-hint { margin:10px 0 0; color:#68758A; font-size:.7rem; line-height:1.45; }
+.ficha-card code, .card code, .question-body code {
+  color:#8A4B00; background:#FFF0D8; border:1px solid #F2D2A6;
+  border-radius:7px; padding:4px 9px; font-family:var(--font-mono);
+  font-size:.88em; font-weight:750; white-space:normal; overflow-wrap:anywhere;
+}
+.katex { color:#1D2B45; font-size:1.04em; }
+.katex-display { overflow-x:auto; overflow-y:hidden; padding:8px 2px; }
+.katex .mord, .katex .mop, .katex .mbin, .katex .mrel { color:inherit; }
+@media(max-width:540px) {
+  .practice-subject-picker { padding:12px; }
+  .subject-chip { min-height:38px; font-size:.74rem; }
+  .practice-subject-picker-head { align-items:flex-start; flex-direction:column; gap:3px; }
+}
