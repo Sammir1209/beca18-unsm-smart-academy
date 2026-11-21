@@ -1,36 +1,38 @@
 # PRE - EINSTEIN · Configuración de producción
 
-## Variables de entorno del sitio
+## Variables del frontend
 
-Configurar en Cloudflare Pages → Settings → Variables and Secrets → Build:
+Configurar en el proveedor de hosting:
 
-| Variable | Valor |
+| Variable | Uso |
 |---|---|
-| `VITE_SUPABASE_URL` | URL del proyecto Supabase `unsm-academy` |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Publishable key del proyecto (nunca service_role) |
-| `VITE_TURNSTILE_SITE_KEY` | Sitekey pública del widget Turnstile |
+| `VITE_SUPABASE_URL` | URL pública del proyecto Supabase |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Publishable key; nunca service_role |
 
-Aplicar las variables a Production y Preview según corresponda y volver a desplegar. No guardar claves privadas en el repositorio ni en variables `VITE_*`.
+No se necesita una clave pública de ALTCHA ni una cuenta externa para el núcleo open-source autohospedado.
 
-## Cloudflare Turnstile + Supabase Auth
+## CAPTCHA propio PRE - EINSTEIN
 
-1. Crear un widget Turnstile en Cloudflare.
-2. Autorizar los dominios de producción y los dominios de preview que se usarán.
-3. Copiar el **Sitekey** a `VITE_TURNSTILE_SITE_KEY` en Cloudflare Pages.
-4. En Supabase → Authentication → Bot and Abuse Protection, activar CAPTCHA, seleccionar Cloudflare Turnstile y guardar el **Secret key** del widget.
-5. Probar el registro con una cuenta controlada. El cliente envía `captchaToken` a `auth.signUp`; Supabase valida el token con el secret.
+El proyecto utilizará ALTCHA open-source (MIT) como motor Proof-of-Work, autohospedado en nuestra infraestructura. El widget se personalizará con el diseño de PRE - EINSTEIN. No se contratará ALTCHA Cloud, ALTCHA Sentinel, Turnstile, hCaptcha ni reCAPTCHA.
 
-El Sitekey es público. El Secret key es privado y solo debe introducirse en el panel seguro de Supabase.
+- Frontend: paquete `altcha`, importado por Vite.
+- Backend: Supabase Edge Functions `captcha-challenge` y `captcha-verify`.
+- Verificación: `altcha-lib` en servidor, más consumo atómico de nonce/proof.
+- Barrera obligatoria: Supabase Auth Before User Created Hook.
+- Secretos: exclusivamente en Supabase Edge Function Secrets y Auth Hooks; nunca en `VITE_*` ni en Git.
+
+**Estado:** diseñado, no implementado ni desplegado todavía. La pantalla de registro del repositorio aún contiene referencias antiguas a Turnstile y deben eliminarse al integrar el widget propio. No habilitar registro en producción como si el CAPTCHA ya estuviera activo.
 
 ## Supabase Auth
 
 - Site URL: dominio de producción de PRE - EINSTEIN.
-- Redirect URLs: dominio de producción y URLs exactas de preview/desarrollo que se usen.
-- Mantener la confirmación de correo activada para cuentas reales, salvo decisión explícita de priorizar registro inmediato sin verificación.
-- Activar la protección contra contraseñas filtradas y definir una política de contraseña robusta.
-- Revisar las plantillas de confirmación y recuperación para que apunten al dominio de producción.
+- Redirect URLs: dominio de producción y URLs exactas de preview/desarrollo.
+- Mantener confirmación de correo activada.
+- Activar protección contra contraseñas filtradas y definir política de contraseña robusta.
+- Revisar plantillas de confirmación y recuperación para el dominio de producción.
+- Configurar y probar el hook Before User Created antes de permitir registros reales.
 
-Con confirmación de correo activada, Supabase puede devolver `session: null` en el registro; el usuario confirma el correo y luego inicia sesión. El inicio automático inmediato depende de la configuración de confirmación de email del proyecto.
+Con confirmación de correo activada, Supabase puede devolver `session: null` en el registro; el usuario confirma el correo y luego inicia sesión.
 
 ## Base de datos y seguridad
 
@@ -46,12 +48,16 @@ Las etiquetas `OFICIAL`, `VALIDATED` y `isFija` requieren evidencia documental, 
 
 ## Verificación antes de producción
 
-- [ ] Variables de entorno configuradas en Cloudflare Pages.
-- [ ] Turnstile activado tanto en Cloudflare como en Supabase.
+- [ ] Variables públicas de Supabase configuradas en el hosting.
+- [ ] Paquetes ALTCHA fijados y lockfile actualizado.
+- [ ] Migraciones CAPTCHA aplicadas y revisadas.
+- [ ] Edge Functions challenge/verify desplegadas y secretos configurados.
+- [ ] Auth Before User Created Hook activo y probado.
+- [ ] El registro rechaza pruebas faltantes, inválidas, vencidas y reutilizadas.
 - [ ] Site URL y Redirect URLs revisadas.
 - [ ] Protección contra contraseñas filtradas activada.
-- [ ] Registro, confirmación de correo, login, logout y recuperación probados con cuenta de prueba.
+- [ ] Registro, confirmación de correo, login, logout y recuperación probados con cuenta controlada.
 - [ ] Persistencia probada tras refrescar, cerrar/abrir y cambiar de dispositivo.
 - [ ] Simulacros solo habilitados cuando el banco validado cubre la cantidad completa de preguntas.
 - [ ] Build y pruebas de flujo completados.
-- [ ] Despliegue de Cloudflare verificado desde el panel de Pages.
+- [ ] Despliegue de hosting verificado desde su panel.
