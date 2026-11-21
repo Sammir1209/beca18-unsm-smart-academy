@@ -5,6 +5,7 @@
 import { repo } from '../core/repository.js';
 import { voiceTutor } from '../core/voiceTutor.js';
 import { icon } from './icons.js';
+import { renderMath } from '../core/math-renderer.js';
 
 export function renderFichas(container, navigateTo) {
   let selectedFicha = null;
@@ -244,6 +245,8 @@ export function renderFichas(container, navigateTo) {
         </div>
       </div>
     `;
+
+    void renderMath(container);
 
     document.getElementById('btn-back-fichas')?.addEventListener('click', () => {
       voiceTutor.stopSpeaking();
