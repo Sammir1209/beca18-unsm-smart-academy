@@ -6,7 +6,7 @@
     "topic": "Regla de Tres y Porcentajes",
     "subtopic": "Aplicaciones Comerciales y Variaciones Porcentuales",
     "level": "INTERMEDIO",
-    "summary": "El tanto por ciento representa el número de partes tomadas de un total dividido en 100 partes iguales. En exámenes de Beca 18 y UNSM es el tema de mayor frecuencia en aritmética aplicada.",
+    "summary": "El tanto por ciento representa el número de partes tomadas de un total dividido en 100 partes iguales. Este concepto se aplica a problemas de proporcionalidad, descuentos, aumentos y operaciones comerciales.",
     "concepts": [
       {
         "name": "Definición de Porcentaje",
@@ -343,7 +343,7 @@
     "topic": "Cinematica",
     "subtopic": "Movimiento Rectilíneo Uniformemente Variado",
     "level": "INTERMEDIO",
-    "summary": "Estudio del movimiento unidimensional con aceleración constante. Pilar de la física en el examen de admisión ordinario de la UNSM.",
+    "summary": "Estudio del movimiento unidimensional con aceleración constante, útil para resolver problemas de velocidad, aceleración, distancia y caída libre.",
     "concepts": [
       {
         "name": "MRU",
