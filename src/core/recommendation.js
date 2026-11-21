@@ -4,6 +4,7 @@
 
 import { storage } from './storage.js';
 import { queueProgressAttempt } from './progress-sync.js';
+import { buildRecommendations } from './recommendation-rules.js';
 
 export class RecommendationEngine {
   static async recordAnswer({ questionId, selectedAnswer, correctAnswer, timeSpentSeconds, topic, isDoubt }) {
@@ -57,10 +58,13 @@ export class RecommendationEngine {
     const attempts = await storage.getAll('attempts');
     const mistakes = await storage.getAll('mistakes');
 
-    const total = attempts.length;
-    const correct = attempts.filter(a => a.isCorrect && !a.isDoubt).length;
+    // Cloud-restored events intentionally do not contain answer keys. Exclude
+    // those records from accuracy rather than counting them as incorrect.
+    const scoredAttempts = attempts.filter(a => typeof a.isCorrect === 'boolean');
+    const total = scoredAttempts.length;
+    const correct = scoredAttempts.filter(a => a.isCorrect && !a.isDoubt).length;
     const doubts = attempts.filter(a => a.isDoubt).length;
-    const errors = attempts.filter(a => a.isCorrect === false && !a.isDoubt).length;
+    const errors = scoredAttempts.filter(a => a.isCorrect === false && !a.isDoubt).length;
 
     const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
     const activeMistakes = mistakes.filter(m => !m.mastered);
@@ -72,22 +76,7 @@ export class RecommendationEngine {
       errors,
       accuracy,
       unresolvedMistakesCount: activeMistakes.length,
-      recommendations: [
-        {
-          topic: 'Regla de Tres y Porcentajes',
-          subject: 'Aritmetica',
-          priority: 'ALTA',
-          action: 'Revisar Ficha: Variaciones Comerciales y Descuentos Sucesivos',
-          fichaId: 'FICHA-MAT-PORCENTAJES'
-        },
-        {
-          topic: 'Ecuaciones e Inecuaciones',
-          subject: 'Algebra',
-          priority: 'MEDIA',
-          action: 'Practicar Teorema de Cardano-Vieta y Raíces Cuadráticas',
-          fichaId: 'FICHA-ALG-ECUACIONES-CUADRATICAS'
-        }
-      ]
+      recommendations: buildRecommendations(activeMistakes, questions)
     };
   }
 }
