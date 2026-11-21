@@ -5,6 +5,9 @@
 import { repo } from '../core/repository.js';
 import { icon } from './icons.js';
 import confetti from 'canvas-confetti';
+import examRules from '../../data/exams/modalities.json';
+
+const UNSM_RULES = Object.fromEntries(examRules.modalities.map(item => [item.id, item]));
 
 const MODALITIES = {
   ENP: {
@@ -17,21 +20,21 @@ const MODALITIES = {
   ORDINARIO: {
     id: 'ORDINARIO', institution: 'UNSM', examType: 'ORDINARIO',
     title: 'UNSM · Ordinario', subtitle: 'Examen de admisión ordinario',
-    duration: 150, standardQuestions: 100, correctPoints: null, wrongPoints: 0,
+    duration: UNSM_RULES.ORDINARIO.durationMinutes, standardQuestions: UNSM_RULES.ORDINARIO.questionCount, correctPoints: UNSM_RULES.ORDINARIO.scoring.correctPoints, wrongPoints: UNSM_RULES.ORDINARIO.scoring.incorrectPoints,
     penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
     description: 'Examen Ordinario UNSM. Las incorrectas y en blanco no descuentan; la matriz de pesos de la convocatoria debe verificarse antes de calcular puntos.'
   },
   EXTRAORDINARIO_I: {
     id: 'EXTRAORDINARIO_I', institution: 'UNSM', examType: 'EXTRAORDINARIO_I',
     title: 'UNSM · Extraordinario I', subtitle: 'Modalidad extraordinaria I',
-    duration: 150, standardQuestions: 100, correctPoints: null, wrongPoints: 0,
+    duration: UNSM_RULES.EXTRAORDINARIO_I.durationMinutes, standardQuestions: UNSM_RULES.EXTRAORDINARIO_I.questionCount, correctPoints: UNSM_RULES.EXTRAORDINARIO_I.scoring.correctPoints, wrongPoints: UNSM_RULES.EXTRAORDINARIO_I.scoring.incorrectPoints,
     penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
     description: 'Modalidad Extraordinario I. Puntuación exacta pendiente de matriz oficial vigente.'
   },
   EXTRAORDINARIO_II: {
     id: 'EXTRAORDINARIO_II', institution: 'UNSM', examType: 'EXTRAORDINARIO_II',
     title: 'UNSM · Extraordinario II', subtitle: 'Concurso Escolar',
-    duration: 150, standardQuestions: 100, correctPoints: null, wrongPoints: 0,
+    duration: UNSM_RULES.EXTRAORDINARIO_II.durationMinutes, standardQuestions: UNSM_RULES.EXTRAORDINARIO_II.questionCount, correctPoints: UNSM_RULES.EXTRAORDINARIO_II.scoring.correctPoints, wrongPoints: UNSM_RULES.EXTRAORDINARIO_II.scoring.incorrectPoints,
     penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
     description: 'Modalidad Extraordinario II · Concurso Escolar. Puntuación exacta pendiente de matriz oficial vigente.'
   }
