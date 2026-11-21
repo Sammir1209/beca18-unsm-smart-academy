@@ -144,7 +144,7 @@ export async function renderDashboard(container, navigateTo) {
         </div>
       </div>
 
-      <!-- Mapa de Frecuencia Curricular -->
+      <!-- Mapa de temas de estudio -->
       <div class="card">
         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
           ${icon('zap', { size: 18, color: 'var(--accent-alert)' })}
