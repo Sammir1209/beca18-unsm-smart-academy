@@ -20,6 +20,8 @@ export async function renderDashboard(container, navigateTo) {
   const user = authData?.session?.user;
   const studentName = String(user?.user_metadata?.full_name || user?.user_metadata?.name || '').trim();
   const greetingName = escapeHtml(studentName ? studentName.split(/\s+/)[0] : 'Postulante');
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
 
   container.innerHTML = `
     <div class="dashboard-stack">
