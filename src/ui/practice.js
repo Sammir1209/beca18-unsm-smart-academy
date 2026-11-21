@@ -194,7 +194,8 @@ export function renderPractice(container, navigateTo) {
                 </div>
 
                 <div style="margin-bottom: 20px; background-color: var(--bg-card); padding: 20px; border-radius: var(--radius-md);">
-                  <div style="font-size: 0.95rem; font-weight: 700; color: #93C5FD; display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                  <div class="einstein-solution-heading"><img src="/stickers/einstein-explaining.svg" alt="Einstein explicando"><span>Resolución paso a paso</span></div>
+                  <div style="display:none;font-size: 0.95rem; font-weight: 700; color: #93C5FD; display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
                     ${icon('step', { size: 18, color: '#93C5FD' })}
                     Resolución Paso a Paso:
                   </div>
