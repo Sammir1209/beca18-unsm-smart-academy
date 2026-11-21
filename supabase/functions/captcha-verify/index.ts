@@ -39,12 +39,12 @@ Deno.serve(async (req: Request) => {
     if (!await rate(client, fp, "verify", 15)) return respond({ error: "RATE_LIMITED" }, 429, origin);
 
     const { data: stored, error: readError } = await client.from("captcha_challenges")
-      .select("challenge,expires_at,consumed_at").eq("id", id).maybeSingle();
+      .select("challenge,ip_fingerprint,expires_at,consumed_at").eq("id", id).maybeSingle();
     if (readError) throw readError;
     if (!stored || stored.consumed_at || new Date(stored.expires_at).getTime() <= Date.now()) {
       return respond({ error: "CHALLENGE_EXPIRED_OR_USED" }, 410, origin);
     }
-    if (stable(stored.challenge) !== stable(payload)) return respond({ error: "CHALLENGE_MISMATCH" }, 400, origin);
+    if (stored.ip_fingerprint !== fp) return respond({ error: "CHALLENGE_CLIENT_MISMATCH" }, 403, origin);\n    if (stable(stored.challenge) !== stable(payload)) return respond({ error: "CHALLENGE_MISMATCH" }, 400, origin);
 
     const result = await verifySolution({ challenge: payload, solution, deriveKey, hmacSignatureSecret: secret });
     if (!result.verified) return respond({ error: result.expired ? "CHALLENGE_EXPIRED" : "CHALLENGE_INVALID" }, 400, origin);
