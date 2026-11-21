@@ -12,29 +12,29 @@ const MODALITIES = {
     id: 'ENP', institution: 'PRONABEC', examType: 'ENP',
     title: 'Beca 18 · ENP', subtitle: 'Examen Nacional de Preselección',
     duration: null, standardQuestions: 60, correctPoints: 2, wrongPoints: 0, blueprintVerified: false,
-    penaltyLabel: 'Sin descuento por error', accent: 'beca',
-    description: 'Matemática y Competencia Lectora. Responde todas las preguntas: las respuestas incorrectas no descuentan puntos.'
+    penaltyLabel: 'Ponderación pendiente de verificar', accent: 'beca',
+    description: 'Modalidad identificada. Su estructura, duración y reglas de calificación deben verificarse con las bases vigentes.'
   },
   ORDINARIO: {
     id: 'ORDINARIO', institution: 'UNSM', examType: 'ORDINARIO',
     title: 'UNSM · Ordinario', subtitle: 'Examen de admisión ordinario',
     duration: null, standardQuestions: 100, correctPoints: 4, wrongPoints: -0.5, blueprintVerified: false,
-    penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
-    description: 'Examen ordinario. La ponderación mostrada es referencial y debe contrastarse con el prospecto vigente.'
+    penaltyLabel: 'Ponderación pendiente de verificar', accent: 'unsm',
+    description: 'Modalidad identificada. Su estructura, duración y reglas de calificación deben verificarse con el prospecto vigente.'
   },
   EXTRAORDINARIO: {
     id: 'EXTRAORDINARIO', institution: 'UNSM', examType: 'EXTRAORDINARIO',
     title: 'UNSM · Extraordinario', subtitle: 'Modalidad extraordinaria',
     duration: null, standardQuestions: 60, correctPoints: 4, wrongPoints: -0.5, blueprintVerified: false,
     penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
-    description: 'Modalidad extraordinaria. Requiere un banco propio y la ponderación debe contrastarse con el prospecto vigente.'
+    description: 'Modalidad identificada. Requiere un banco propio y un blueprint oficial verificado antes de habilitarse.'
   },
   CONCURSO_ESCOLAR: {
     id: 'CONCURSO_ESCOLAR', institution: 'UNSM', examType: 'CONCURSO_ESCOLAR',
     title: 'UNSM · Concurso escolar', subtitle: 'Quinto de secundaria',
     duration: null, standardQuestions: 80, correctPoints: 4, wrongPoints: -0.5, blueprintVerified: false,
     penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
-    description: 'Modalidad escolar para quinto de secundaria. La ponderación es referencial hasta validar el prospecto vigente.'
+    description: 'Modalidad identificada. Requiere bases vigentes, distribución oficial y banco de preguntas validado.'
   }
 };
 
