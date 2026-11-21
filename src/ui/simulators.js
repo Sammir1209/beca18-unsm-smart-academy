@@ -5,6 +5,9 @@
 import { repo } from '../core/repository.js';
 import { icon } from './icons.js';
 import confetti from 'canvas-confetti';
+import examRules from '../../data/exams/modalities.json';
+
+const UNSM_RULES = Object.fromEntries(examRules.modalities.map(item => [item.id, item]));
 
 const MODALITIES = {
   ENP: {
@@ -17,16 +20,23 @@ const MODALITIES = {
   ORDINARIO: {
     id: 'ORDINARIO', institution: 'UNSM', examType: 'ORDINARIO',
     title: 'UNSM · Ordinario', subtitle: 'Examen de admisión ordinario',
-    duration: 150, standardQuestions: 100, correctPoints: 2, wrongPoints: 0,
+    duration: UNSM_RULES.ORDINARIO.durationMinutes, standardQuestions: UNSM_RULES.ORDINARIO.questionCount, correctPoints: UNSM_RULES.ORDINARIO.scoring.correctPoints, wrongPoints: UNSM_RULES.ORDINARIO.scoring.incorrectPoints,
     penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
-    description: 'Examen de admisión UNSM. Solo suman las respuestas correctas; las incorrectas y en blanco no descuentan.'
+    description: 'Examen Ordinario UNSM. Las incorrectas y en blanco no descuentan; la matriz de pesos de la convocatoria debe verificarse antes de calcular puntos.'
   },
-  EXTRAORDINARIO: {
-    id: 'EXTRAORDINARIO', institution: 'UNSM', examType: 'EXTRAORDINARIO',
-    title: 'UNSM · Extraordinario', subtitle: 'Modalidad extraordinaria',
-    duration: 150, standardQuestions: 100, correctPoints: 2, wrongPoints: 0,
+  EXTRAORDINARIO_I: {
+    id: 'EXTRAORDINARIO_I', institution: 'UNSM', examType: 'EXTRAORDINARIO_I',
+    title: 'UNSM · Extraordinario I', subtitle: 'Modalidad extraordinaria I',
+    duration: UNSM_RULES.EXTRAORDINARIO_I.durationMinutes, standardQuestions: UNSM_RULES.EXTRAORDINARIO_I.questionCount, correctPoints: UNSM_RULES.EXTRAORDINARIO_I.scoring.correctPoints, wrongPoints: UNSM_RULES.EXTRAORDINARIO_I.scoring.incorrectPoints,
     penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
-    description: 'Modalidad extraordinaria UNSM. Solo suman las respuestas correctas; las incorrectas y en blanco no descuentan.'
+    description: 'Modalidad Extraordinario I. Puntuación exacta pendiente de matriz oficial vigente.'
+  },
+  EXTRAORDINARIO_II: {
+    id: 'EXTRAORDINARIO_II', institution: 'UNSM', examType: 'EXTRAORDINARIO_II',
+    title: 'UNSM · Extraordinario II', subtitle: 'Concurso Escolar',
+    duration: UNSM_RULES.EXTRAORDINARIO_II.durationMinutes, standardQuestions: UNSM_RULES.EXTRAORDINARIO_II.questionCount, correctPoints: UNSM_RULES.EXTRAORDINARIO_II.scoring.correctPoints, wrongPoints: UNSM_RULES.EXTRAORDINARIO_II.scoring.incorrectPoints,
+    penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
+    description: 'Modalidad Extraordinario II · Concurso Escolar. Puntuación exacta pendiente de matriz oficial vigente.'
   }
 };
 
@@ -43,10 +53,11 @@ export function renderSimulators(container, navigateTo) {
     if (timerInterval) clearInterval(timerInterval);
     const cards = Object.values(MODALITIES).map(modality => {
       const pool = getPool(modality);
+      const complete = pool.length >= modality.standardQuestions;
       const available = pool.length > 0;
-      const countLabel = modality.standardQuestions
-        ? `${modality.standardQuestions} preguntas objetivo`
-        : 'Banco de preguntas por incorporar';
+      const countLabel = complete
+        ? `${modality.standardQuestions} preguntas disponibles para examen completo`
+        : `Banco parcial · faltan ${Math.max(0, modality.standardQuestions - pool.length)} preguntas`;
       return `
         <article class="sim-modality-card ${modality.accent}" data-modality="${modality.id}">
           <div class="sim-card-topline">
@@ -62,12 +73,15 @@ export function renderSimulators(container, navigateTo) {
           </div>
           <div class="sim-card-footer">
             <span class="sim-score-rule">${modality.penaltyLabel}</span>
-            <button class="btn ${modality.accent === 'beca' ? 'btn-beca' : 'btn-primary'} sim-start-button" data-start="${modality.id}" ${available ? '' : 'disabled'}>
-              ${available ? 'Preparar simulacro' : 'En preparación'}
-              ${icon(available ? 'arrowRight' : 'lock', { size: 16 })}
+            <button class="btn ${modality.accent === 'beca' ? 'btn-beca' : 'btn-primary'} sim-start-button" data-start="${modality.id}" ${complete ? '' : 'disabled'}>
+              ${complete ? 'Examen completo' : 'Banco incompleto'}
+              ${icon(complete ? 'arrowRight' : 'lock', { size: 16 })}
+            </button>
+            <button class="btn btn-secondary sim-practice-button" data-practice="${modality.id}" ${available ? '' : 'disabled'}>
+              Practicar banco (${pool.length})
             </button>
           </div>
-          ${modality.id === 'EXTRAORDINARIO' && !available ? '<p class="sim-card-note">No se han cargado preguntas extraordinarias validadas. No se reutilizarán preguntas ordinarias como si fueran extraordinarias.</p>' : ''}
+          ${modality.institution === 'UNSM' && !complete ? '<p class="sim-card-note">El banco todavía no alcanza las 100 preguntas requeridas. Puedes practicar el material disponible; no se presentará como examen oficial completo.</p>' : ''}
         </article>
       `;
     }).join('');
@@ -87,8 +101,8 @@ export function renderSimulators(container, navigateTo) {
         <aside class="simulator-scoring-note">
           <strong>Cómo se calcula tu puntaje</strong>
           <p><b>ENP:</b> +2 por acierto y 0 por error o pregunta en blanco, según el esquema configurado para este simulador.</p>
-          <p><b>UNSM Ordinario y Extraordinario:</b> se suman los puntos de las respuestas correctas según el peso de cada pregunta. Las incorrectas y en blanco no descuentan.</p>
-          <p class="simulator-note-muted">La puntuación exacta por bloque debe configurarse con el prospecto vigente de cada convocatoria.</p>
+          <p><b>UNSM:</b> las respuestas incorrectas y en blanco no descuentan. El puntaje numérico se habilitará cuando se cargue la matriz oficial de pesos de cada convocatoria.</p>
+          <p class="simulator-note-muted">No se reutilizan preguntas de otra modalidad para completar un examen. Los bancos parciales solo permiten práctica, no simulacros oficiales completos.</p>
         </aside>
       </section>
     `;
@@ -96,15 +110,23 @@ export function renderSimulators(container, navigateTo) {
     container.querySelectorAll('[data-start]').forEach(button => {
       button.addEventListener('click', () => {
         const modality = MODALITIES[button.dataset.start];
-        if (modality && getPool(modality).length) startSimulator(modality);
+        if (modality && getPool(modality).length >= modality.standardQuestions) startSimulator(modality, false);
+      });
+    });
+    container.querySelectorAll('[data-practice]').forEach(button => {
+      button.addEventListener('click', () => {
+        const modality = MODALITIES[button.dataset.practice];
+        if (modality && getPool(modality).length) startSimulator(modality, true);
       });
     });
   }
 
-  function startSimulator(modality) {
+  function startSimulator(modality, practiceOnly = false) {
     const pool = getPool(modality);
     if (!pool.length) return;
-    const questions = [...pool].sort(() => Math.random() - 0.5);
+    if (!practiceOnly && pool.length < modality.standardQuestions) return;
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    const questions = practiceOnly ? shuffled : shuffled.slice(0, modality.standardQuestions);
     activeSession = {
       modality, institution: modality.institution, durationMinutes: modality.duration,
       endTimestamp: Date.now() + modality.duration * 60 * 1000,
@@ -195,8 +217,7 @@ export function renderSimulators(container, navigateTo) {
       else if (answer === q.correctAnswer) { correct++; bySubject[q.subject].correct++; }
       else { incorrect++; bySubject[q.subject].incorrect++; }
     });
-    const score = correct * modality.correctPoints;
-    const penalty = 0;
+    const score = Number.isFinite(modality.correctPoints) ? correct * modality.correctPoints : null;
     const subjectRows = Object.entries(bySubject).map(([subject, data]) => `
       <div class="sim-result-subject"><span>${subject}</span><strong>${data.correct}/${data.correct + data.incorrect + data.blank}</strong></div>
     `).join('');
@@ -204,7 +225,7 @@ export function renderSimulators(container, navigateTo) {
     container.innerHTML = `
       <section class="sim-results-shell">
         <header class="sim-results-heading"><span class="simulator-eyebrow">SIMULACRO COMPLETADO</span><h2>Tu resultado</h2><p>${modality.title} · ${questions.length} preguntas</p></header>
-        <div class="sim-score-panel"><span>Puntaje obtenido</span><strong>${score.toFixed(1)} <small>pts</small></strong><div>+ ${(correct * modality.correctPoints).toFixed(1)} por aciertos · 0 por errores y respuestas en blanco</div></div>
+        <div class="sim-score-panel"><span>${modality.correctPoints === null ? 'Respuestas correctas' : 'Puntaje de práctica'}</span><strong>${score === null ? correct : score.toFixed(1)} <small>${score === null ? 'aciertos' : 'pts'}</small></strong><div>${score === null ? 'No se calcula puntaje UNSM sin matriz oficial de pesos.' : `+ ${score.toFixed(1)} por aciertos · 0 por errores y respuestas en blanco`}</div></div>
         <div class="sim-result-stats">
           <div><strong class="positive">${correct}</strong><span>Aciertos</span></div>
           <div><strong class="negative">${incorrect}</strong><span>Errores</span><small>0 pts descontados</small></div>
@@ -212,7 +233,7 @@ export function renderSimulators(container, navigateTo) {
         </div>
         <div class="sim-result-breakdown"><h3>Desglose por curso</h3>${subjectRows || '<p>Sin datos por curso.</p>'}</div>
         <div class="sim-result-actions"><button id="btn-back-lobby" class="btn btn-primary">Volver a modalidades</button><button id="btn-view-errors" class="btn btn-secondary">Revisar errores</button></div>
-        <p class="simulator-note-muted">Resultado de práctica: solo se suman respuestas correctas. La UNSM asigna pesos por bloque y el prospecto vigente determina el valor exacto de cada pregunta; este resultado no reemplaza el cálculo oficial.</p>
+        <p class="simulator-note-muted">Resultado de práctica. Las respuestas incorrectas y en blanco no descuentan. ${modality.correctPoints === null ? 'El puntaje UNSM queda pendiente hasta incorporar la matriz oficial de la convocatoria.' : 'Este puntaje corresponde al esquema de práctica configurado y no reemplaza el resultado oficial.'}</p>
       </section>
     `;
 
