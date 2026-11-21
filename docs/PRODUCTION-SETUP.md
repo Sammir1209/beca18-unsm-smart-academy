@@ -87,3 +87,20 @@ Las etiquetas `OFICIAL`, `VALIDATED` y `isFija` requieren evidencia documental, 
 - Ejecutar E2E real en navegador móvil y escritorio; no se ha creado una cuenta de prueba.
 - Revisar el alcance de los preview deployments de Cloudflare Pages y decidir si deben limitarse.
 - Proteger la rama de integración con reglas de revisión/checks requeridos; la rama actual no tiene protección configurada.
+
+
+## Configuración de hosting y APIs — 2026-11-21
+
+### Cloudflare Pages
+
+El proyecto Pages `beca18-unsm-smart-academy` es actualmente un frontend Vite estático (`dist`) y su configuración de proyecto no detecta Pages Functions (`uses_functions=false`). Se configuraron en producción y preview las variables públicas `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY`. Son credenciales publicables del cliente; nunca colocar aquí una service-role key.
+
+Los endpoints `/api/tutor/chat`, `/api/tutor/tts` y `/api/tutor/live-token` están implementados como funciones serverless de Vercel en `api/tutor/`. No se deben considerar disponibles bajo el dominio `pages.dev` mientras Pages siga siendo un despliegue estático sin funciones o proxy. La publicación principal debe utilizar un hosting que despliegue también esas rutas, o debe implementarse y probarse un proxy Pages Functions hacia un backend Vercel de producción antes de anunciar esas funciones en Pages.
+
+### Vercel
+
+El proyecto `unsm-academy` tiene dominio `unsm-academy.vercel.app` y variables Vercel de Supabase configuradas. El despliegue de producción registrado es anterior a la rama de hardening; los despliegues recientes de la rama de trabajo son previews. No promover la rama de hardening a producción hasta cerrar las pruebas E2E y revisar el despliegue de backend.
+
+### Cuotas TTS
+
+La migración `20261121223000_harden_tts_quota_parameters.sql` fija en servidor los límites de voz neuronal: 8 peticiones y 9,000 caracteres por ventana de 60 segundos, con máximo de 1,800 caracteres por solicitud. El RPC rechaza valores de política alterados por el cliente. La migración está aplicada en Supabase y versionada en el repositorio.
