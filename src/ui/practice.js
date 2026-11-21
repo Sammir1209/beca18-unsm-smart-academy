@@ -7,10 +7,11 @@ import { RecommendationEngine } from '../core/recommendation.js';
 import { voiceTutor } from '../core/voiceTutor.js';
 import { icon } from './icons.js';
 import { mountTutorChat } from './tutor-chat.js';
+import { renderMath } from '../core/math-renderer.js';
 
 export function renderPractice(container, navigateTo) {
   let activeFilterInstitution = 'ALL';
-  let activeFilterSubject = 'ALL';
+  let activeFilterSubjects = new Set();
   let activeFilterOnlyFijas = false;
 
   let currentIndex = 0;
@@ -22,7 +23,7 @@ export function renderPractice(container, navigateTo) {
   function getFilteredQuestions() {
     return repo.questions.filter(q => {
       if (activeFilterInstitution !== 'ALL' && q.institution !== activeFilterInstitution) return false;
-      if (activeFilterSubject !== 'ALL' && q.subject !== activeFilterSubject) return false;
+      if (activeFilterSubjects.size > 0 && !activeFilterSubjects.has(q.subject)) return false;
       if (activeFilterOnlyFijas && !q.isFija) return false;
       return true;
     });
@@ -63,21 +64,17 @@ export function renderPractice(container, navigateTo) {
                   Solo Fijas
                 </button>
 
-                <select id="select-subject-filter" style="background-color: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 12px; border-radius: var(--radius-md); font-size: 0.85rem;">
-                  <option value="ALL">Todos los Cursos</option>
-                  <option value="Aritmetica" ${activeFilterSubject === 'Aritmetica' ? 'selected' : ''}>Aritmética</option>
-                  <option value="Algebra" ${activeFilterSubject === 'Algebra' ? 'selected' : ''}>Álgebra</option>
-                  <option value="Geometria" ${activeFilterSubject === 'Geometria' ? 'selected' : ''}>Geometría</option>
-                  <option value="Razonamiento Matematico" ${activeFilterSubject === 'Razonamiento Matematico' ? 'selected' : ''}>Razonamiento Matemático (RM)</option>
-                  <option value="Comprension Lectora" ${activeFilterSubject === 'Comprension Lectora' ? 'selected' : ''}>Comprensión Lectora</option>
-                  <option value="Razonamiento Verbal" ${activeFilterSubject === 'Razonamiento Verbal' ? 'selected' : ''}>Razonamiento Verbal</option>
-                  <option value="Fisica" ${activeFilterSubject === 'Fisica' ? 'selected' : ''}>Física</option>
-                  <option value="Quimica" ${activeFilterSubject === 'Quimica' ? 'selected' : ''}>Química</option>
-                  <option value="Biologia" ${activeFilterSubject === 'Biologia' ? 'selected' : ''}>Biología</option>
-                  <option value="Historia del Peru" ${activeFilterSubject === 'Historia del Peru' ? 'selected' : ''}>Historia del Perú</option>
-                  <option value="Geografia" ${activeFilterSubject === 'Geografia' ? 'selected' : ''}>Geografía</option>
-                  <option value="Cultura General" ${activeFilterSubject === 'Cultura General' ? 'selected' : ''}>Cultura General</option>
-                </select>
+                <button type="button" class="btn btn-sm btn-secondary" id="clear-subject-filters">Limpiar temas</button>
+              </div>
+              <div class="practice-subject-picker" aria-label="Seleccionar varios temas">
+                <div class="practice-subject-picker-head"><strong>Temas para practicar</strong><span id="selected-subject-count">${activeFilterSubjects.size ? activeFilterSubjects.size + ' seleccionados' : 'Todos los temas'}</span></div>
+                <div class="practice-subject-chips">
+                  ${[...new Set(repo.questions.map(question => question.subject).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es')).map(subject => `
+                    <button type="button" class="subject-chip ${activeFilterSubjects.has(subject) ? 'is-selected' : ''}" data-subject="${subject}" aria-pressed="${activeFilterSubjects.has(subject)}">${subject}</button>
+                  `).join('')}
+                </div>
+                <p class="practice-subject-hint">Puedes combinar tantos cursos como quieras. Si no eliges ninguno, se mostrarán todos.</p>
+              </div>
               </div>
             </div>
           </div>
@@ -265,6 +262,8 @@ export function renderPractice(container, navigateTo) {
       </div>
     `;
 
+    void renderMath(container);
+
     // 3. Filtros de Institución
     document.getElementById('filter-inst-all')?.addEventListener('click', () => {
       activeFilterInstitution = 'ALL';
@@ -298,13 +297,19 @@ export function renderPractice(container, navigateTo) {
       wasDoubtMode = false;
       renderView();
     });
-    document.getElementById('select-subject-filter')?.addEventListener('change', (e) => {
-      activeFilterSubject = e.target.value;
-      currentIndex = 0;
-      selectedOption = null;
-      hasSubmitted = false;
-      wasDoubtMode = false;
+    document.getElementById('clear-subject-filters')?.addEventListener('click', () => {
+      activeFilterSubjects.clear();
+      currentIndex = 0; selectedOption = null; hasSubmitted = false; wasDoubtMode = false;
       renderView();
+    });
+    container.querySelectorAll('[data-subject]').forEach(button => {
+      button.addEventListener('click', () => {
+        const subject = button.getAttribute('data-subject');
+        if (activeFilterSubjects.has(subject)) activeFilterSubjects.delete(subject);
+        else activeFilterSubjects.add(subject);
+        currentIndex = 0; selectedOption = null; hasSubmitted = false; wasDoubtMode = false;
+        renderView();
+      });
     });
 
     if (questions.length === 0) return;
@@ -349,6 +354,7 @@ export function renderPractice(container, navigateTo) {
     });
 
     async function handleSubmit() {
+      if (!selectedOption || hasSubmitted) return;
       hasSubmitted = true;
       wasDoubtMode = false;
       const isCorrect = selectedOption === q.correctAnswer;
@@ -358,15 +364,16 @@ export function renderPractice(container, navigateTo) {
       
       voiceTutor.speak(speechFeedback);
 
-      await RecommendationEngine.recordAnswer({
-        questionId: q.id,
-        selectedAnswer: selectedOption,
-        correctAnswer: q.correctAnswer,
-        timeSpentSeconds: 45,
-        topic: q.topic,
-        isDoubt: false
-      });
-      renderView();
+      try {
+        await RecommendationEngine.recordAnswer({
+          questionId: q.id, selectedAnswer: selectedOption, correctAnswer: q.correctAnswer,
+          timeSpentSeconds: 45, topic: q.topic, isDoubt: false
+        });
+      } catch (error) {
+        console.error('No se pudo guardar el intento; se mantiene la corrección local:', error);
+      } finally {
+        renderView();
+      }
     }
 
     async function handleDoubt() {
