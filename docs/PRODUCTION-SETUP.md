@@ -99,7 +99,7 @@ Las APIs de origen están implementadas como funciones serverless de Vercel en `
 
 ### Vercel
 
-El proyecto `unsm-academy` tiene dominio `unsm-academy.vercel.app` y variables Vercel de Supabase configuradas. El despliegue de producción registrado es anterior a la rama de hardening; los despliegues recientes de la rama de trabajo son previews. El backend Vercel de preview seleccionado para el proxy Pages es `https://unsm-academy-9rnn72eml-samirconter-1146s-projects.vercel.app`, asociado al commit `2c85f602ba1bd0d6ad42723af454b275968fc4c4`. Está listo como deployment de preview, pero no coincide con el HEAD actual de la rama; por eso no debe promocionarse a producción. La creación de nuevos despliegues fue bloqueada por el límite diario gratuito de la API. No promover una URL o backend de preview a producción.
+El proyecto `unsm-academy` tiene dominio `unsm-academy.vercel.app` y variables Vercel de Supabase configuradas. El despliegue de producción registrado es anterior a la rama de hardening; los despliegues recientes de la rama de trabajo son previews. El backend Vercel de preview seleccionado para el proxy Pages es `https://unsm-academy-9ixg5oj6w-samirconter-1146s-projects.vercel.app`, deployment `READY`, asociado al commit `b371df20aca26c97d7f1631f828a622cb201e0cd`. Contiene las APIs del tutor y fue comprobado con solicitudes GET de control (405/Allow: POST); las solicitudes POST autenticadas de chat, TTS y voz no se ejecutaron sin una cuenta de prueba. Este backend de preview no se debe promocionar a producción. La creación de nuevos despliegues fue bloqueada por el límite diario gratuito de la API. No promover una URL o backend de preview a producción.
 
 ### Cuotas TTS
 
