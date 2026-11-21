@@ -69,3 +69,21 @@ Las etiquetas `OFICIAL`, `VALIDATED` y `isFija` requieren evidencia documental, 
 - [ ] Verificar que la metadata temporal desaparece tras crear usuario.
 - [ ] Confirmar build y despliegue del frontend desde el proveedor de hosting.
 - [ ] Activar leaked password protection y revisar redirecciones Auth.
+
+
+## Auditoría de preparación para producción — 2026-11-21
+
+- El workflow de calidad ejecuta instalación reproducible con `npm ci`, pruebas de integridad del banco y build de producción.
+- Las pruebas de contenido verifican identificadores únicos, estructura de opciones, clave válida y procedencia mínima para cualquier ítem marcado como validado/publicado.
+- El banco local contiene 31 preguntas con estado `REVIEW_REQUIRED`; no hay preguntas publicadas para simulacros oficiales.
+- Las tablas Supabase `questions`, `question_options` y `question_answer_keys` están vacías. El motor de simulacros permanece bloqueado hasta que se verifique el blueprint por convocatoria y exista cobertura suficiente.
+- La UI ya no presenta las modalidades como simulacros oficiales; los tiempos y puntajes no verificados no deben usarse como parámetros de examen.
+- `captcha-verify` se actualizó a v3 para vincular la solución al fingerprint HMAC del cliente que recibió el desafío.
+
+### Bloqueos que requieren configuración o prueba externa
+
+- Activar leaked password protection desde Authentication → Security and Protection (la herramienta conectada no expone ese ajuste).
+- Revisar Site URL, Redirect URLs, confirmación de correo y plantillas en Supabase Auth.
+- Ejecutar E2E real en navegador móvil y escritorio; no se ha creado una cuenta de prueba.
+- Revisar el alcance de los preview deployments de Cloudflare Pages y decidir si deben limitarse.
+- Proteger la rama de integración con reglas de revisión/checks requeridos; la rama actual no tiene protección configurada.
