@@ -13,6 +13,7 @@ export async function renderMistakes(container, navigateTo) {
   container.innerHTML = `
     <div style="max-width: 900px; margin: 0 auto;">
       <div style="margin-bottom: 24px;">
+        <div class="einstein-inline-tip"><img src="/stickers/einstein-warning.svg" alt=""><span>Einstein te ayudará a convertir cada error en un aprendizaje.</span></div>
         <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 10px;">
           ${icon('mistakes', { size: 28, color: 'var(--accent-alert)' })}
           Banco Inteligente de Errores ("Mis Errores")
@@ -24,9 +25,7 @@ export async function renderMistakes(container, navigateTo) {
 
       ${activeMistakes.length === 0 ? `
         <div class="card" style="text-align: center; padding: 48px;">
-          <div style="display: flex; justify-content: center; margin-bottom: 16px;">
-            ${icon('check', { size: 48, color: 'var(--accent-beca)' })}
-          </div>
+          <img class="einstein-empty-sticker" src="/stickers/einstein-celebrating.svg" alt="Einstein celebrando tu progreso">
           <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px;">¡Excelente trabajo! No tienes errores pendientes</h3>
           <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
             Has consolidado todos los temas practicados o aún no has iniciado tu sesión diaria.
