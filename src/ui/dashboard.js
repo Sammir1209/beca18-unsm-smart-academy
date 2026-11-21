@@ -36,7 +36,7 @@ export async function renderDashboard(container, navigateTo) {
             Buenos días, ${greetingName}
           </h1>
           <p class="dashboard-hero-description">
-            Tu ruta de preparación está optimizada para el <strong>Núcleo Común (Matemática + Comprensión Lectora)</strong> y la especialización en Ciencias para la UNSM.
+            Organiza tu preparación con práctica, fichas y seguimiento de tus resultados para Beca 18 y la admisión a la UNSM.
           </p>
         </div>
         <div class="dashboard-hero-actions">
@@ -125,7 +125,7 @@ export async function renderDashboard(container, navigateTo) {
           Recomendado para ti hoy (Motor Diagnóstico)
         </h3>
         <div style="display: flex; flex-direction: column; gap: 12px;">
-          ${diag.recommendations.map(rec => `
+          ${diag.recommendations.length ? diag.recommendations.map(rec => `
             <div class="recommendation-row">
               <div class="recommendation-copy">
                 <span class="tag ${rec.priority === 'ALTA' ? 'tag-diff-adv' : 'tag-diff-mid'}">${escapeHtml(rec.priority)} PRIORIDAD</span>
@@ -133,11 +133,14 @@ export async function renderDashboard(container, navigateTo) {
                 <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">(${escapeHtml(rec.subject)})</span>
                 <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${escapeHtml(rec.action)}</div>
               </div>
-              <button class="btn btn-secondary btn-sm" onclick="window.location.hash='#fichas'">
-                Estudiar Ficha ${icon('chevronRight', { size: 14 })}
+              <button class="btn btn-secondary btn-sm" data-open-practice>
+                Practicar tema ${icon('chevronRight', { size: 14 })}
               </button>
             </div>
-          `).join('')}
+          `).join('') : `
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Aún no hay errores suficientes para generar recomendaciones personalizadas. Resuelve algunas preguntas y el diagnóstico se actualizará con tus resultados reales.</p>
+            <button id="btn-first-practice" class="btn btn-secondary btn-sm" style="align-self:flex-start;">Comenzar práctica ${icon('chevronRight', { size: 14 })}</button>
+          `}
         </div>
       </div>
 
@@ -169,7 +172,7 @@ export async function renderDashboard(container, navigateTo) {
             <div style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
               ${icon('star', { size: 16, color: 'var(--accent-beca)' })} Inferencia & Idea Principal (RV)
             </div>
-            <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">FRECUENCIA MUY ALTA</div>
+            <div style="font-size: 0.8rem; color: var(--accent-beca); font-weight: 600; margin-top: 4px;">TEMA DE REPASO</div>
             <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Desarrolla comprensión, inferencia e idea principal</div>
           </div>
           <div class="frequency-card frequency-card-alert">
@@ -187,4 +190,6 @@ export async function renderDashboard(container, navigateTo) {
 
   document.getElementById('btn-start-practice')?.addEventListener('click', () => navigateTo('practice'));
   document.getElementById('btn-start-simulator')?.addEventListener('click', () => navigateTo('simulators'));
+  document.getElementById('btn-first-practice')?.addEventListener('click', () => navigateTo('practice'));
+  container.querySelectorAll('[data-open-practice]').forEach(button => button.addEventListener('click', () => navigateTo('practice')));
 }
