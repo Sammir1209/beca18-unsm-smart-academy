@@ -5,6 +5,7 @@
 import { repo } from '../core/repository.js';
 import { voiceTutor } from '../core/voiceTutor.js';
 import { icon } from './icons.js';
+import { renderMath } from '../core/math-renderer.js';
 
 export function renderFichas(container, navigateTo) {
   let selectedFicha = null;
@@ -166,7 +167,7 @@ export function renderFichas(container, navigateTo) {
                 ${f.formulas.map(formula => `
                   <div style="background-color: var(--bg-card); padding: 14px 18px; border-radius: var(--radius-md); border-left: 3px solid var(--accent-beca); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <span style="font-size: 0.9rem; font-weight: 600;">${formula.label}</span>
-                    <code style="font-family: var(--font-mono); font-size: 0.95rem; color: #A7F3D0; font-weight: 700; background-color: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 6px;">${formula.formula}</code>
+                    <code style="font-family: var(--font-mono); font-size: 0.95rem; color: #8A4B00; font-weight: 750; background-color: #FFF0D8; border: 1px solid #F2D2A6; padding: 4px 10px; border-radius: 6px;">${formula.formula}</code>
                   </div>
                 `).join('')}
               </div>
@@ -243,6 +244,8 @@ export function renderFichas(container, navigateTo) {
         </div>
       </div>
     `;
+
+    void renderMath(container);
 
     document.getElementById('btn-back-fichas')?.addEventListener('click', () => {
       voiceTutor.stopSpeaking();
