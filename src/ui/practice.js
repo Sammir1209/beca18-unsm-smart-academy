@@ -18,7 +18,6 @@ export function renderPractice(container, navigateTo) {
   let hasSubmitted = false;
   let wasDoubtMode = false;
   let tutorChatCleanup = null;
-  let avatarInstance = null;
 
   function getFilteredQuestions() {
     return repo.questions.filter(q => {
@@ -154,7 +153,7 @@ export function renderPractice(container, navigateTo) {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
               <button id="btn-dont-know" class="btn btn-doubt" ${hasSubmitted ? 'disabled' : ''}>
                 ${icon('doubt', { size: 18, color: '#FBBF24' })}
-                No lo sé (Aprender con el Tutor 3D)
+                No lo sé (Aprender con Einstein)
               </button>
 
               <button id="btn-submit-answer" class="btn btn-primary" ${hasSubmitted || !selectedOption ? 'disabled' : ''}>
@@ -174,7 +173,7 @@ export function renderPractice(container, navigateTo) {
                          <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #A7F3D0;">¡Excelente deducción! Respuesta Correcta</h4><div style="font-size: 0.85rem; color: var(--text-muted);">Dominio consolidado</div></div>`
                       : wasDoubtMode
                       ? `<div class="card-icon amber" style="width: 38px; height: 38px;">${icon('lightbulb', { size: 24, color: 'var(--accent-alert)' })}</div>
-                         <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #FDE68A;">Modo Aprendizaje Guiado</h4><div style="font-size: 0.85rem; color: var(--text-muted);">El tutor 3D te guía paso a paso</div></div>`
+                         <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #FDE68A;">Modo Aprendizaje Guiado</h4><div style="font-size: 0.85rem; color: var(--text-muted);">Einstein te guía paso a paso</div></div>`
                       : `<div class="card-icon" style="width: 38px; height: 38px; background-color: rgba(239, 68, 68, 0.15);">${icon('warning', { size: 24, color: 'var(--accent-danger)' })}</div>
                          <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #FECACA;">Respuesta Incorrecta &bull; Análisis</h4><div style="font-size: 0.85rem; color: var(--text-muted);">Aprende la trampa del examen</div></div>`
                     }
@@ -182,7 +181,7 @@ export function renderPractice(container, navigateTo) {
 
                   <button id="btn-voice-explain" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
                     ${icon('zap', { size: 14, color: '#60A5FA' })}
-                    Explicar con Gestos 3D
+                    Explicación de Einstein
                   </button>
                 </div>
 
@@ -243,55 +242,28 @@ export function renderPractice(container, navigateTo) {
           `}
         </div>
 
-        <!-- PANEL DEL TUTOR: selección, avatar y conversación -->
+        <!-- PRE-EINSTEIN: tutor único -->
 <aside class="practice-tutor-sidebar">
-  <section class="tutor-panel-card">
-    <div class="tutor-visual-header">
-      <div class="tutor-visual-identity">
-        <span class="tutor-visual-icon"><i data-lucide="brain"></i></span>
-        <span><strong>Tu espacio de aprendizaje</strong><small>Asistencia académica inteligente</small></span>
-      </div>
-      <span class="tutor-online-indicator"><i></i> Disponible</span>
+  <section class="einstein-intro-card">
+    <div class="einstein-mascot" role="img" aria-label="Einstein, tu compañero de estudio">
+      <svg viewBox="0 0 120 128" aria-hidden="true">
+        <path d="M22 49C7 36 18 18 34 24C31 6 53 4 61 19C73 1 96 12 91 29C111 22 119 45 102 56L99 79H20Z" fill="#E8EDF4" stroke="#263D70" stroke-width="4"/>
+        <path d="M29 47C14 35 28 26 40 34C39 18 54 17 62 32C76 14 91 24 83 39C101 31 108 45 94 53L91 73H28Z" fill="#FFF" stroke="#263D70" stroke-width="3"/>
+        <ellipse cx="60" cy="67" rx="36" ry="39" fill="#F5B27E" stroke="#263D70" stroke-width="4"/>
+        <circle cx="46" cy="68" r="13" fill="none" stroke="#263D70" stroke-width="4"/><circle cx="75" cy="68" r="13" fill="none" stroke="#263D70" stroke-width="4"/><path d="M59 68H62" stroke="#263D70" stroke-width="4"/>
+        <circle cx="46" cy="68" r="4" fill="#263D70"/><circle cx="75" cy="68" r="4" fill="#263D70"/>
+        <path d="M52 91Q61 99 70 91" fill="none" stroke="#A84D40" stroke-width="3" stroke-linecap="round"/>
+        <path d="M43 103L60 113L77 103L88 126H32Z" fill="#FFF" stroke="#263D70" stroke-width="3"/><path d="M55 105L60 113L65 105L62 124H58Z" fill="#F28A00"/>
+      </svg>
     </div>
-    <div id="avatar-3d-viewport" class="tutor-avatar-stage">
-      <div class="tutor-avatar-stage-glow"></div>
-      <div class="tutor-avatar-stage-placeholder"><span>IA</span><small>Activa el avatar visual 3D</small></div>
-    </div>
-    <div id="tutor-chat-mount"></div>
+    <div class="einstein-intro-copy"><span class="einstein-eyebrow">TU COMPAÑERO DE ESTUDIO</span><h3>Aprende con Einstein</h3><p>Pide una pista, comprende el procedimiento y resuelve cada ejercicio paso a paso.</p></div>
+    <span class="einstein-online"><i></i> Disponible para ayudarte</span>
   </section>
+  <div id="tutor-chat-mount"></div>
 </aside>
 
       </div>
     `;
-
-    // 1. El tutor 3D se descarga únicamente si el estudiante decide activarlo.
-    const viewport = document.getElementById('avatar-3d-viewport');
-    if (viewport) {
-      if (avatarInstance) avatarInstance.destroy();
-      avatarInstance = null;
-      const activateTutor = document.createElement('button');
-      activateTutor.type = 'button';
-      activateTutor.className = 'tutor-activate-3d';
-      activateTutor.innerHTML = `${icon('sparkles', { size: 20 })}<strong>Activar avatar 3D</strong><small>Vista visual del profesor</small>`;
-      activateTutor.setAttribute('aria-label', 'Cargar avatar visual 3D');
-      viewport.replaceChildren(activateTutor);
-      activateTutor.addEventListener('click', async () => {
-        activateTutor.disabled = true;
-        activateTutor.textContent = 'Preparando vista 3D…';
-        try {
-          const { Avatar3D } = await import('./avatar3d.js');
-          if (!viewport.isConnected) return;
-          avatarInstance = new Avatar3D(viewport);
-          voiceTutor.attachAvatar(avatarInstance);
-        } catch (error) {
-          console.error('No se pudo cargar el tutor visual 3D:', error);
-          if (viewport.isConnected) {
-            activateTutor.disabled = false;
-            activateTutor.innerHTML = `${icon('sparkles', { size: 20 })}<strong>Reintentar avatar 3D</strong><small>No se pudo cargar la vista</small>`;
-          }
-        }
-      });
-    }
 
     // 3. Filtros de Institución
     document.getElementById('filter-inst-all')?.addEventListener('click', () => {
@@ -359,17 +331,11 @@ export function renderPractice(container, navigateTo) {
         }
         return JSON.stringify(context);
       },
-      onCharacterChange: (character) => voiceTutor.setCharacter(character),
       onReadQuestion: () => {
         const current = questions[currentIndex];
         if (!current) return;
         const readText = `Pregunta ${currentIndex + 1}. Curso de ${current.subject}. ${current.rawQuestion}. Alternativas: ${current.options.map((option) => `Opción ${option.id}: ${option.text}`).join('. ')}.`;
         voiceTutor.speak(readText);
-      },
-      onLiveState: ({ isListening, isSpeaking }) => {
-        if (!avatarInstance) return;
-        avatarInstance.setListening(Boolean(isListening));
-        avatarInstance.setSpeaking(Boolean(isSpeaking));
       },
     });
 
