@@ -1676,3 +1676,16 @@ html, body { background: #F4F7FC !important; color: #1D2B45; }
   .einstein-learning-sticker { flex-basis:50px; width:50px; height:54px; }
   .einstein-learning-sticker svg { width:47px; height:51px; }
 }
+
+/* Corrección de contraste en los estados de respuesta y sus explicaciones */
+#explanation-box h4 { color:#29468F !important; }
+#explanation-box [style*="color: #93C5FD"],
+#explanation-box [style*="color: #60A5FA"] { color:#29468F !important; }
+#explanation-box [style*="color: #A7F3D0"],
+#explanation-box [style*="color: #FDE68A"],
+#explanation-box [style*="color: #FECACA"] { color:#29468F !important; }
+#explanation-box [style*="background-color: var(--bg-card)"] {
+  background:#FFF7EC !important; border:1px solid #F1D7B5;
+}
+#explanation-box .katex { color:#1D2B45 !important; }
+#explanation-box .katex-display { max-width:100%; }
