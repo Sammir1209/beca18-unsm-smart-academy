@@ -88,7 +88,7 @@ export function mountTutorChat(container, {
         <div class="tutor-message-list" id="tutor-message-list" aria-live="polite">
           <div class="tutor-welcome-message">
             <span class="tutor-welcome-mark"><i data-lucide="sparkles"></i></span>
-            <div><strong>¡Hola! Soy ${tutorNames[character]}.</strong><p>Podemos resolver ejercicios, repasar temas o conversar sobre cualquier duda de tu preparación.</p></div>
+            <div><strong>¡Hola! Soy ${TUTOR_NAME}.</strong><p>Podemos resolver ejercicios, repasar temas o conversar sobre cualquier duda de tu preparación.</p></div>
           </div>
         </div>
         <div class="tutor-quick-prompts">
