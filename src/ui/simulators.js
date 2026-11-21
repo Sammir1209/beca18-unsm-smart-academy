@@ -11,29 +11,29 @@ const MODALITIES = {
   ENP: {
     id: 'ENP', institution: 'PRONABEC', examType: 'ENP',
     title: 'Beca 18 · ENP', subtitle: 'Examen Nacional de Preselección',
-    duration: null, standardQuestions: 60, correctPoints: 2, wrongPoints: 0, blueprintVerified: false,
+    duration: null, standardQuestions: null, correctPoints: null, wrongPoints: null, blueprintVerified: false,
     penaltyLabel: 'Ponderación pendiente de verificar', accent: 'beca',
     description: 'Modalidad identificada. Su estructura, duración y reglas de calificación deben verificarse con las bases vigentes.'
   },
   ORDINARIO: {
     id: 'ORDINARIO', institution: 'UNSM', examType: 'ORDINARIO',
     title: 'UNSM · Ordinario', subtitle: 'Examen de admisión ordinario',
-    duration: null, standardQuestions: 100, correctPoints: 4, wrongPoints: -0.5, blueprintVerified: false,
+    duration: null, standardQuestions: null, correctPoints: null, wrongPoints: null, blueprintVerified: false,
     penaltyLabel: 'Ponderación pendiente de verificar', accent: 'unsm',
     description: 'Modalidad identificada. Su estructura, duración y reglas de calificación deben verificarse con el prospecto vigente.'
   },
   EXTRAORDINARIO: {
     id: 'EXTRAORDINARIO', institution: 'UNSM', examType: 'EXTRAORDINARIO',
     title: 'UNSM · Extraordinario', subtitle: 'Modalidad extraordinaria',
-    duration: null, standardQuestions: 60, correctPoints: 4, wrongPoints: -0.5, blueprintVerified: false,
-    penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
+    duration: null, standardQuestions: null, correctPoints: null, wrongPoints: null, blueprintVerified: false,
+    penaltyLabel: 'Ponderación pendiente de verificar', accent: 'unsm',
     description: 'Modalidad identificada. Requiere un banco propio y un blueprint oficial verificado antes de habilitarse.'
   },
   CONCURSO_ESCOLAR: {
     id: 'CONCURSO_ESCOLAR', institution: 'UNSM', examType: 'CONCURSO_ESCOLAR',
     title: 'UNSM · Concurso escolar', subtitle: 'Quinto de secundaria',
-    duration: null, standardQuestions: 80, correctPoints: 4, wrongPoints: -0.5, blueprintVerified: false,
-    penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
+    duration: null, standardQuestions: null, correctPoints: null, wrongPoints: null, blueprintVerified: false,
+    penaltyLabel: 'Ponderación pendiente de verificar', accent: 'unsm',
     description: 'Modalidad identificada. Requiere bases vigentes, distribución oficial y banco de preguntas validado.'
   }
 };
@@ -110,7 +110,11 @@ export function renderSimulators(container, navigateTo) {
     if (timerInterval) clearInterval(timerInterval);
     const cards = Object.values(MODALITIES).map(modality => {
       const pool = getPool(modality);
-      const available = modality.blueprintVerified === true && Number.isInteger(modality.duration) && pool.length >= modality.standardQuestions;
+      const available = modality.blueprintVerified === true
+        && Number.isInteger(modality.duration) && modality.duration > 0
+        && Number.isInteger(modality.standardQuestions) && modality.standardQuestions > 0
+        && Number.isFinite(modality.correctPoints) && modality.correctPoints > 0
+        && Number.isFinite(modality.wrongPoints) && pool.length >= modality.standardQuestions;
       const countLabel = modality.blueprintVerified ? `${modality.standardQuestions} preguntas requeridas` : 'Estructura oficial pendiente de validar';
       return `
         <article class="sim-modality-card ${modality.accent}" data-modality="${modality.id}">
@@ -169,7 +173,12 @@ export function renderSimulators(container, navigateTo) {
   function startSimulator(modality) {
     const pool = getPool(modality);
     if (!pool.length) return;
-    if (modality.blueprintVerified !== true || !Number.isInteger(modality.duration) || pool.length < modality.standardQuestions) return;
+    if (modality.blueprintVerified !== true
+        || !Number.isInteger(modality.duration) || modality.duration <= 0
+        || !Number.isInteger(modality.standardQuestions) || modality.standardQuestions <= 0
+        || !Number.isFinite(modality.correctPoints) || modality.correctPoints <= 0
+        || !Number.isFinite(modality.wrongPoints)
+        || pool.length < modality.standardQuestions) return;
     const questions = [...pool];
     for (let i = questions.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [questions[i], questions[j]] = [questions[j], questions[i]]; }
     questions.length = modality.standardQuestions;
