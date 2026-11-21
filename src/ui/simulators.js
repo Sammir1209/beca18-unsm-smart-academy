@@ -77,7 +77,6 @@ export function renderSimulators(container, navigateTo) {
 
   async function restoreSession() {
     let snapshot = null;
-    try { snapshot = JSON.parse(localStorage.getItem(localStateKey()) || 'null'); } catch { snapshot = null; }
     if (supabase) {
       try {
         const { data: { user } = {} } = await supabase.auth.getUser();
@@ -88,6 +87,10 @@ export function renderSimulators(container, navigateTo) {
         }
       } catch (error) { console.warn('No se pudo recuperar el simulacro desde la nube:', error.message); }
     }
+    try {
+      const local = JSON.parse(localStorage.getItem(localStateKey()) || 'null');
+      if (local && (!snapshot || local.updatedAt > snapshot.updatedAt)) snapshot = local;
+    } catch { snapshot = snapshot || null; }
     if (!snapshot?.modalityId || !Array.isArray(snapshot.questionIds)) return false;
     const modality = MODALITIES[snapshot.modalityId];
     const byId = new Map(repo.questions.map(question => [question.id, question]));
