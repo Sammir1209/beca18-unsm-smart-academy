@@ -7,7 +7,12 @@ export const cors = (origin: string) => ({ "Access-Control-Allow-Origin": origin
 export function originOf(req: Request): string | null {
   const origin=req.headers.get("origin");
   const configured=(Deno.env.get("CAPTCHA_ALLOWED_ORIGINS")||"").split(",").map(x=>x.trim()).filter(Boolean);
-  return origin && (origins.has(origin)||configured.includes(origin)) ? origin : null;
+  if(!origin) return null;
+  try {
+    const hostname=new URL(origin).hostname;
+    const pages=hostname==="beca18-unsm-smart-academy.pages.dev"||hostname.endsWith(".beca18-unsm-smart-academy.pages.dev");
+    return origins.has(origin)||configured.includes(origin)||pages ? origin : null;
+  } catch { return null; }
 }
 export function respond(data: unknown,status: number,origin: string) {
   return new Response(JSON.stringify(data),{status,headers:{...cors(origin),"Content-Type":"application/json","Cache-Control":"no-store"}});
