@@ -164,7 +164,7 @@ export function renderPractice(container, navigateTo) {
               <span class="tag ${questions[currentIndex].institution === 'PRONABEC' ? 'tag-beca' : 'tag-unsm'}">${escapeHtml(questions[currentIndex].institution)}</span>
               <span class="tag tag-unsm">${escapeHtml(questions[currentIndex].examType)} · ${escapeHtml(questions[currentIndex].year)}</span>
               <span class="tag ${questions[currentIndex].difficulty === 'BASICO' ? 'tag-diff-basic' : questions[currentIndex].difficulty === 'INTERMEDIO' ? 'tag-diff-mid' : 'tag-diff-adv'}">${escapeHtml(questions[currentIndex].difficulty)}</span>
-              ${questions[currentIndex].status === 'REVIEW_REQUIRED' ? '<span class="tag" style="background:rgba(245,158,11,.12);color:#B45309;">REFERENCIA EN REVISIÓN</span>' : ''}
+              ${questions[currentIndex].status === 'REVIEW_REQUIRED' ? '<span class="tag" style="background:rgba(245,158,11,.12);color:#B45309;">PREGUNTA EN REVISIÓN</span>' : ''}
               ${questions[currentIndex].isFija ? `<span class="tag tag-diff-mid" style="background-color: rgba(245, 158, 11, 0.2); color: #FBBF24; display: inline-flex; align-items: center; gap: 4px;">${icon('star', { size: 12, color: '#FBBF24' })} FIJA DE EXAMEN</span>` : ''}
               
               ${questions[currentIndex].sourceReference ? `
