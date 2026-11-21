@@ -219,7 +219,9 @@ export function renderPractice(container, navigateTo) {
                   </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 20px;">
+                <details class="einstein-extra-notes">
+                  <summary><img src="/stickers/einstein-thinking.svg" alt=""> Ver consejo y error frecuente</summary>
+                  <div class="einstein-extra-notes-grid">
                   <div style="background-color: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: var(--radius-md); padding: 16px; display: flex; align-items: flex-start; gap: 10px;">
                     <div style="flex-shrink: 0; margin-top: 2px;">${icon('lightbulb', { size: 20, color: 'var(--accent-alert)' })}</div>
                     <div>
@@ -235,7 +237,8 @@ export function renderPractice(container, navigateTo) {
                       <div style="font-size: 0.85rem; color: var(--text-muted);">${questions[currentIndex].explanation.commonPitfall}</div>
                     </div>
                   </div>
-                </div>
+                  </div>
+                </details>
 
                 ${questions[currentIndex].relatedFichaId ? `
                   <div style="display: flex; justify-content: flex-end; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 16px;">
