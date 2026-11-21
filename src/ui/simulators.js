@@ -5,6 +5,7 @@
 import { repo } from '../core/repository.js';
 import { icon } from './icons.js';
 import confetti from 'canvas-confetti';
+import { supabase } from '../core/supabase.js';
 
 const MODALITIES = {
   ENP: {
@@ -17,36 +18,97 @@ const MODALITIES = {
   ORDINARIO: {
     id: 'ORDINARIO', institution: 'UNSM', examType: 'ORDINARIO',
     title: 'UNSM · Ordinario', subtitle: 'Examen de admisión ordinario',
-    duration: 150, standardQuestions: 100, correctPoints: 2, wrongPoints: 0,
-    penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
-    description: 'Examen de admisión UNSM. Solo suman las respuestas correctas; las incorrectas y en blanco no descuentan.'
+    duration: 180, standardQuestions: 100, correctPoints: 4, wrongPoints: -0.5,
+    penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
+    description: 'Examen ordinario. La ponderación mostrada es referencial y debe contrastarse con el prospecto vigente.'
   },
   EXTRAORDINARIO: {
     id: 'EXTRAORDINARIO', institution: 'UNSM', examType: 'EXTRAORDINARIO',
     title: 'UNSM · Extraordinario', subtitle: 'Modalidad extraordinaria',
-    duration: 150, standardQuestions: 100, correctPoints: 2, wrongPoints: 0,
-    penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
-    description: 'Modalidad extraordinaria UNSM. Solo suman las respuestas correctas; las incorrectas y en blanco no descuentan.'
+    duration: 120, standardQuestions: 60, correctPoints: 4, wrongPoints: -0.5,
+    penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
+    description: 'Modalidad extraordinaria. Requiere un banco propio y la ponderación debe contrastarse con el prospecto vigente.'
+  },
+  CONCURSO_ESCOLAR: {
+    id: 'CONCURSO_ESCOLAR', institution: 'UNSM', examType: 'CONCURSO_ESCOLAR',
+    title: 'UNSM · Concurso escolar', subtitle: 'Quinto de secundaria',
+    duration: 150, standardQuestions: 80, correctPoints: 4, wrongPoints: -0.5,
+    penaltyLabel: '+4 por acierto · −0.5 por error (referencial)', accent: 'unsm',
+    description: 'Modalidad escolar para quinto de secundaria. La ponderación es referencial hasta validar el prospecto vigente.'
   }
 };
 
 export function renderSimulators(container, navigateTo) {
   let activeSession = null;
   let timerInterval = null;
+  let currentUserId = 'guest';
+  let saveInFlight = Promise.resolve();
+  const localStateKey = () => `pre-einstein:simulator:${currentUserId}`;
+
+  function snapshotSession() {
+    if (!activeSession) return null;
+    return {
+      modalityId: activeSession.modality.id,
+      questionIds: activeSession.questions.map(question => question.id),
+      currentIndex: activeSession.currentIndex,
+      answers: activeSession.answers,
+      endTimestamp: activeSession.endTimestamp,
+      startedAt: activeSession.startedAt,
+      finished: Boolean(activeSession.finished),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  function persistSession() {
+    const snapshot = snapshotSession();
+    if (!snapshot) return Promise.resolve();
+    try { localStorage.setItem(localStateKey(), JSON.stringify(snapshot)); } catch (error) { console.warn('No se pudo guardar el simulacro localmente:', error); }
+    if (!supabase || currentUserId === 'guest') return Promise.resolve();
+    saveInFlight = saveInFlight.then(async () => {
+      const { data: { user } = {} } = await supabase.auth.getUser();
+      if (!user || user.id !== currentUserId) return;
+      const { error } = await supabase.from('student_learning_state').upsert({
+        user_id: user.id, state_key: 'simulator', state_data: snapshot, updated_at: snapshot.updatedAt
+      }, { onConflict: 'user_id,state_key' });
+      if (error) throw error;
+    }).catch(error => console.warn('Sincronización del simulacro pendiente:', error.message));
+    return saveInFlight;
+  }
+
+  async function restoreSession() {
+    let snapshot = null;
+    try { snapshot = JSON.parse(localStorage.getItem(localStateKey()) || 'null'); } catch { snapshot = null; }
+    if (supabase) {
+      try {
+        const { data: { user } = {} } = await supabase.auth.getUser();
+        if (user) {
+          currentUserId = user.id;
+          const { data, error } = await supabase.from('student_learning_state').select('state_data,updated_at').eq('user_id', user.id).eq('state_key', 'simulator').maybeSingle();
+          if (!error && data?.state_data && (!snapshot || data.updated_at > snapshot.updatedAt)) snapshot = data.state_data;
+        }
+      } catch (error) { console.warn('No se pudo recuperar el simulacro desde la nube:', error.message); }
+    }
+    if (!snapshot?.modalityId || !Array.isArray(snapshot.questionIds)) return false;
+    const modality = MODALITIES[snapshot.modalityId];
+    const byId = new Map(repo.questions.map(question => [question.id, question]));
+    const questions = snapshot.questionIds.map(id => byId.get(id)).filter(Boolean);
+    if (!modality || questions.length !== snapshot.questionIds.length || !questions.length) return false;
+    activeSession = { modality, institution: modality.institution, durationMinutes: modality.duration, endTimestamp: Number(snapshot.endTimestamp), startedAt: snapshot.startedAt || Date.now(), questions, currentIndex: Math.max(0, Math.min(Number(snapshot.currentIndex) || 0, questions.length - 1)), answers: snapshot.answers || {}, finished: Boolean(snapshot.finished) };
+    if (!activeSession.finished && activeSession.endTimestamp <= Date.now()) activeSession.finished = true;
+    return true;
+  }
 
   const getPool = (modality) => repo.questions.filter(q =>
     q.institution === modality.institution && q.examType === modality.examType &&
-    Array.isArray(q.options) && q.options.length > 1 && q.correctAnswer
+    Array.isArray(q.options) && q.options.length >= 2 && q.correctAnswer && ['VALIDATED', 'PUBLISHED'].includes(q.status)
   );
 
   function renderLobby() {
     if (timerInterval) clearInterval(timerInterval);
     const cards = Object.values(MODALITIES).map(modality => {
       const pool = getPool(modality);
-      const available = pool.length > 0;
-      const countLabel = modality.standardQuestions
-        ? `${modality.standardQuestions} preguntas objetivo`
-        : 'Banco de preguntas por incorporar';
+      const available = pool.length >= modality.standardQuestions;
+      const countLabel = `${modality.standardQuestions} preguntas requeridas`;
       return `
         <article class="sim-modality-card ${modality.accent}" data-modality="${modality.id}">
           <div class="sim-card-topline">
@@ -63,11 +125,11 @@ export function renderSimulators(container, navigateTo) {
           <div class="sim-card-footer">
             <span class="sim-score-rule">${modality.penaltyLabel}</span>
             <button class="btn ${modality.accent === 'beca' ? 'btn-beca' : 'btn-primary'} sim-start-button" data-start="${modality.id}" ${available ? '' : 'disabled'}>
-              ${available ? 'Preparar simulacro' : 'En preparación'}
+              ${available ? 'Preparar simulacro' : `Banco insuficiente (${pool.length}/${modality.standardQuestions})`}
               ${icon(available ? 'arrowRight' : 'lock', { size: 16 })}
             </button>
           </div>
-          ${modality.id === 'EXTRAORDINARIO' && !available ? '<p class="sim-card-note">No se han cargado preguntas extraordinarias validadas. No se reutilizarán preguntas ordinarias como si fueran extraordinarias.</p>' : ''}
+          ${!available ? `<p class="sim-card-note">Faltan ${Math.max(0, modality.standardQuestions - pool.length)} preguntas validadas. No se completará el examen con preguntas repetidas ni de otra modalidad.</p>` : ''}
         </article>
       `;
     }).join('');
@@ -87,7 +149,7 @@ export function renderSimulators(container, navigateTo) {
         <aside class="simulator-scoring-note">
           <strong>Cómo se calcula tu puntaje</strong>
           <p><b>ENP:</b> +2 por acierto y 0 por error o pregunta en blanco, según el esquema configurado para este simulador.</p>
-          <p><b>UNSM Ordinario y Extraordinario:</b> se suman los puntos de las respuestas correctas según el peso de cada pregunta. Las incorrectas y en blanco no descuentan.</p>
+          <p><b>UNSM:</b> ponderación referencial del inventario del proyecto: +4 por acierto, −0.5 por error y 0 en blanco. Debe verificarse con el prospecto vigente.</p>
           <p class="simulator-note-muted">La puntuación exacta por bloque debe configurarse con el prospecto vigente de cada convocatoria.</p>
         </aside>
       </section>
@@ -104,12 +166,16 @@ export function renderSimulators(container, navigateTo) {
   function startSimulator(modality) {
     const pool = getPool(modality);
     if (!pool.length) return;
-    const questions = [...pool].sort(() => Math.random() - 0.5);
+    if (pool.length < modality.standardQuestions) return;
+    const questions = [...pool];
+    for (let i = questions.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [questions[i], questions[j]] = [questions[j], questions[i]]; }
+    questions.length = modality.standardQuestions;
     activeSession = {
       modality, institution: modality.institution, durationMinutes: modality.duration,
-      endTimestamp: Date.now() + modality.duration * 60 * 1000,
+      startedAt: Date.now(), endTimestamp: Date.now() + modality.duration * 60 * 1000,
       questions, currentIndex: 0, answers: {}, finished: false
     };
+    void persistSession();
     renderActiveExam();
   }
 
@@ -151,17 +217,19 @@ export function renderSimulators(container, navigateTo) {
 
     container.querySelectorAll('[data-option]').forEach(item => item.addEventListener('click', () => {
       activeSession.answers[q.id] = item.dataset.option;
+      void persistSession();
       renderActiveExam();
     }));
     container.querySelectorAll('[data-index]').forEach(item => item.addEventListener('click', () => {
       activeSession.currentIndex = Number(item.dataset.index);
+      void persistSession();
       renderActiveExam();
     }));
     document.getElementById('btn-exam-prev')?.addEventListener('click', () => {
-      if (activeSession.currentIndex > 0) { activeSession.currentIndex--; renderActiveExam(); }
+      if (activeSession.currentIndex > 0) { activeSession.currentIndex--; void persistSession(); renderActiveExam(); }
     });
     document.getElementById('btn-exam-next')?.addEventListener('click', () => {
-      if (activeSession.currentIndex < activeSession.questions.length - 1) { activeSession.currentIndex++; renderActiveExam(); }
+      if (activeSession.currentIndex < activeSession.questions.length - 1) { activeSession.currentIndex++; void persistSession(); renderActiveExam(); }
     });
     document.getElementById('btn-finish-exam')?.addEventListener('click', () => {
       if (confirm('¿Finalizar y calificar este simulacro?')) finishSession();
@@ -180,6 +248,7 @@ export function renderSimulators(container, navigateTo) {
     if (!activeSession || activeSession.finished) return;
     if (timerInterval) clearInterval(timerInterval);
     activeSession.finished = true;
+    void persistSession();
     confetti({ particleCount: 55, spread: 58, origin: { y: 0.65 } });
     renderResults();
   }
@@ -195,8 +264,8 @@ export function renderSimulators(container, navigateTo) {
       else if (answer === q.correctAnswer) { correct++; bySubject[q.subject].correct++; }
       else { incorrect++; bySubject[q.subject].incorrect++; }
     });
-    const score = correct * modality.correctPoints;
-    const penalty = 0;
+    const score = correct * modality.correctPoints + incorrect * modality.wrongPoints;
+    const penalty = incorrect * Math.abs(modality.wrongPoints);
     const subjectRows = Object.entries(bySubject).map(([subject, data]) => `
       <div class="sim-result-subject"><span>${subject}</span><strong>${data.correct}/${data.correct + data.incorrect + data.blank}</strong></div>
     `).join('');
@@ -204,21 +273,21 @@ export function renderSimulators(container, navigateTo) {
     container.innerHTML = `
       <section class="sim-results-shell">
         <header class="sim-results-heading"><span class="simulator-eyebrow">SIMULACRO COMPLETADO</span><h2>Tu resultado</h2><p>${modality.title} · ${questions.length} preguntas</p></header>
-        <div class="sim-score-panel"><span>Puntaje obtenido</span><strong>${score.toFixed(1)} <small>pts</small></strong><div>+ ${(correct * modality.correctPoints).toFixed(1)} por aciertos · 0 por errores y respuestas en blanco</div></div>
+        <div class="sim-score-panel"><span>Puntaje obtenido</span><strong>${score.toFixed(1)} <small>pts</small></strong><div>+ ${(correct * modality.correctPoints).toFixed(1)} por aciertos · − ${penalty.toFixed(1)} por errores · 0 en blanco</div></div>
         <div class="sim-result-stats">
           <div><strong class="positive">${correct}</strong><span>Aciertos</span></div>
-          <div><strong class="negative">${incorrect}</strong><span>Errores</span><small>0 pts descontados</small></div>
+          <div><strong class="negative">${incorrect}</strong><span>Errores</span><small>−${(incorrect * Math.abs(modality.wrongPoints)).toFixed(1)} pts</small></div>
           <div><strong>${blank}</strong><span>En blanco</span><small>0 pts</small></div>
         </div>
         <div class="sim-result-breakdown"><h3>Desglose por curso</h3>${subjectRows || '<p>Sin datos por curso.</p>'}</div>
         <div class="sim-result-actions"><button id="btn-back-lobby" class="btn btn-primary">Volver a modalidades</button><button id="btn-view-errors" class="btn btn-secondary">Revisar errores</button></div>
-        <p class="simulator-note-muted">Resultado de práctica: solo se suman respuestas correctas. La UNSM asigna pesos por bloque y el prospecto vigente determina el valor exacto de cada pregunta; este resultado no reemplaza el cálculo oficial.</p>
+        <p class="simulator-note-muted">Puntaje calculado con los parámetros configurados en PRE - EINSTEIN. Confirma la ponderación de la convocatoria vigente antes de tomarlo como puntaje oficial.</p>
       </section>
     `;
 
-    document.getElementById('btn-back-lobby')?.addEventListener('click', () => { activeSession = null; renderLobby(); });
+    document.getElementById('btn-back-lobby')?.addEventListener('click', () => { activeSession = null; try { localStorage.removeItem(localStateKey()); } catch {} if (supabase && currentUserId !== 'guest') void supabase.from('student_learning_state').delete().eq('user_id', currentUserId).eq('state_key', 'simulator'); renderLobby(); });
     document.getElementById('btn-view-errors')?.addEventListener('click', () => { window.location.hash = '#mistakes'; });
   }
 
-  renderLobby();
+  void (async () => { const restored = await restoreSession(); if (restored) { if (activeSession.finished) renderResults(); else renderActiveExam(); } else renderLobby(); })();
 }
