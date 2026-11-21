@@ -186,7 +186,7 @@ class App {
       fichas: 'Fichas Temáticas de Alto Rendimiento',
       flashcards: 'Flashcards Mnemotécnicas',
       mistakes: 'Banco de Errores',
-      sources: 'Fuentes Oficiales & Auditoría',
+      sources: 'Fuentes & Trazabilidad',
       login: 'Iniciar sesión',
       register: 'Crear cuenta',
     };
