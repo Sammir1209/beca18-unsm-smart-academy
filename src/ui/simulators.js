@@ -17,16 +17,16 @@ const MODALITIES = {
   ORDINARIO: {
     id: 'ORDINARIO', institution: 'UNSM', examType: 'ORDINARIO',
     title: 'UNSM · Ordinario', subtitle: 'Examen de admisión ordinario',
-    duration: 180, standardQuestions: 100, correctPoints: 4, wrongPoints: -0.5,
-    penaltyLabel: '−0.5 puntos por error', accent: 'unsm',
-    description: 'Evaluación de ciencias, matemática y letras con descuento por cada respuesta incorrecta.'
+    duration: 150, standardQuestions: 100, correctPoints: 2, wrongPoints: 0,
+    penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
+    description: 'Examen de admisión UNSM. Solo suman las respuestas correctas; las incorrectas y en blanco no descuentan.'
   },
   EXTRAORDINARIO: {
     id: 'EXTRAORDINARIO', institution: 'UNSM', examType: 'EXTRAORDINARIO',
     title: 'UNSM · Extraordinario', subtitle: 'Modalidad extraordinaria',
-    duration: 180, standardQuestions: null, correctPoints: 4, wrongPoints: -0.5,
-    penaltyLabel: '−0.5 puntos por error*', accent: 'unsm',
-    description: 'Simulacro separado para la modalidad extraordinaria. Se habilitará con preguntas verificadas de esta modalidad.'
+    duration: 150, standardQuestions: 100, correctPoints: 2, wrongPoints: 0,
+    penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
+    description: 'Modalidad extraordinaria UNSM. Solo suman las respuestas correctas; las incorrectas y en blanco no descuentan.'
   }
 };
 
@@ -87,8 +87,8 @@ export function renderSimulators(container, navigateTo) {
         <aside class="simulator-scoring-note">
           <strong>Cómo se calcula tu puntaje</strong>
           <p><b>ENP:</b> +2 por acierto y 0 por error o pregunta en blanco, según el esquema configurado para este simulador.</p>
-          <p><b>UNSM Ordinario:</b> +4 por acierto, −0.5 por error y 0 por pregunta en blanco.</p>
-          <p class="simulator-note-muted">La modalidad extraordinaria usará su propia matriz cuando se incorpore documentación y banco de preguntas verificados.</p>
+          <p><b>UNSM Ordinario y Extraordinario:</b> se suman los puntos de las respuestas correctas según el peso de cada pregunta. Las incorrectas y en blanco no descuentan.</p>
+          <p class="simulator-note-muted">La puntuación exacta por bloque debe configurarse con el prospecto vigente de cada convocatoria.</p>
         </aside>
       </section>
     `;
@@ -195,8 +195,8 @@ export function renderSimulators(container, navigateTo) {
       else if (answer === q.correctAnswer) { correct++; bySubject[q.subject].correct++; }
       else { incorrect++; bySubject[q.subject].incorrect++; }
     });
-    const score = Math.max(0, correct * modality.correctPoints + incorrect * modality.wrongPoints);
-    const penalty = incorrect * Math.abs(modality.wrongPoints);
+    const score = correct * modality.correctPoints;
+    const penalty = 0;
     const subjectRows = Object.entries(bySubject).map(([subject, data]) => `
       <div class="sim-result-subject"><span>${subject}</span><strong>${data.correct}/${data.correct + data.incorrect + data.blank}</strong></div>
     `).join('');
@@ -204,15 +204,15 @@ export function renderSimulators(container, navigateTo) {
     container.innerHTML = `
       <section class="sim-results-shell">
         <header class="sim-results-heading"><span class="simulator-eyebrow">SIMULACRO COMPLETADO</span><h2>Tu resultado</h2><p>${modality.title} · ${questions.length} preguntas</p></header>
-        <div class="sim-score-panel"><span>Puntaje obtenido</span><strong>${score.toFixed(1)} <small>pts</small></strong><div>+ ${(correct * modality.correctPoints).toFixed(1)} por aciertos · − ${penalty.toFixed(1)} por errores</div></div>
+        <div class="sim-score-panel"><span>Puntaje obtenido</span><strong>${score.toFixed(1)} <small>pts</small></strong><div>+ ${(correct * modality.correctPoints).toFixed(1)} por aciertos · 0 por errores y respuestas en blanco</div></div>
         <div class="sim-result-stats">
           <div><strong class="positive">${correct}</strong><span>Aciertos</span></div>
-          <div><strong class="negative">${incorrect}</strong><span>Errores</span><small>−${penalty.toFixed(1)} pts</small></div>
+          <div><strong class="negative">${incorrect}</strong><span>Errores</span><small>0 pts descontados</small></div>
           <div><strong>${blank}</strong><span>En blanco</span><small>0 pts</small></div>
         </div>
         <div class="sim-result-breakdown"><h3>Desglose por curso</h3>${subjectRows || '<p>Sin datos por curso.</p>'}</div>
         <div class="sim-result-actions"><button id="btn-back-lobby" class="btn btn-primary">Volver a modalidades</button><button id="btn-view-errors" class="btn btn-secondary">Revisar errores</button></div>
-        <p class="simulator-note-muted">Puntaje calculado con la escala configurada para esta modalidad. Verifica siempre las bases oficiales de admisión de tu convocatoria.</p>
+        <p class="simulator-note-muted">Resultado de práctica: solo se suman respuestas correctas. La UNSM asigna pesos por bloque y el prospecto vigente determina el valor exacto de cada pregunta; este resultado no reemplaza el cálculo oficial.</p>
       </section>
     `;
 
