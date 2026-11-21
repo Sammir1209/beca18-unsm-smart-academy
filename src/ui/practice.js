@@ -7,6 +7,7 @@ import { RecommendationEngine } from '../core/recommendation.js';
 import { voiceTutor } from '../core/voiceTutor.js';
 import { icon } from './icons.js';
 import { mountTutorChat } from './tutor-chat.js';
+import { renderMath } from '../core/math-renderer.js';
 
 export function renderPractice(container, navigateTo) {
   let activeFilterInstitution = 'ALL';
@@ -18,7 +19,7 @@ export function renderPractice(container, navigateTo) {
   let hasSubmitted = false;
   let wasDoubtMode = false;
   let tutorChatCleanup = null;
-  let avatarInstance = null;
+
 
   function getFilteredQuestions() {
     return repo.questions.filter(q => {
@@ -36,7 +37,7 @@ export function renderPractice(container, navigateTo) {
     container.innerHTML = `
       <div class="practice-layout" style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
         
-        <!-- COLUMNA PRINCIPAL DE PREGUNTAS (IZQUIERDA) -->
+        <!-- Preguntas y resolución -->
         <div style="flex: 1; min-width: 320px;" class="question-container">
           
           <!-- Barra de Filtros de Banco (Fijas, Institución, Cursos) -->
@@ -160,7 +161,7 @@ export function renderPractice(container, navigateTo) {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
               <button id="btn-dont-know" class="btn btn-doubt" ${hasSubmitted ? 'disabled' : ''}>
                 ${icon('doubt', { size: 18, color: '#FBBF24' })}
-                No lo sé (Aprender con el Tutor 3D)
+                No lo sé (Aprender con Einstein)
               </button>
 
               <button id="btn-submit-answer" class="btn btn-primary" ${hasSubmitted || !selectedOption ? 'disabled' : ''}>
@@ -180,7 +181,7 @@ export function renderPractice(container, navigateTo) {
                          <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #A7F3D0;">¡Excelente deducción! Respuesta Correcta</h4><div style="font-size: 0.85rem; color: var(--text-muted);">Dominio consolidado</div></div>`
                       : wasDoubtMode
                       ? `<div class="card-icon amber" style="width: 38px; height: 38px;">${icon('lightbulb', { size: 24, color: 'var(--accent-alert)' })}</div>
-                         <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #FDE68A;">Modo Aprendizaje Guiado</h4><div style="font-size: 0.85rem; color: var(--text-muted);">El tutor 3D te guía paso a paso</div></div>`
+                         <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #FDE68A;">Einstein te acompaña</h4><div style="font-size: 0.85rem; color: var(--text-muted);">Vamos a entender el procedimiento</div></div>`
                       : `<div class="card-icon" style="width: 38px; height: 38px; background-color: rgba(239, 68, 68, 0.15);">${icon('warning', { size: 24, color: 'var(--accent-danger)' })}</div>
                          <div><h4 style="font-weight: 800; font-size: 1.2rem; color: #FECACA;">Respuesta Incorrecta &bull; Análisis</h4><div style="font-size: 0.85rem; color: var(--text-muted);">Aprende la trampa del examen</div></div>`
                     }
@@ -188,7 +189,7 @@ export function renderPractice(container, navigateTo) {
 
                   <button id="btn-voice-explain" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
                     ${icon('zap', { size: 14, color: '#60A5FA' })}
-                    Explicar con Gestos 3D
+                    Escuchar explicación
                   </button>
                 </div>
 
@@ -249,22 +250,11 @@ export function renderPractice(container, navigateTo) {
           `}
         </div>
 
-        <!-- PANEL DEL TUTOR: selección, avatar y conversación -->
+        <!-- Tutor único: Einstein -->
 <details class="practice-tutor-sidebar einstein-help-drawer" id="einstein-help-drawer">
-  <summary><img src="/einstein-mascot.svg" alt=""><span>Conversar con Einstein<small>Explicaciones paso a paso y ayuda por voz</small></span></summary>
+  <summary><img src="/einstein-mascot.svg" alt="Einstein"><span>Conversar con Einstein<small>Pistas, explicaciones y ayuda por voz</small></span></summary>
   <section class="tutor-panel-card einstein-help-content">
-    <div class="einstein-speech-intro"><img src="/einstein-mascot.svg" alt="Einstein, tu guía de aprendizaje"><div class="einstein-speech-bubble"><strong>¡Hola, futuro universitario!</strong>Cuéntame qué parte del ejercicio te está confundiendo. Lo resolveremos juntos, paso a paso.</div></div>
-    <div class="tutor-visual-header">
-      <div class="tutor-visual-identity">
-        <span class="tutor-visual-icon"><i data-lucide="brain"></i></span>
-        <span><strong>Tu espacio de aprendizaje</strong><small>Asistencia académica inteligente</small></span>
-      </div>
-      <span class="tutor-online-indicator"><i></i> Disponible</span>
-    </div>
-    <div id="avatar-3d-viewport" class="tutor-avatar-stage">
-      <div class="tutor-avatar-stage-glow"></div>
-      <div class="tutor-avatar-stage-placeholder"><span>IA</span><small>Activa el avatar visual 3D</small></div>
-    </div>
+    <div class="einstein-speech-intro"><img src="/einstein-mascot.svg" alt="Einstein, tu tutor"><div class="einstein-speech-bubble"><strong>¡Vamos a razonarlo!</strong>Cuéntame dónde te trabaste. Te daré una pista y construiremos la solución paso a paso.</div></div>
     <div id="tutor-chat-mount"></div>
   </section>
 </details>
@@ -272,34 +262,7 @@ export function renderPractice(container, navigateTo) {
       </div>
     `;
 
-    // 1. El tutor 3D se descarga únicamente si el estudiante decide activarlo.
-    const viewport = document.getElementById('avatar-3d-viewport');
-    if (viewport) {
-      if (avatarInstance) avatarInstance.destroy();
-      avatarInstance = null;
-      const activateTutor = document.createElement('button');
-      activateTutor.type = 'button';
-      activateTutor.className = 'tutor-activate-3d';
-      activateTutor.innerHTML = `${icon('sparkles', { size: 20 })}<strong>Activar avatar 3D</strong><small>Vista visual del profesor</small>`;
-      activateTutor.setAttribute('aria-label', 'Cargar avatar visual 3D');
-      viewport.replaceChildren(activateTutor);
-      activateTutor.addEventListener('click', async () => {
-        activateTutor.disabled = true;
-        activateTutor.textContent = 'Preparando vista 3D…';
-        try {
-          const { Avatar3D } = await import('./avatar3d.js');
-          if (!viewport.isConnected) return;
-          avatarInstance = new Avatar3D(viewport);
-          voiceTutor.attachAvatar(avatarInstance);
-        } catch (error) {
-          console.error('No se pudo cargar el tutor visual 3D:', error);
-          if (viewport.isConnected) {
-            activateTutor.disabled = false;
-            activateTutor.innerHTML = `${icon('sparkles', { size: 20 })}<strong>Reintentar avatar 3D</strong><small>No se pudo cargar la vista</small>`;
-          }
-        }
-      });
-    }
+    void renderMath(container);
 
     document.getElementById('btn-einstein-help')?.addEventListener('click', () => {
       const drawer = document.getElementById('einstein-help-drawer');
@@ -375,17 +338,12 @@ export function renderPractice(container, navigateTo) {
         }
         return JSON.stringify(context);
       },
-      onCharacterChange: (character) => voiceTutor.setCharacter(character),
+      onCharacterChange: () => {},
       onReadQuestion: () => {
         const current = questions[currentIndex];
         if (!current) return;
         const readText = `Pregunta ${currentIndex + 1}. Curso de ${current.subject}. ${current.rawQuestion}. Alternativas: ${current.options.map((option) => `Opción ${option.id}: ${option.text}`).join('. ')}.`;
         voiceTutor.speak(readText);
-      },
-      onLiveState: ({ isListening, isSpeaking }) => {
-        if (!avatarInstance) return;
-        avatarInstance.setListening(Boolean(isListening));
-        avatarInstance.setSpeaking(Boolean(isSpeaking));
       },
     });
 
@@ -424,7 +382,7 @@ export function renderPractice(container, navigateTo) {
       wasDoubtMode = true;
       selectedOption = null;
 
-      voiceTutor.speak(`Modo formativo activado. No te preocupes, te explico el concepto: la clave es la opción ${q.correctAnswer}. ${q.explanation.solutionStepByStep[0] || ''}`);
+      voiceTutor.speak(`Modo de aprendizaje con Einstein activado. Empecemos por la idea principal: ${q.explanation.solutionStepByStep[0] || ''}`);
 
       await RecommendationEngine.recordAnswer({
         questionId: q.id,
