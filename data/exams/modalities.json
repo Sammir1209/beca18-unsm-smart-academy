@@ -1,0 +1,54 @@
+{
+  "version": "1.0.0",
+  "institution": "UNSM",
+  "sourceOfRules": "Reglamento de Admisión de Pregrado 2024-I; confirmar siempre con prospecto de convocatoria vigente.",
+  "sourceUrl": "https://transparencia.unsm.edu.pe/documentos/2024/transparencyportal/admission/432f0a36-4561-4d74-90df-c9e6b93d7826.pdf",
+  "modalities": [
+    {
+      "id": "ORDINARIO",
+      "label": "Ordinario",
+      "questionCount": 100,
+      "durationMinutes": 150,
+      "scoring": {
+        "correctPoints": null,
+        "incorrectPoints": 0,
+        "blankPoints": 0,
+        "weights": null
+      },
+      "scoringStatus": "PENDING_CURRENT_PROSPECTUS"
+    },
+    {
+      "id": "EXTRAORDINARIO_I",
+      "label": "Extraordinario I",
+      "questionCount": 100,
+      "durationMinutes": 150,
+      "scoring": {
+        "correctPoints": null,
+        "incorrectPoints": 0,
+        "blankPoints": 0,
+        "weights": null
+      },
+      "scoringStatus": "PENDING_CURRENT_PROSPECTUS"
+    },
+    {
+      "id": "EXTRAORDINARIO_II",
+      "label": "Extraordinario II · Concurso Escolar",
+      "questionCount": 100,
+      "durationMinutes": 150,
+      "scoring": {
+        "correctPoints": null,
+        "incorrectPoints": 0,
+        "blankPoints": 0,
+        "weights": null
+      },
+      "scoringStatus": "PENDING_CURRENT_PROSPECTUS"
+    }
+  ],
+  "rules": {
+    "incorrectAnswersDeduct": false,
+    "blankAnswersDeduct": false,
+    "doNotAssumeUniformCorrectWeight": true,
+    "doNotMixModalities": true,
+    "incompleteBankCanOnlyRunPractice": true
+  }
+}
