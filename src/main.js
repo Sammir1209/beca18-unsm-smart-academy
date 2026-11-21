@@ -36,7 +36,7 @@ class App {
               ${icon('award', { size: 22, color: '#fff' })}
             </div>
             <div>
-              <div class="sidebar-title">Smart Academy</div>
+              <div class="sidebar-title">PRE - EINSTEIN</div>
               <div class="sidebar-subtitle">Beca 18 + UNSM</div>
             </div>
           </div>
@@ -191,7 +191,7 @@ class App {
       register: 'Crear cuenta',
     };
     const titleEl = document.getElementById('topbar-title');
-    if (titleEl) titleEl.innerText = titles[route] || 'Smart Academy';
+    if (titleEl) titleEl.innerText = titles[route] || 'PRE - EINSTEIN';
 
     // Render View
     const contentEl = document.getElementById('main-content');
