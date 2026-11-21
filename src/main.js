@@ -86,7 +86,8 @@ class App {
         <!-- Main Wrapper -->
         <div class="main-wrapper">
           <header class="topbar">
-            <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img class="topbar-einstein-sticker" src="/stickers/einstein-thinking.svg" alt="" aria-hidden="true">
               <h2 id="topbar-title" class="page-title">Inicio</h2>
             </div>
             <div class="topbar-actions">
