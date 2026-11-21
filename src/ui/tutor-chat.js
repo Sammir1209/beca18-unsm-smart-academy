@@ -189,6 +189,8 @@ export function mountTutorChat(container, {
     messages.push(userMessage);
     addMessage('user', clean);
     chatInput.value = '';
+    chatInput.style.height = '';
+    chatInput.style.overflowY = 'hidden';
     chatSendButton.disabled = true;
     setStatus('El tutor está pensando…', 'thinking');
 
@@ -548,6 +550,14 @@ export function mountTutorChat(container, {
     sendText(chatInput.value);
   });
 
+  const resizeChatInput = () => {
+    chatInput.style.height = '54px';
+    const nextHeight = Math.min(chatInput.scrollHeight, 120);
+    chatInput.style.height = `${nextHeight}px`;
+    chatInput.style.overflowY = chatInput.scrollHeight > 120 ? 'auto' : 'hidden';
+  };
+
+  chatInput.addEventListener('input', resizeChatInput);
   chatInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
