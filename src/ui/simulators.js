@@ -17,9 +17,9 @@ const MODALITIES = {
   ORDINARIO: {
     id: 'ORDINARIO', institution: 'UNSM', examType: 'ORDINARIO',
     title: 'UNSM · Ordinario', subtitle: 'Examen de admisión ordinario',
-    duration: 150, standardQuestions: 100, correctPoints: 2, wrongPoints: 0,
+    duration: 150, standardQuestions: 100, correctPoints: null, wrongPoints: 0,
     penaltyLabel: 'Sin descuento por error ni respuesta en blanco', accent: 'unsm',
-    description: 'Examen de admisión UNSM. Solo suman las respuestas correctas; las incorrectas y en blanco no descuentan.'
+    description: 'Examen Ordinario UNSM. Las incorrectas y en blanco no descuentan; la matriz de pesos de la convocatoria debe verificarse antes de calcular puntos.'
   },
   EXTRAORDINARIO_I: {
     id: 'EXTRAORDINARIO_I', institution: 'UNSM', examType: 'EXTRAORDINARIO_I',
