@@ -57,3 +57,29 @@ test('local progress and mistakes are scoped to the active account', async () =>
   assert.match(engine, /attempt\.userId === ownerId/);
   assert.match(storage, /\['userId', 'questionId'\]/);
 });
+
+test('source inventory never presents missing document hashes as verified', async () => {
+  const inventory = JSON.parse(await read('../research/sources/source-inventory.json'));
+  for (const source of inventory.sources || []) {
+    if (source.checksumStatus !== 'COMPUTED') {
+      assert.equal(source.checksum, null, source.sourceId);
+    } else {
+      assert.match(source.checksum, /^[a-f0-9]{64}$/i, source.sourceId);
+    }
+  }
+});
+
+test('practice view escapes dynamic question content before HTML rendering', async () => {
+  const source = await read('../src/ui/practice.js');
+  assert.match(source, /const escapeHtml =/);
+  assert.match(source, /escapeHtml\(questions\[currentIndex\]\.rawQuestion\)/);
+  assert.match(source, /escapeHtml\(opt\.text\)/);
+});
+
+test('dashboard and navigation do not overstate the question bank as official', async () => {
+  const dashboard = await read('../src/ui/dashboard.js');
+  const main = await read('../src/main.js');
+  assert.doesNotMatch(dashboard, /Simulacro Oficial|Preguntas Oficiales|FRECUENCIA MUY ALTA/);
+  assert.match(main, /Fuentes & Trazabilidad/);
+  assert.doesNotMatch(main, /Fuentes Oficiales & Auditoría/);
+});
