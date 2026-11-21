@@ -8,9 +8,9 @@ import unicodedata
 def normalize_text(value: str) -> str:
     value = unicodedata.normalize("NFKC", value).lower()
     value = value.replace("\u00ad", "")
-    value = re.sub(r"\\s+", " ", value)
-    value = re.sub(r"[^\\w\\s%.,+*/=()√π-]", " ", value, flags=re.UNICODE)
-    return re.sub(r"\\s+", " ", value).strip()
+    value = re.sub(r"\s+", " ", value)
+    value = re.sub(r"[^\w\s%.,+*/=()√π-]", " ", value, flags=re.UNICODE)
+    return re.sub(r"\s+", " ", value).strip()
 
 
 def content_hash(value: str) -> str:
