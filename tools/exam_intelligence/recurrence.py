@@ -48,22 +48,41 @@ def recurring_topic_report(records: list[dict]) -> list[dict]:
     ]
 
 
-def add_semantic_scores(candidates: list[RecurrenceCandidate], texts: dict[str, str]) -> list[dict]:
-    """Optional semantic pass; used only to enrich the review queue."""
+def semantic_candidates(records: list[dict], *, threshold: float = 0.78) -> list[dict]:
+    """Compare all eligible records semantically; output is always an unverified review queue."""
     try:
         from sentence_transformers import SentenceTransformer
     except ImportError as exc:
         raise RuntimeError("Install the [semantic] extra for semantic comparison.") from exc
-    ids = sorted({item.question_a for item in candidates} | {item.question_b for item in candidates})
-    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    vectors = model.encode([texts[item] for item in ids], normalize_embeddings=True)
-    index = {question_id: vectors[pos] for pos, question_id in enumerate(ids)}
-    return [
-        {
-            "question_a": item.question_a, "question_b": item.question_b,
-            "cosine_similarity": float(index[item.question_a] @ index[item.question_b]),
-            "lexical_similarity": item.lexical_similarity,
-            "review_status": RecurrenceStatus.CANDIDATE.value
-        }
-        for item in candidates
+
+    eligible = [
+        item for item in records
+        if item.get("id") and item.get("rawQuestion")
+        and item.get("sourceReference", {}).get("document")
     ]
+    if len(eligible) < 2:
+        return []
+    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+    vectors = model.encode(
+        [normalize_text(item["rawQuestion"]) for item in eligible],
+        normalize_embeddings=True, show_progress_bar=False
+    )
+    candidates: list[dict] = []
+    for index, left in enumerate(eligible):
+        source_left = left["sourceReference"]["document"]
+        for right_index in range(index + 1, len(eligible)):
+            right = eligible[right_index]
+            if source_left == right["sourceReference"]["document"]:
+                continue
+            similarity = float(vectors[index] @ vectors[right_index])
+            if similarity < threshold:
+                continue
+            candidates.append({
+                "question_a": left["id"], "question_b": right["id"],
+                "source_a": source_left, "source_b": right["sourceReference"]["document"],
+                "recurrence_type": RecurrenceType.NEAR_DUPLICATE.value,
+                "semantic_similarity": round(similarity, 4),
+                "review_status": RecurrenceStatus.CANDIDATE.value,
+                "evidence_note": "Coincidencia semántica automática; requiere comparación y aprobación humana."
+            })
+    return candidates
