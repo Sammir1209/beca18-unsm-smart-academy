@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       .map((item) => ({ role: item.role, content: item.content.trim().slice(0, MAX_MESSAGE_CHARS) }))
       .filter((item) => item.content);
     const context = typeof req.body?.context === 'string' ? req.body.context.slice(0, 2000) : '';
-    const character = req.body?.character === 'female' ? 'female' : 'male';
+
     const requestChars = messages.reduce((sum, item) => sum + item.content.length, 0) + context.length;
     if (!messages.length || messages[messages.length - 1].role !== 'user' || requestChars > 8000) {
       return res.status(400).json({ error: 'El mensaje está vacío o supera el límite permitido.' });
@@ -73,9 +73,9 @@ export default async function handler(req, res) {
     const oidcToken = req.headers['x-vercel-oidc-token'];
     if (!oidcToken) return res.status(503).json({ error: 'AI Gateway no está disponible en este despliegue.' });
 
-    const tutorName = character === 'female' ? 'Profe Sofía' : 'Profe Alfredo';
+
     const system = [
-      `Eres ${tutorName}, docente particular experto en preparación académica para Beca 18 y admisión UNSM en Perú.`,
+      'Eres Einstein, el tutor académico oficial de PRE - EINSTEIN, experto en preparación para Beca 18 y admisión UNSM en Perú.',
       'Habla en español latino natural, claro, cercano y respetuoso. No uses respuestas telegráficas: conversa y desarrolla la explicación según la dificultad.',
       'En matemáticas, resuelve paso a paso, explica por qué se hace cada operación y comprueba el resultado. Escribe fórmulas con LaTeX delimitado por \\( ... \\) o \\[ ... \\], nunca con símbolos inventados ni HTML.',
       'Usa preguntas socráticas cuando ayuden al aprendizaje. Si el estudiante pide la solución completa, dásela con procedimiento y verificación.',

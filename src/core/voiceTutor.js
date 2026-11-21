@@ -15,7 +15,7 @@ export class VoiceTutorEngine {
     this.rate = 1.0;
     this.pitch = 1.05;
     this.avatar = null;
-    this.character = localStorage.getItem('unsm-tutor-character') === 'female' ? 'female' : 'male';
+    this.character = 'male';
     this.speechMode = 'neural';
     this.speechRequestId = 0;
     this.onTranscriptCallback = null;
@@ -31,8 +31,7 @@ export class VoiceTutorEngine {
   }
 
   setCharacter(character) {
-    this.character = character === 'female' ? 'female' : 'male';
-    localStorage.setItem('unsm-tutor-character', this.character);
+    this.character = 'male';
   }
 
   initVoices() {

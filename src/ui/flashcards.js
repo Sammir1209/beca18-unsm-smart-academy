@@ -25,6 +25,7 @@ export function renderFlashcards(container, navigateTo) {
     container.innerHTML = `
       <div style="max-width: 680px; margin: 0 auto;">
         
+        <div class="einstein-inline-tip flashcards-einstein-tip"><img src="/stickers/einstein-reading.svg" alt="Einstein leyendo"><div><strong>Repasa con Einstein</strong><span>Recuerda, responde y consolida lo aprendido con repetición espaciada.</span></div></div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
           <div>
             <span class="tag tag-unsm">${c.subject}</span>
@@ -41,7 +42,7 @@ export function renderFlashcards(container, navigateTo) {
             ${isFlipped ? 'Respuesta & Explicación' : 'Pregunta o Reto Conceptual (Toca para voltear)'}
           </div>
 
-          <div style="font-size: 1.35rem; font-weight: 700; line-height: 1.6; color: ${isFlipped ? '#A7F3D0' : '#fff'};">
+          <div style="font-size: 1.35rem; font-weight: 700; line-height: 1.6; color: ${isFlipped ? '#14734d' : '#263f88'};">
             ${isFlipped ? c.back : c.front}
           </div>
 

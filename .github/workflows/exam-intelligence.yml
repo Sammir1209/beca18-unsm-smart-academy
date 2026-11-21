@@ -2,7 +2,7 @@ name: Exam Intelligence Quality
 
 on:
   push:
-    branches: [feat/exam-intelligence-pipeline]
+    branches: [feat/exam-intelligence-pipeline, feat/pre-einstein-brand-experience]
     paths:
       - "tools/exam_intelligence/**"
       - "tests/exam_intelligence/**"
@@ -13,7 +13,7 @@ on:
       - "package-lock.json"
       - ".github/workflows/exam-intelligence.yml"
   pull_request:
-    branches: [mobile-first-unsm-academy]
+    branches: [mobile-first-unsm-academy, feat/exam-intelligence-pipeline]
     paths:
       - "tools/exam_intelligence/**"
       - "tests/exam_intelligence/**"

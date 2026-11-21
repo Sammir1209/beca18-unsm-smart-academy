@@ -7,15 +7,10 @@ const LIVE_MAX_MS = 5 * 60 * 1000;
 const SAMPLE_RATE = 24000;
 const FRAME_SAMPLES = 480;
 
-const tutorNames = {
-  male: 'Profe Alfredo',
-  female: 'Profe Sofía',
-};
+const TUTOR_NAME = 'Einstein';
 
-const liveInstructions = (character) => {
-  const name = tutorNames[character] || tutorNames.male;
-  return [
-    `Eres ${name}, un profesor particular que conversa en español peruano/latino natural.`,
+const liveInstructions = () => [
+    'Eres Einstein, el tutor académico de PRE - EINSTEIN. Conversas en español peruano/latino natural.',
     'Tu trabajo es enseñar, no solo dar respuestas. Escucha con atención, responde a lo que el estudiante realmente pregunta y mantén el hilo de la conversación.',
     'Explica con calma y con suficiente detalle. En matemáticas, desglosa el procedimiento paso a paso, verbaliza qué operación haces y por qué, y comprueba el resultado.',
     'Usa ejemplos sencillos relacionados con secundaria y preparación para Beca 18 y admisión UNSM. Ajusta la profundidad al nivel del estudiante.',
@@ -25,7 +20,6 @@ const liveInstructions = (character) => {
     'Permite interrupciones naturales. No monopolices la conversación. Haz una pregunta breve para comprobar comprensión cuando sea oportuno.',
     'Pronuncia las expresiones matemáticas de forma comprensible. Cuando escribas texto, usa LaTeX válido delimitado con \\( ... \\) o \\[ ... \\].',
   ].join(' ');
-};
 
 function renderMath(target) {
   if (target) void renderMathInRoot(target);
@@ -39,7 +33,7 @@ export function mountTutorChat(container, {
 } = {}) {
   if (!container) return () => {};
 
-  let character = localStorage.getItem('unsm-tutor-character') === 'female' ? 'female' : 'male';
+  const character = 'einstein';
   let messages = [];
   let socket = null;
   let mediaStream = null;
@@ -63,24 +57,12 @@ export function mountTutorChat(container, {
 
   container.innerHTML = `
     <section class="tutor-chat-shell" aria-label="Asistente académico interactivo">
-      <div class="tutor-character-picker" role="group" aria-label="Seleccionar profesor">
-        <button type="button" class="tutor-character-option ${character === 'male' ? 'active' : ''}" data-character="male" aria-pressed="${character === 'male'}">
-          <span class="tutor-character-avatar tutor-avatar-male">A</span>
-          <span class="tutor-character-copy"><strong>Profe Alfredo</strong><small>Explicación y práctica</small></span>
-          <span class="tutor-character-check" aria-hidden="true">✓</span>
-        </button>
-        <button type="button" class="tutor-character-option ${character === 'female' ? 'active' : ''}" data-character="female" aria-pressed="${character === 'female'}">
-          <span class="tutor-character-avatar tutor-avatar-female">S</span>
-          <span class="tutor-character-copy"><strong>Profe Sofía</strong><small>Guía y acompañamiento</small></span>
-          <span class="tutor-character-check" aria-hidden="true">✓</span>
-        </button>
-      </div>
-
+      <div class="tutor-einstein-brand"><img src="/einstein-mascot.svg" alt="Einstein, tu tutor"><div><strong>Einstein</strong><span>Tu tutor personal para Beca 18 y la UNSM</span></div></div>
       <div class="tutor-live-panel">
         <div class="tutor-live-heading">
           <div>
             <span class="tutor-overline">AULA INTERACTIVA</span>
-            <strong id="tutor-active-name">${tutorNames[character]}</strong>
+            <strong id="tutor-active-name">${TUTOR_NAME}</strong>
           </div>
           <span class="tutor-status-pill" id="tutor-status-pill"><i></i><span id="tutor-status-text">Listo para conversar</span></span>
         </div>
@@ -106,7 +88,7 @@ export function mountTutorChat(container, {
         <div class="tutor-message-list" id="tutor-message-list" aria-live="polite">
           <div class="tutor-welcome-message">
             <span class="tutor-welcome-mark"><i data-lucide="sparkles"></i></span>
-            <div><strong>¡Hola! Soy ${tutorNames[character]}.</strong><p>Podemos resolver ejercicios, repasar temas o conversar sobre cualquier duda de tu preparación.</p></div>
+            <div><strong>¡Hola! Soy ${TUTOR_NAME}.</strong><p>Podemos resolver ejercicios, repasar temas o conversar sobre cualquier duda de tu preparación.</p></div>
           </div>
         </div>
         <div class="tutor-quick-prompts">
@@ -205,7 +187,7 @@ export function mountTutorChat(container, {
         body: JSON.stringify({
           messages: messages.slice(-6),
           context: getContextText(2000),
-          character,
+          character: 'einstein',
         }),
       });
       const data = await response.json().catch(() => ({}));
@@ -417,9 +399,9 @@ export function mountTutorChat(container, {
             delegation: { type: 'client' },
             audio: {
               format: { type: 'audio/pcm', rate: SAMPLE_RATE },
-              output: { voice: character === 'female' ? 'marin' : 'cedar' },
+              output: { voice: 'cedar' },
             },
-            instructions: liveInstructions(character),
+            instructions: liveInstructions(),
           },
         }));
       });
@@ -524,22 +506,6 @@ export function mountTutorChat(container, {
     liveAttemptId += 1;
     finishLive('Cerrando conversación…', 'ready');
   }
-
-  container.querySelectorAll('[data-character]').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (isLive || isStarting) stopLive();
-      character = button.dataset.character === 'female' ? 'female' : 'male';
-      localStorage.setItem('unsm-tutor-character', character);
-      container.querySelectorAll('[data-character]').forEach((item) => {
-        const active = item.dataset.character === character;
-        item.classList.toggle('active', active);
-        item.setAttribute('aria-pressed', String(active));
-      });
-      $('#tutor-active-name').textContent = tutorNames[character];
-      onCharacterChange(character);
-      setStatus(`${tutorNames[character]} está listo para ayudarte.`, 'ready');
-    });
-  });
 
   liveStartButton.addEventListener('click', startLive);
   liveStopButton.addEventListener('click', stopLive);

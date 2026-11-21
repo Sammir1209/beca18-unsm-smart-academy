@@ -88,6 +88,7 @@ export function renderSimulators(container, navigateTo) {
 
     container.innerHTML = `
       <section class="simulator-hub">
+        <div class="einstein-study-tip simulator-einstein-tip"><img src="/stickers/einstein-thinking.svg" alt="Einstein pensando"><div><strong>Consejo de Einstein</strong><span>Administra tu tiempo, revisa cada alternativa y recuerda: en estos simulacros no se descuentan puntos por respuestas incorrectas o en blanco.</span></div></div>
         <header class="simulator-heading">
           <span class="simulator-eyebrow">PREPARACIÓN DE ADMISIÓN</span>
           <h2>Simulacros</h2>

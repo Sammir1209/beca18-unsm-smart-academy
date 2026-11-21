@@ -20,6 +20,8 @@ export async function renderDashboard(container, navigateTo) {
   const user = authData?.session?.user;
   const studentName = String(user?.user_metadata?.full_name || user?.user_metadata?.name || '').trim();
   const greetingName = escapeHtml(studentName ? studentName.split(/\s+/)[0] : 'Postulante');
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
 
   container.innerHTML = `
     <div class="dashboard-stack">
@@ -33,12 +35,13 @@ export async function renderDashboard(container, navigateTo) {
             <span style="font-size: 0.8rem; color: var(--text-dim);">Convocatoria 2027</span>
           </div>
           <h1 class="dashboard-hero-title">
-            Buenos días, ${greetingName}
+            ${greeting}, ${greetingName}
           </h1>
           <p class="dashboard-hero-description">
             Tu ruta de preparación está optimizada para el <strong>Núcleo Común (Matemática + Comprensión Lectora)</strong> y la especialización en Ciencias para la UNSM.
           </p>
         </div>
+        <div class="dashboard-einstein-note"><img src="/stickers/einstein-explaining.svg" alt="Einstein explicando"><div><strong>Tu compañero de estudio</strong><span>Einstein te ayuda a comprender, practicar y corregir tus errores.</span></div></div>
         <div class="dashboard-hero-actions">
           <button id="btn-start-practice" class="btn btn-beca">
             ${icon('practice', { size: 18, color: '#064E3B' })}

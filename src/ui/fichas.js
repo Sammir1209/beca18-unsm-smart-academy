@@ -5,6 +5,7 @@
 import { repo } from '../core/repository.js';
 import { voiceTutor } from '../core/voiceTutor.js';
 import { icon } from './icons.js';
+import { renderMath } from '../core/math-renderer.js';
 
 export function renderFichas(container, navigateTo) {
   let selectedFicha = null;
@@ -132,6 +133,7 @@ export function renderFichas(container, navigateTo) {
             <span class="tag tag-beca">${f.topic}</span>
             <span class="tag tag-diff-basic">${f.subtopic || ''}</span>
           </div>
+          <div class="einstein-study-tip"><img src="/stickers/einstein-reading.svg" alt="Einstein leyendo"><div><strong>Einstein te recomienda</strong><span>Lee la idea clave y observa las fórmulas antes de resolver los ejercicios.</span></div></div>
           <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px;">${f.title}</h1>
           <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 24px;">
             ${f.summary}
@@ -140,14 +142,14 @@ export function renderFichas(container, navigateTo) {
           <!-- Conceptos Nucleares Visuales -->
           ${f.concepts && f.concepts.length > 0 ? `
             <div style="margin-bottom: 28px;">
-              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 14px; color: #93C5FD; display: flex; align-items: center; gap: 8px;">
+              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 14px; color: var(--accent-unsm); display: flex; align-items: center; gap: 8px;">
                 ${icon('brain', { size: 20, color: 'var(--accent-unsm)' })}
                 Marco Teórico Esencial (Sin rodeos)
               </h3>
               <div style="display: flex; flex-direction: column; gap: 12px;">
                 ${f.concepts.map(c => `
                   <div style="background-color: var(--bg-card); padding: 16px 20px; border-radius: var(--radius-md); border-left: 3px solid var(--accent-unsm);">
-                    <strong style="color: #60A5FA; font-size: 0.95rem; display: block; margin-bottom: 6px;">${c.name}</strong>
+                    <strong style="color: var(--accent-unsm); font-size: 0.95rem; display: block; margin-bottom: 6px;">${c.name}</strong>
                     <div style="color: var(--text-main); font-size: 0.9rem; line-height: 1.6;">${c.description}</div>
                   </div>
                 `).join('')}
@@ -166,7 +168,7 @@ export function renderFichas(container, navigateTo) {
                 ${f.formulas.map(formula => `
                   <div style="background-color: var(--bg-card); padding: 14px 18px; border-radius: var(--radius-md); border-left: 3px solid var(--accent-beca); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <span style="font-size: 0.9rem; font-weight: 600;">${formula.label}</span>
-                    <code style="font-family: var(--font-mono); font-size: 0.95rem; color: #A7F3D0; font-weight: 700; background-color: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 6px;">${formula.formula}</code>
+                    <span class="formula-display">\\( ${formula.formula.replace(/([A-Za-z])_([A-Za-z0-9]+)/g, '$1_{$2}').replace(/\*/g, '\\cdot ').replace(/%/g, '\\%')} \\)</span>
                   </div>
                 `).join('')}
               </div>
@@ -243,6 +245,8 @@ export function renderFichas(container, navigateTo) {
         </div>
       </div>
     `;
+
+    void renderMath(container);
 
     document.getElementById('btn-back-fichas')?.addEventListener('click', () => {
       voiceTutor.stopSpeaking();
