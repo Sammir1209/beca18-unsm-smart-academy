@@ -11,8 +11,9 @@ Un acertijo validado exclusivamente en JavaScript no es un control anti-bot: bas
 ## Arquitectura elegida
 
 - Cliente: aplicación Vite. Renderiza el reto visual propio y captura la selección.
-- Backend de reto: Cloudflare Pages Functions bajo `functions/api/captcha/*`. Nunca confía en la respuesta correcta enviada por el navegador.
-- Persistencia: PostgreSQL de Supabase, tablas internas de CAPTCHA con RLS activado y sin permisos para `anon` ni `authenticated`. La Function utiliza un secreto de servidor; nunca se envía al cliente.
+- Motor PoW: `altcha` (widget Web Component) y `altcha-lib` (generación/verificación server-side), ambos del núcleo open-source MIT. Se ejecutan en nuestra infraestructura; no se usa ALTCHA Cloud ni Sentinel.
+- Backend de reto: Supabase Edge Functions `captcha-challenge` y `captcha-verify`, usando `altcha-lib` compatible con Deno 2+. Nunca confía en una respuesta enviada por el navegador sin verificarla criptográficamente.
+- Persistencia: PostgreSQL de Supabase, tablas internas de CAPTCHA con RLS y sin permisos para `anon` ni `authenticated`. Se registra el nonce/reto y el consumo para impedir replays; los secretos viven solo en Edge Function Secrets.
 - Barrera de alta: Supabase Auth **Before User Created Hook**. El hook comprueba y consume de forma atómica el comprobante antes de que Supabase inserte la nueva cuenta.
 
 Supabase documenta el hook Before User Created como punto de control previo al alta; recibe metadatos de la solicitud (incluida IP y request ID) y el usuario que está por crearse. Puede permitir con objeto vacío o rechazar con error 4xx. Referencias: [hook](https://supabase.com/docs/guides/auth/auth-hooks/before-user-created-hook), [Auth Hooks](https://supabase.com/docs/guides/auth/auth-hooks).
@@ -47,15 +48,11 @@ sequenceDiagram
 
 ### Reto base
 
-Utilizar un reto visual de símbolos geométricos propios, renderizados como SVG (no imágenes de terceros). Ejemplo: “Selecciona todos los símbolos que tienen exactamente cuatro lados”. Cada reto genera de forma aleatoria:
-- una instrucción seleccionada de un catálogo acotado;
-- una cuadrícula de símbolos distintos con rotaciones, escalas y colores;
-- una respuesta correcta aleatoria en el servidor;
-- un identificador opaco con caducidad breve.
+Usar ALTCHA Proof-of-Work en modo autohospedado: el servidor crea un reto nuevo, firmado y con expiración; el navegador resuelve el trabajo criptográfico y devuelve el payload. `altcha-lib` valida firma, expiración y solución en servidor. No se envían imágenes ni se obliga al alumno a resolver acertijos visuales.
 
-El navegador recibe solo los símbolos e instrucción. La respuesta correcta nunca se serializa ni se embebe en HTML, JavaScript, atributos, source map o URL. El servidor conserva un hash con salt aleatorio; la verificación consume el reto tras el número configurado de intentos.
+La presentación se personaliza para PRE - EINSTEIN mediante el Web Component `altcha-widget`, tema CSS propio, textos en español y estilos del sistema de diseño. El usuario debe ver un estado claro: pendiente, verificando, verificado, vencido o error. La accesibilidad del widget y el idioma se deben comprobar en dispositivos móviles reales.
 
-La interfaz debe ofrecer teclado, lector de pantalla y una alternativa accesible equivalente. No depender de distinguir colores, tiempo de reacción, audio obligatorio ni habilidades cognitivas complejas. Permitir actualizar el reto y explicar errores sin revelar la clave.
+El motor PoW no identifica personas ni detiene por sí solo automatizaciones avanzadas. Se combina con rate limits, nonce de un solo uso, límites de registro y confirmación de correo.
 
 ### Defensa en profundidad
 
@@ -104,20 +101,13 @@ Las siguientes tablas deben residir en un esquema interno/no expuesto o tener RL
 
 ## Contrato API
 
-### POST `/api/captcha/challenge`
-Request: `{ purpose: "signup" }`.
+### POST `/functions/v1/captcha-challenge`
+Emite un reto ALTCHA firmado para el propósito `signup`, con expiración corta y nonce aleatorio. Responde con el objeto `challenge` esperado por el widget. No devuelve secretos de firma.
 
-Response: `{ challengeId, challenge: { instruction, symbols, layout }, expiresAt }`.
-No responder `answer`, `answerHash`, salt ni proof.
+### POST `/functions/v1/captcha-verify`
+Recibe el payload ALTCHA. Ejecuta `verifySolution` en servidor con `altcha-lib`, valida el propósito y la expiración, y consume el nonce de forma atómica. Solo si todo es válido emite un comprobante opaco de alta, guardando únicamente su hash.
 
-Errores: `400` purpose no permitido, `429` rate limit, `503` servicio temporalmente no disponible.
-
-### POST `/api/captcha/verify`
-Request: `{ challengeId, answer }`.
-
-Éxito: `{ verified: true, proofToken, expiresAt }`.
-Fallo: `{ verified: false, errorCode: "CHALLENGE_INCORRECT" }`.
-Tras fallar: incrementar contador atómicamente; tras superar el límite, invalidar el reto. No entregar tokens en fallo.
+Errores: `400` payload inválido, `409` reto ya usado, `429` límite excedido, `410` expirado, `503` servicio temporalmente no disponible. No entregar comprobantes en caso de error.
 
 ## Integración con Supabase Auth
 
@@ -148,8 +138,8 @@ El hook oficial recibe `event.user.user_metadata` y `event.metadata.ip_address`;
 ## Variables de entorno de servidor (nunca VITE_)
 
 - `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY` (o secret key equivalente de servidor; exclusivamente Pages Function)
-- `CAPTCHA_HMAC_SECRET` (mínimo 32 bytes aleatorios, con rotación/versionado)
+- `SUPABASE_SERVICE_ROLE_KEY` (solo Edge Function; nunca frontend)
+- `CAPTCHA_HMAC_SECRET` (mínimo 32 bytes aleatorios, solo Edge Function)
 - `CAPTCHA_ALLOWED_ORIGINS`
 - `BEFORE_USER_CREATED_HOOK_SECRET` en Supabase Auth Hooks, según el método de hook configurado.
 
@@ -157,14 +147,15 @@ No se debe implementar mientras no estén provisionados los secretos en los dos 
 
 ## Plan de construcción y pruebas
 
-1. Esquema/migración privada, RLS/grants, índices y limpieza de caducados.
-2. Pages Functions challenge/verify; validación de origin y límites transaccionales.
-3. Hook Before User Created y trigger para retirar metadata temporal.
-4. Widget accesible y flujo de alta; eliminar dependencia de Turnstile.
-5. Pruebas unitarias de creación, normalización, hash, expiración y un solo uso.
-6. Pruebas de integración: proof faltante, inválido, repetido, caducado, propósito equivocado, concurrencia doble, rate limit, origen no permitido, alta directa Auth que omite la interfaz, confirmación de email y rollback.
-7. Pruebas E2E en Cloudflare Preview y luego Production.
-8. Revisión Supabase Advisors, logs y política de retención.
+1. Instalar `altcha` y `altcha-lib` con versiones fijadas; revisar licencias y lockfile.
+2. Esquema/migración privada, RLS/grants, índices y limpieza de caducados.
+3. Supabase Edge Functions challenge/verify con ALTCHA; validación de origin y límites transaccionales.
+4. Hook Before User Created y trigger para retirar metadata temporal.
+5. Widget ALTCHA personalizado en español y flujo de alta; eliminar dependencia de Turnstile.
+6. Pruebas unitarias de firma, PoW, expiración y un solo uso.
+7. Pruebas de integración: proof faltante, inválido, repetido, caducado, propósito equivocado, concurrencia doble, rate limit, origen no permitido, alta directa Auth que omite la interfaz, confirmación de email y rollback.
+8. Pruebas E2E en Preview y Production.
+9. Revisión Supabase Advisors, logs y política de retención.
 
 ## Riesgos aceptados y límites
 
