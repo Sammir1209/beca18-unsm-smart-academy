@@ -7,7 +7,7 @@ import typer
 
 from .audit import audit_question_bank
 from .ingestion import ingest_pdf
-from .recurrence import compare_questions, recurring_topic_report
+from .recurrence import compare_questions, recurring_topic_report, semantic_candidates
 
 app = typer.Typer(help="Exam Intelligence: ingestion, auditing and recurrence analysis.")
 
@@ -40,15 +40,19 @@ def ingest(pdf: Path = typer.Argument(..., exists=True, readable=True),
 @app.command()
 def compare(bank: Path = typer.Option(Path("data/questions/questions.json"), exists=True),
             output: Path = typer.Option(Path("data/analysis/recurrence-candidates.json")),
-            threshold: float = typer.Option(88.0, min=0, max=100)) -> None:
+            threshold: float = typer.Option(88.0, min=0, max=100),
+            semantic: bool = typer.Option(False, help="Run optional embedding-based similarity (downloads a model on first run).")) -> None:
     records = json.loads(bank.read_text(encoding="utf-8"))
     candidates = compare_questions(records, threshold=threshold)
+    semantic_matches = semantic_candidates(records) if semantic else []
     topics = recurring_topic_report(records)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps({
         "generatedForReview": True,
         "candidateCount": len(candidates),
         "candidates": [item.model_dump(mode="json") for item in candidates],
+        "semanticCandidateCount": len(semantic_matches),
+        "semanticCandidates": semantic_matches,
         "topicFrequency": topics
     }, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
     typer.echo(f"{len(candidates)} recurrence candidates written to {output}")
