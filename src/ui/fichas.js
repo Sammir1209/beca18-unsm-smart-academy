@@ -167,7 +167,7 @@ export function renderFichas(container, navigateTo) {
                 ${f.formulas.map(formula => `
                   <div style="background-color: var(--bg-card); padding: 14px 18px; border-radius: var(--radius-md); border-left: 3px solid var(--accent-beca); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <span style="font-size: 0.9rem; font-weight: 600;">${formula.label}</span>
-                    <span class="formula-display">\\(${formula.formula.replace(/([A-Za-z])_([A-Za-z0-9]+)/g, '$1_{$2}').replace(/\\*/g, '\\\\cdot ').replace(/%/g, '\\\\%')}\\)</span>
+                    <span class="formula-display">\\( ${formula.formula.replace(/([A-Za-z])_([A-Za-z0-9]+)/g, '$1_{$2}').replace(/\*/g, '\\cdot ').replace(/%/g, '\\%')} \\)</span>
                   </div>
                 `).join('')}
               </div>
