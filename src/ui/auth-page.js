@@ -6,6 +6,9 @@ export function renderAuthPage(container, route, navigate) {
   if (!container) return;
   const mode = route === 'register' ? 'register' : 'login';
   const title = mode === 'register' ? 'Crea tu cuenta' : 'Qué bueno verte de nuevo';
+  const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
+  let captchaToken = '';
+  let turnstileWidgetId = null;
   const subtitle = mode === 'register'
     ? 'Regístrate y guarda tu avance para continuar estudiando desde otros dispositivos.'
     : 'Inicia sesión y continúa tu preparación para la UNSM y Beca 18.';
@@ -31,7 +34,7 @@ export function renderAuthPage(container, route, navigate) {
             <input id="auth-route-email" type="email" autocomplete="email" placeholder="nombre@correo.com" required>
             <label for="auth-route-password">Contraseña</label>
             <input id="auth-route-password" type="password" autocomplete="${mode === 'register' ? 'new-password' : 'current-password'}" minlength="8" placeholder="Mínimo 8 caracteres" required>
-            ${mode === 'register' ? '<label for="auth-route-confirm">Confirmar contraseña</label><input id="auth-route-confirm" type="password" autocomplete="new-password" minlength="8" placeholder="Repite tu contraseña" required>' : ''}
+            ${mode === 'register' ? '<label for="auth-route-confirm">Confirmar contraseña</label><input id="auth-route-confirm" type="password" autocomplete="new-password" minlength="8" placeholder="Repite tu contraseña" required><div class="auth-captcha-wrap"><label>Verificación de seguridad</label><div id="auth-turnstile"></div><small id="auth-captcha-hint">Verifica que eres una persona para crear tu cuenta.</small></div>' : ''}
             <button class="btn btn-primary auth-submit" type="submit">${mode === 'login' ? 'Iniciar sesión' : 'Crear mi cuenta'}</button>
           </form>
           <div class="auth-links">
@@ -53,12 +56,45 @@ export function renderAuthPage(container, route, navigate) {
     feedback.dataset.type = type;
   };
 
+  const form = container.querySelector('#auth-route-form');
+  const submitButton = form?.querySelector('button[type="submit"]');
+
+  if (mode === 'register') {
+    if (!turnstileSiteKey) {
+      if (submitButton) submitButton.disabled = true;
+      setFeedback('Falta configurar VITE_TURNSTILE_SITE_KEY en las variables de entorno del sitio.', 'warning');
+    } else {
+      const renderTurnstile = () => {
+        if (!window.turnstile || !container.querySelector('#auth-turnstile')) return;
+        if (turnstileWidgetId !== null) window.turnstile.remove(turnstileWidgetId);
+        turnstileWidgetId = window.turnstile.render('#auth-turnstile', {
+          sitekey: turnstileSiteKey,
+          callback: (token) => { captchaToken = token; if (submitButton && supabaseConfigured) submitButton.disabled = false; },
+          'expired-callback': () => { captchaToken = ''; if (submitButton) submitButton.disabled = true; },
+          'error-callback': () => { captchaToken = ''; if (submitButton) submitButton.disabled = true; setFeedback('No se pudo validar el CAPTCHA. Intenta nuevamente.', 'error'); }
+        });
+      };
+      if (window.turnstile) renderTurnstile();
+      else {
+        let script = document.querySelector('script[data-turnstile-api]');
+        if (!script) {
+          script = document.createElement('script');
+          script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+          script.async = true; script.defer = true; script.dataset.turnstileApi = 'true';
+          document.head.appendChild(script);
+        }
+        script.addEventListener('load', renderTurnstile, { once: true });
+        script.addEventListener('error', () => setFeedback('No se pudo cargar la verificación de seguridad.', 'error'), { once: true });
+      }
+    }
+  }
+
   if (!supabaseConfigured || !supabase) {
     setFeedback('La conexión de cuentas todavía no está configurada. Puedes continuar en modo local.', 'warning');
     return;
   }
 
-  container.querySelector('#auth-route-form')?.addEventListener('submit', async (event) => {
+  form?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     const button = form.querySelector('button[type="submit"]');
@@ -76,15 +112,20 @@ export function renderAuthPage(container, route, navigate) {
         return;
       }
 
+      const fullName = form.querySelector('#auth-route-name').value.trim();
       const confirm = form.querySelector('#auth-route-confirm').value;
+      if (fullName.length < 2) throw new Error('Escribe tu nombre completo.');
       if (password !== confirm) throw new Error('Las contraseñas no coinciden.');
+      if (!turnstileSiteKey || !captchaToken) throw new Error('Completa la verificación CAPTCHA antes de crear tu cuenta.');
 
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: form.querySelector('#auth-route-name').value.trim() } },
+        options: { data: { full_name: fullName }, captchaToken },
       });
       if (error) throw error;
+      captchaToken = '';
+      if (window.turnstile && turnstileWidgetId !== null) window.turnstile.reset(turnstileWidgetId);
 
       if (data.session) {
         setFeedback('Cuenta creada correctamente.', 'success');
@@ -94,9 +135,10 @@ export function renderAuthPage(container, route, navigate) {
       }
     } catch (error) {
       const message = error?.message || 'No se pudo completar la solicitud.';
+      if (mode === 'register' && window.turnstile && turnstileWidgetId !== null) { captchaToken = ''; window.turnstile.reset(turnstileWidgetId); }
       setFeedback(message, 'error');
     } finally {
-      button.disabled = false;
+      button.disabled = mode === 'register' && (!turnstileSiteKey || !captchaToken);
     }
   });
 }
