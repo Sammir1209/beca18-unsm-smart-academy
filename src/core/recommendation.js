@@ -37,7 +37,7 @@ export class RecommendationEngine {
         mastered: false
       };
 
-      if (!isCorrect) existing.failCount += 1;
+      if (!isCorrect && !isDoubt) existing.failCount += 1;
       if (isDoubt) existing.doubtCount += 1;
       existing.lastFailedAt = Date.now();
       existing.mastered = false;
@@ -60,7 +60,7 @@ export class RecommendationEngine {
 
     // Cloud-restored events intentionally do not contain answer keys. Exclude
     // those records from accuracy rather than counting them as incorrect.
-    const scoredAttempts = attempts.filter(a => typeof a.isCorrect === 'boolean');
+    const scoredAttempts = attempts.filter(a => typeof a.isCorrect === 'boolean' && !a.isDoubt);
     const total = scoredAttempts.length;
     const correct = scoredAttempts.filter(a => a.isCorrect && !a.isDoubt).length;
     const doubts = attempts.filter(a => a.isDoubt).length;
