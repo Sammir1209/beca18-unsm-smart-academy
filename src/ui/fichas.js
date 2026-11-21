@@ -132,6 +132,7 @@ export function renderFichas(container, navigateTo) {
             <span class="tag tag-beca">${f.topic}</span>
             <span class="tag tag-diff-basic">${f.subtopic || ''}</span>
           </div>
+          <div class="einstein-study-tip"><img src="/stickers/einstein-reading.svg" alt="Einstein leyendo"><div><strong>Einstein te recomienda</strong><span>Lee la idea clave y observa las fórmulas antes de resolver los ejercicios.</span></div></div>
           <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px;">${f.title}</h1>
           <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 24px;">
             ${f.summary}
@@ -166,7 +167,7 @@ export function renderFichas(container, navigateTo) {
                 ${f.formulas.map(formula => `
                   <div style="background-color: var(--bg-card); padding: 14px 18px; border-radius: var(--radius-md); border-left: 3px solid var(--accent-beca); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <span style="font-size: 0.9rem; font-weight: 600;">${formula.label}</span>
-                    <code style="font-family: var(--font-mono); font-size: 0.95rem; color: #A7F3D0; font-weight: 700; background-color: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 6px;">${formula.formula}</code>
+                    <span class="formula-display">\\(${formula.formula.replace(/([A-Za-z])_([A-Za-z0-9]+)/g, '$1_{$2}').replace(/\\*/g, '\\\\cdot ').replace(/%/g, '\\\\%')}\\)</span>
                   </div>
                 `).join('')}
               </div>
