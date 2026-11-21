@@ -110,8 +110,8 @@ export function renderSimulators(container, navigateTo) {
     if (timerInterval) clearInterval(timerInterval);
     const cards = Object.values(MODALITIES).map(modality => {
       const pool = getPool(modality);
-      const available = pool.length >= modality.standardQuestions;
-      const countLabel = `${modality.standardQuestions} preguntas requeridas`;
+      const available = modality.blueprintVerified === true && Number.isInteger(modality.duration) && pool.length >= modality.standardQuestions;
+      const countLabel = modality.blueprintVerified ? `${modality.standardQuestions} preguntas requeridas` : 'Estructura oficial pendiente de validar';
       return `
         <article class="sim-modality-card ${modality.accent}" data-modality="${modality.id}">
           <div class="sim-card-topline">
@@ -150,10 +150,10 @@ export function renderSimulators(container, navigateTo) {
         </div>
         <div class="simulator-modalities">${cards}</div>
         <aside class="simulator-scoring-note">
-          <strong>Cómo se calcula tu puntaje</strong>
-          <p><b>ENP:</b> +2 por acierto y 0 por error o pregunta en blanco, según el esquema configurado para este simulador.</p>
-          <p><b>UNSM:</b> ponderación referencial del inventario del proyecto: +4 por acierto, −0.5 por error y 0 en blanco. Debe verificarse con el prospecto vigente.</p>
-          <p class="simulator-note-muted">La puntuación exacta por bloque debe configurarse con el prospecto vigente de cada convocatoria.</p>
+          <strong>Transparencia académica</strong>
+          <p>Los tiempos, la cantidad de preguntas, la distribución por áreas y la puntuación deben verificarse con el prospecto vigente de cada convocatoria.</p>
+          
+          <p class="simulator-note-muted">No se mostrarán simulacros como oficiales ni se inventarán preguntas para completar un banco insuficiente.</p>
         </aside>
       </section>
     `;
@@ -169,7 +169,7 @@ export function renderSimulators(container, navigateTo) {
   function startSimulator(modality) {
     const pool = getPool(modality);
     if (!pool.length) return;
-    if (pool.length < modality.standardQuestions) return;
+    if (modality.blueprintVerified !== true || !Number.isInteger(modality.duration) || pool.length < modality.standardQuestions) return;
     const questions = [...pool];
     for (let i = questions.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [questions[i], questions[j]] = [questions[j], questions[i]]; }
     questions.length = modality.standardQuestions;
