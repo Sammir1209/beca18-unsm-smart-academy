@@ -1554,3 +1554,56 @@ body{background:var(--bg-primary);color:var(--text-main)}.sidebar{background:#ff
 .einstein-extra-notes-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px}
 .einstein-extra-notes-grid>div{margin:0!important;padding:11px!important}
 @media(max-width:640px){.einstein-extra-notes-grid{grid-template-columns:1fr}}
+
+/* PRE-EINSTEIN visual correction pass — high contrast, blue/orange hierarchy */
+:root{
+ --brand-blue:#263f88;--brand-blue-strong:#1f3475;--brand-orange:#f28a00;
+ --brand-ink:#1c2940;--brand-muted:#56657b;--brand-soft:#f4f6fb;
+ --text-main:#1c2940;--text-muted:#596981;--text-dim:#718097;
+ --accent-unsm:#263f88;--accent-beca:#f28a00;--accent-alert:#f28a00;
+}
+.dashboard-hero{background:linear-gradient(112deg,#fff 0%,#f5f7ff 70%,#fff4e7 100%)!important;border-color:#dfe6f2!important}
+.dashboard-hero-title{color:#1c2940!important;text-shadow:none!important}
+.dashboard-hero-description{color:#53627a!important}
+.dashboard-hero-description strong{color:#263f88!important}
+.dashboard-hero-tags .tag-beca{background:#fff0dc!important;color:#a95b00!important}
+.dashboard-hero-tags .tag-unsm{background:#eaf0ff!important;color:#263f88!important}
+.dashboard-hero-tags>span:last-child{color:#68768b!important}
+.dashboard-einstein-note{background:#fff8ee!important;border-color:#f1d8b8!important}
+.dashboard-einstein-note strong{color:#263f88!important}
+.dashboard-einstein-note span{color:#53627a!important}
+.stat-label{color:#53627a!important}
+.stat-value{color:#1c2940!important}
+.card{color:#1c2940}
+.einstein-solution-heading{color:#263f88!important}
+.einstein-solution-heading img{width:54px;height:54px;object-fit:contain}
+#explanation-box [style*="color: #FECACA"]{color:#a62e32!important}
+#explanation-box [style*="color: #A7F3D0"]{color:#14734d!important}
+#explanation-box [style*="color: #FDE68A"]{color:#9a5700!important}
+#explanation-box [style*="color: #60A5FA"]{color:#263f88!important}
+#explanation-box [style*="color: #93C5FD"]{color:#263f88!important}
+#explanation-box .btn-secondary{background:#eef2f9!important;border:1px solid #dce4f0!important;color:#34445f!important}
+#explanation-box .btn-secondary svg{color:#263f88!important}
+#explanation-box .math-rich-text{overflow-wrap:anywhere}
+#explanation-box .math-rich-text .katex{color:#1f3475}
+#explanation-box .katex-display{margin:7px 0!important;padding:8px 10px;background:#f5f7fc;border:1px solid #e4eaf4;border-radius:10px}
+#explanation-box .katex{font-size:1.04em}
+#explanation-box [style*="background-color: var(--bg-card)"]{background:#fff!important;border:1px solid #e4eaf2!important}
+#explanation-box [style*="background-color: #1E293B"]{background:#263f88!important;color:#fff!important}
+#explanation-box [style*="color: #60A5FA"]{color:#fff!important}
+.topbar-einstein-sticker{width:40px!important;height:40px!important}
+.einstein-help-trigger img,.einstein-extra-notes summary img{width:58px;height:58px;object-fit:contain}
+.einstein-extra-notes>summary{color:#263f88}
+.einstein-extra-notes>summary img{width:42px;height:42px}
+.tutor-einstein-brand{background:linear-gradient(100deg,#fff7eb,#f3f6ff)!important;border-color:#e6dfd3!important}
+.tutor-einstein-brand strong{color:#263f88!important}
+.tutor-einstein-brand span{color:#53627a!important}
+@media(max-width:760px){
+ .dashboard-hero-title{font-size:1.45rem!important;line-height:1.25!important}
+ .dashboard-hero-description{font-size:.88rem!important;line-height:1.65!important}
+ .dashboard-einstein-note img{width:76px!important;height:76px!important}
+ .einstein-solution-heading{font-size:1rem!important}
+ .einstein-solution-heading img{width:48px!important;height:48px!important}
+ #explanation-box [style*="font-size: 0.95rem"]{font-size:.9rem!important;line-height:1.62!important}
+ #explanation-box .katex{font-size:1em}
+}
